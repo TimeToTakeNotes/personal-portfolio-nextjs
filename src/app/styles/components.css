@@ -1,0 +1,138 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@layer components {
+
+  /* Base button */
+  .btn {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium
+          transition-all duration-200 ease-in-out focus-visible:outline-none
+          focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50
+          disabled:pointer-events-none active:scale-95 cursor-pointer;
+  }
+
+  /* Primary – bold, elevated */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground shadow-md hover:shadow-lg
+          hover:bg-primary-hover hover:scale-105 transform;
+  }
+
+  /* Secondary – softer, subtle lift */
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary-hover
+          hover:-translate-y-0.5 hover:shadow-md;
+  }
+
+  /* Outline – border emphasis with smooth fill */
+  .btn-outline {
+    @apply border border-border bg-transparent text-primary relative overflow-hidden;
+  }
+  .btn-outline::after {
+    content: "";
+    @apply absolute inset-0 bg-primary opacity-0 transition-opacity duration-200;
+  }
+  .btn-outline:hover::after {
+    @apply opacity-10;
+  }
+  .btn-outline:hover {
+    @apply bg-secondary text-primary-foreground;
+  }
+
+  /* Error – strong attention grab */
+  .btn-error {
+    @apply bg-destructive text-destructive-foreground shadow-sm
+          hover:bg-destructive-hover hover:shadow-md hover:brightness-95;
+  }
+
+  /* Link – dual animated underline */
+  .btn-link {
+    @apply text-link no-underline;
+  }
+
+  /* Ghost – minimal, with smooth background fade */
+  .btn-ghost {
+    @apply bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground
+          hover:scale-105 transition-all duration-300 ease-out;
+  }
+
+  /* Sizes */
+  .btn-sm { @apply text-sm px-3 py-1.5; }
+  .btn-md { @apply text-base px-4 py-2; }
+  .btn-lg { @apply text-lg px-5 py-3; }
+  .btn-xl { @apply text-xl px-6 py-3.5; }
+  .btn-icon { @apply h-10 w-10 p-0; }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold
+          transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2
+          cursor-default;
+  }
+
+  /* Variant styles */
+  .badge-default {
+    @apply border-transparent bg-primary text-primary-foreground hover:bg-secondary-hover;
+  }
+
+  .badge-secondary {
+    @apply border-transparent bg-secondary text-secondary-foreground hover:bg-secondary-hover;
+  }
+
+  .badge-destructive {
+    @apply border-transparent bg-destructive text-destructive-foreground hover:bg-destructive-hover;
+  }
+
+  .badge-outline {
+    @apply border border-border text-foreground bg-transparent;
+  }
+
+  /* Logo */
+  .logo {
+    @apply h-8 w-8 text-primary;
+  }
+
+  /* Cards */
+  .card {
+    @apply rounded-lg border shadow-sm bg-card text-card-foreground border-border cursor-default;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .testimonial-card {
+    @apply rounded-lg border shadow-sm bg-card text-card-foreground border-border;
+  }
+
+  /* Card Sections */
+  .card-header { @apply flex flex-col space-y-1.5 p-6; }
+  .card-title { @apply text-2xl font-semibold leading-none tracking-tight; }
+  .card-description { @apply text-sm text-muted-foreground; }
+  .card-content { @apply p-6 pt-0; }
+  .card-footer { @apply flex items-center p-6 pt-0; }
+
+  /* Inputs (Web3Form) */
+  .input-group { @apply relative; }
+
+  .input-field {
+    @apply block w-full border border-border rounded-lg bg-input px-4 pt-6 pb-2
+           text-foreground placeholder-transparent transition-colors duration-150 ease-in-out;
+    outline-offset: 2px;
+  }
+
+  .input-field:focus {
+    @apply border-primary ring-3 ring-ring ring-offset-1;
+    outline: none;
+  }
+
+  .floating-label {
+    @apply absolute left-4 top-5 text-muted-foreground text-base pointer-events-none
+           transition-all duration-150 ease-in-out origin-left bg-transparent px-1;
+    transform-origin: left top;
+  }
+
+  .input-field:focus + .floating-label,
+  .input-field:not(:placeholder-shown) + .floating-label {
+    @apply -translate-y-3 scale-80 text-primary top-1 bg-background;
+  }
+}
