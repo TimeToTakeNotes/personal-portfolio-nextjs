@@ -1,10 +1,10 @@
+import "./globals.css";
 import type React from "react"
 import type { Metadata } from "next"
 import { Space_Grotesk, DM_Sans } from "next/font/google"
-import "./globals.css";
 import { ThemeProvider } from "@arno/components/layout/ThemeProvider";
 import MainNavigation from "@arno/components/layout/MainNavigation";
-// import Footer from "@arno/components/layout/Footer";
+import Footer from "@arno/components/layout/Footer";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -53,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider defaultTheme="system">
         <MainNavigation />
         <main>{children}</main>
-        {/* <Footer /> */}
+        <Footer />
         </ThemeProvider>
       </body>
     </html>

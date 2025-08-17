@@ -1,6 +1,6 @@
 // data.json (sample)
 export const siteData = {
-  name: "Alex Chen",
+  name: "Arno Christie",
   role: "Junior Software Developer",
   tagline: "Building thoughtful web apps with AI in the loop",
   skills: {

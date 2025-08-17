@@ -10,6 +10,7 @@ import { siteData } from "@arno/assets/site"
 import { fadeInUp, fadeIn, easeOut, staggerContainer, scaleOnHover } from "@arno/lib/animations"
 import { ArrowRight, CarFront, Download, Eye } from "lucide-react"
 import  FloatingInput  from "@arno/components/ui/Input"
+import { Card } from "../ui/Card"
 
 const childVariant = {
   initial: { opacity: 0, y: 20 },
@@ -36,7 +37,8 @@ export const HeroSection: React.FC = () => {
         >
           {siteData.role}
         </motion.h2>
-<FloatingInput label="Email" name="email" type="email" required />        {/* Tagline */}
+        <FloatingInput label="Email" name="email" type="email" required />
+        <Card>Testing testing</Card>
         <motion.p
           {...fadeIn}
           transition={{ ...fadeIn.transition, delay: 0.4 }}
@@ -56,6 +58,7 @@ export const HeroSection: React.FC = () => {
             <motion.div key={skill} variants={childVariant} whileHover={scaleOnHover.whileHover}>
               <Badge variant="default">{skill}</Badge>
               <Badge variant="secondary">{skill}</Badge>
+              <Badge variant="tag">{skill}</Badge>
               <Badge variant="outline">{skill}</Badge>
               <Badge variant="destructive">{skill}</Badge>
             </motion.div>

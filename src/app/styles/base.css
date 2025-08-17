@@ -28,7 +28,6 @@
   }
 
   html {
-    font-family: var(--font-body);
     scroll-behavior: smooth;
   }
 
@@ -73,25 +72,14 @@
     scroll-margin-top: 80px;
   }
 
-  /* Inputs */
-  input, textarea, select {
-    @apply border-border rounded-md px-2 py-1 text-foreground bg-background;
-    transition: border-color 0.3s ease;
-  }
-  input:focus, textarea:focus, select:focus {
-    box-shadow: 0 0 0 3px rgb(56 178 172 / 0.3);
-    outline: none;
-  }
-
   /* Scrollbar */
   body::-webkit-scrollbar {
-    width: 12px;
+    width: 6px;
   }
   body::-webkit-scrollbar-track {
     @apply bg-background;
   }
   body::-webkit-scrollbar-thumb {
-    @apply bg-primary rounded-md;
-    border: 3px solid var(--color-background);
+    @apply bg-primary rounded-md border border-background;
   }
 }

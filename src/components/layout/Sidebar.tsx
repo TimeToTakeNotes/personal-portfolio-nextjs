@@ -30,7 +30,7 @@ export default function Sidebar({ isOpen, onNavClick }: Props) {
         </div>
         
         {/* Action buttons */}
-        <div className="flex flex-col gap-4 p-6 mt-auto border-t border-border/30">
+        <div className="flex flex-col gap-4 p-15 mt-auto border-t border-border/30">
           <Button 
             variant="outline" 
             className="w-full"

@@ -12,13 +12,15 @@ export default function Navbar() {
       className={clsx(
         "hidden lg:block", // Hidden on mobile, visible on commp
         "fixed top-0 w-full backdrop-blur-md border-b z-1001 transition-all duration-300",
-        "bg-background/60 border-b border-border"
+        "bg-muted border-b border-border"
       )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          <Logo />
-          <div className="items-center space-x-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center h-16">
+          <div className="flex-shrink-0 pl-4">
+            <Logo />
+          </div>
+          <div className="ml-auto items-center space-x-8 flex">
             {["features", "how-it-works", "use-cases", "testimonials"].map((id) => (
               <a
                 key={id}

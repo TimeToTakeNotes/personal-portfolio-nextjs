@@ -11,8 +11,7 @@ interface BackgroundWrapperProps {
 const BackgroundWrapper: React.FC<BackgroundWrapperProps> = ({
   children,
   className = "",
-  image,
-  overlay = true
+  image
 }) => {
     const imageUrl = typeof image === "string" ? image : image.src;
   return (
@@ -23,16 +22,6 @@ const BackgroundWrapper: React.FC<BackgroundWrapperProps> = ({
           backgroundImage: `url(${imageUrl})`
         }}
       >
-        {overlay && (
-          <div
-            className="absolute inset-0 z-[1] pointer-events-none"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 50% 50%, transparent 0, transparent 2px, rgba(10, 10, 10, 0.6) 2px)",
-              backgroundSize: "8px 8px"
-            }}
-          />
-        )}
         <div className="relative z-[2] h-full w-full">{children}</div>
       </div>
     </div>

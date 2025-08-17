@@ -31,11 +31,11 @@
   --accent: oklch(0.88 0.15 85); /* Maize accent */
   --accent-foreground: oklch(0.322 0.123 268.5); /* Oxford Blue text on accent */
 
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-hover: oklch(0.577 0.245 27.325 / 0.8); /* Slightly dimmer destructive for hover */
+  --destructive: oklch(0.55 0.25 25);
+  --destructive-hover: oklch(0.55 0.25 25 / 0.8);
   --destructive-foreground: oklch(1 0 0);
 
-  --border: oklch(0.92 0.005 264); /* Light border */
+  --border: oklch(0.82 0.005 264);; /* Light border */
   --input: oklch(1 0 0); /* White input background */
   --ring: oklch(0.322 0.123 268.5 / 0.2); /* Oxford Blue ring with opacity */
 
@@ -51,7 +51,7 @@
   --sidebar-primary-foreground: oklch(0.322 0.123 268.5);
   --sidebar-accent: oklch(0.96 0.005 264);
   --sidebar-accent-foreground: oklch(0.322 0.123 268.5);
-  --sidebar-border: oklch(0.92 0.005 264);
+  --sidebar-border: oklch(0.82 0.005 264);;
   --sidebar-ring: oklch(0.322 0.123 268.5 / 0.2);
 
   --radius: 0.75rem; /* Slightly larger radius for modern look */
@@ -59,34 +59,37 @@
 
 .dark {
   /* Dark mode tokens maintaining Oxford Blue and Maize theme */
-  --background: oklch(0.08 0.02 264); /* Very dark blue-tinted background */
-  --foreground: oklch(0.98 0.005 85); /* Light cream foreground */
+  --background: oklch(0.10 0.02 264); /* Very dark blue-tinted background */
+  --foreground: oklch(0.97 0.01 265); /* Light neutral with a blue hint */
 
-  --card: oklch(0.12 0.02 264); /* Dark card background */
+  --card: oklch(0.18 0.02 260); /* Dark card background */
   --card-foreground: oklch(0.98 0.005 85); /* Light text on cards */
 
-  --popover: oklch(0.12 0.02 264);
+  --popover: oklch(0.18 0.02 260);
   --popover-foreground: oklch(0.98 0.005 85);
 
   --primary: oklch(0.88 0.15 85); /* Maize as primary in dark mode */
+  --primary-hover: oklch(0.88 0.15 85 / 0.8);
   --primary-foreground: oklch(0.08 0.02 264); /* Dark text on maize */
 
-  --secondary: oklch(0.2 0.03 264); /* Darker Oxford Blue secondary */
+  --secondary: oklch(0.322 0.123 268.5);
+  --secondary-hover: oklch(0.322 0.123 268.5 / 0.8);
   --secondary-foreground: oklch(0.98 0.005 85);
 
-  --color-link: var(--accent); /* Maize accent for dark mode */
+  --color-link: var(--primary); /* Maize for dark mode */
   --color-link-hover: oklch(0.88 0.15 85 / 0.8);
 
-  --muted: oklch(0.15 0.02 264);
-  --muted-foreground: oklch(0.7 0.01 264);
+  --muted: oklch(0.18 0.02 264);
+  --muted-foreground: oklch(0.7 0.02 264);
 
-  --accent: oklch(0.88 0.15 85); /* Maize accent */
-  --accent-foreground: oklch(0.08 0.02 264);
+  --accent: var(--primary); /* Maize in dark mode */
+  --accent-foreground: oklch(0.08 0.02 264); /* Oxford Blue text on Maize */
 
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.98 0.005 85);
+  --destructive: oklch(0.55 0.25 25);
+  --destructive-hover: oklch(0.55 0.25 25 / 0.8);
+  --destructive-foreground: oklch(1 0 0);
 
-  --border: oklch(0.2 0.02 264);
+  --border: oklch(0.35 0.01 65);
   --input: oklch(0.15 0.02 264);
   --ring: oklch(0.88 0.15 85 / 0.3);
 
