@@ -10,7 +10,7 @@ import { siteData } from "@arno/assets/site"
 import { fadeInUp, fadeIn, easeOut, staggerContainer, scaleOnHover } from "@arno/lib/animations"
 import { ArrowRight, CarFront, Download, Eye } from "lucide-react"
 import  FloatingInput  from "@arno/components/ui/Input"
-import { Card } from "../ui/Card"
+import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "../ui/Card"
 
 const childVariant = {
   initial: { opacity: 0, y: 20 },
@@ -37,8 +37,71 @@ export const HeroSection: React.FC = () => {
         >
           {siteData.role}
         </motion.h2>
-        <FloatingInput label="Email" name="email" type="email" required />
-        <Card>Testing testing</Card>
+
+        <div className="flex flex-wrap gap-2 items-center">
+          <Badge variant="default" animation="tilt">Default</Badge>
+          <Badge variant="secondary" size="sm" animation="pulse">Secondary</Badge>
+          <Badge variant="tag" rounded={false}>Tag</Badge>
+          <Badge variant="destructive" size="lg" animation="glow">Destructive</Badge>
+          <Badge variant="outline" animation="bounce">Outline</Badge>
+
+          {/* Icon-only badges */}
+          <Badge variant="icon" size="icon">
+            <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0z"/>
+            </svg>
+          </Badge>
+
+          <Badge variant="icon" size="icon">
+            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0z"/>
+            </svg>
+          </Badge>
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4">
+          <Card variant="glass" padding="sm" size="full">
+          <CardHeader>
+            <CardTitle>Glass Card</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>Perfect for modals or overlays.</p>
+          </CardContent>
+        </Card>
+        <Card size="auto" variant="default" padding="lg" animation="tilt">
+          <CardHeader>
+            <CardTitle>Test Card</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>Testing different card styles.</p>
+          </CardContent>
+        </Card>   
+        <Card variant="interactive" size="auto">
+          <CardHeader>
+            <CardTitle>Interactive Card</CardTitle>
+            <CardDescription>Hover me for a smooth scale effect</CardDescription>
+          </CardHeader>
+          <CardContent>Some card content goes here</CardContent>
+          <CardFooter>Footer actions</CardFooter>
+        </Card>
+
+        <Card  size="auto" variant="outline" padding="sm">
+          <CardHeader>
+            <CardTitle >Test Card</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>Testing different card styles.</p>
+          </CardContent>
+        </Card>
+        <Card variant="flat" padding="lg">
+          <CardHeader>
+            <CardTitle>Test Card</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>Testing different card styles.</p>
+          </CardContent>
+        </Card>
+        </div>
         <motion.p
           {...fadeIn}
           transition={{ ...fadeIn.transition, delay: 0.4 }}
@@ -77,8 +140,8 @@ export const HeroSection: React.FC = () => {
           <Button size="md" variant="secondary" className="flex items-center gap-2">
             test
           </Button>
-          <Button size="sm" variant="link" className="flex items-center gap-2">
-            test
+          <Button variant="link" className="flex items-center gap-2">
+            testing button
           </Button>
         </motion.div>
         <motion.div

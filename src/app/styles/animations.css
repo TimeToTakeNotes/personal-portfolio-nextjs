@@ -26,14 +26,14 @@
   /* ---------------------------------------------------- */
   /* Double-line underline animation */
   .double-underline-animated {
-    @apply relative font-semibold text-link no-underline transition-colors duration-300 ease-in-out;
-    color: var(--color-link);
+    @apply relative text-link font-semibold text-link no-underline transition-colors duration-300 ease-in-out;
+
   }
 
   .double-underline-animated::after,
   .double-underline-animated::before {
     content: "";
-    @apply absolute h-[2px] w-full bg-current;
+    @apply absolute h-[2px] left-3 right-3 bg-current;
     will-change: transform;
     backface-visibility: hidden;
     transition: transform 0.3s ease;
@@ -41,14 +41,14 @@
 
   /* Bottom line: left → right */
   .double-underline-animated::after {
-    @apply bottom-0 left-0;
+    @apply bottom-1 left-3;
     transform-origin: left;
     transform: scaleX(0);
   }
 
   /* Top line: right → left */
   .double-underline-animated::before {
-    @apply top-0 right-0;
+    @apply top-1 right-3;
     transform-origin: right;
     transform: scaleX(0);
   }
