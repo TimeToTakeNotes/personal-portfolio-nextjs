@@ -13,7 +13,7 @@ import { fadeInUp, fadeIn, easeOut } from "@arno/lib/animations"
 
 // ── Floating path lines ────────────────────────────────────────────────────
 // Uses `currentColor` so colour is controlled by the wrapping element's
-// `text-*` class — no hardcoded colour values inside the component.
+// `text-*` class - no hardcoded colour values inside the component.
 
 const PATHS = Array.from({ length: 36 }, (_, i) => ({
   id: i,
@@ -26,12 +26,12 @@ const PATHS = Array.from({ length: 36 }, (_, i) => ({
     ` ${684 - i * 5 * pos} ${875 - i * 6}` +
     ` ${684 - i * 5 * pos} ${875 - i * 6}`,
   width: 0.5 + i * 0.03,
-  // Deterministic duration — avoids SSR/client Math.random() hydration mismatch
+  // Deterministic duration - avoids SSR/client Math.random() hydration mismatch
   duration: 20 + (i * 7) % 11,
   strokeOpacity: 0.12 + i * 0.018,
 }))
 
-function FloatingPaths({ position }: { position: number }) {
+export function FloatingPaths({ position }: { position: number }) {
   return (
     <div className="absolute inset-0 pointer-events-none">
       <svg className="w-full h-full" viewBox="0 0 696 316" fill="none">
@@ -80,7 +80,7 @@ export const HeroSection: React.FC = () => {
       {/* ── Background Layer ─────────────────────────────────────────────── */}
       <div className="absolute inset-0 pointer-events-none select-none" aria-hidden>
 
-        {/* Dot grid — structural base */}
+        {/* Dot grid - structural base */}
         <div
           className="absolute inset-0 opacity-40 dark:opacity-20"
           style={{
@@ -89,17 +89,17 @@ export const HeroSection: React.FC = () => {
           }}
         />
 
-        {/* Floating paths — crimson (primary) sweep */}
+        {/* Floating paths - crimson (primary) sweep */}
         <div className="absolute inset-0 text-primary opacity-[0.75] dark:opacity-[0.65]">
           <FloatingPaths position={1} />
         </div>
 
-        {/* Floating paths — grey-blue (muted) counter-sweep */}
+        {/* Floating paths - grey-blue (muted) counter-sweep */}
         <div className="absolute inset-0 text-muted-foreground opacity-[0.55] dark:opacity-[0.45]">
           <FloatingPaths position={-1} />
         </div>
 
-        {/* Bottom fade — blends into the next section */}
+        {/* Bottom fade - blends into the next section */}
         <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background to-transparent" />
       </div>
 
@@ -111,14 +111,14 @@ export const HeroSection: React.FC = () => {
           <motion.div {...fadeIn} className="flex justify-center mb-8">
             <Badge variant="tag" size="sm" className="gap-2 px-4 py-1.5 backdrop-blur-sm">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-60" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
               </span>
-              Open to opportunities
+              Junior Fullstack Developer @ Converge Solutions
             </Badge>
           </motion.div>
 
-          {/* Name — gradient text */}
+          {/* Name - gradient text */}
           <motion.h1
             {...fadeInUp}
             transition={{ ...fadeInUp.transition, delay: 0.1 }}
@@ -188,9 +188,11 @@ export const HeroSection: React.FC = () => {
               <Linkedin className="h-4 w-4" />
             </a>
             <div className="h-4 w-px bg-border/50" />
-            <Button size="sm" variant="ghost" className="gap-1.5 text-muted-foreground text-sm">
-              <Download className="h-3.5 w-3.5" />
-              Download CV
+            <Button size="sm" variant="ghost" className="gap-1.5 text-muted-foreground text-sm" asChild>
+              <a href="/Arno Christie - CV.pdf" download="Arno Christie - CV.pdf">
+                <Download className="h-3.5 w-3.5" />
+                Download CV
+              </a>
             </Button>
           </motion.div>
 

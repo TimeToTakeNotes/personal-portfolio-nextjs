@@ -41,7 +41,7 @@
       0 8px 40px color-mix(in srgb, var(--color-primary) 20%, transparent);
   }
 
-  /* Card hover glow — used on specialization + project cards */
+  /* Card hover glow - used on specialization + project cards */
   .card-glow:hover {
     box-shadow:
       0 4px 20px color-mix(in srgb, var(--color-primary) 12%, transparent),

@@ -103,7 +103,7 @@
 
   /* ── Muted ──────────────────────────────────────────────────── */
   --muted: oklch(0.185 0.065 263);           /* lifted slightly for track/tint visibility */
-  --muted-foreground: oklch(0.72 0.03 258);  /* lifted & desaturated — readable paragraph contrast */
+  --muted-foreground: oklch(0.72 0.03 258);  /* lifted & desaturated - readable paragraph contrast */
 
   /* ── Accent ─────────────────────────────────────────────────── */
   --accent: oklch(0.60 0.14 19);

@@ -30,24 +30,25 @@ function TimelineItem({
       transition={{ duration: 0.45, ease: easeOut, delay: index * 0.1 }}
       className="relative pl-14"
     >
-      {/* Timeline dot */}
-      <div className="absolute left-0 top-0 flex flex-col items-center">
-        <div
-          className={`h-10 w-10 rounded-xl flex items-center justify-center border-2 z-10 ${
-            isWork
-              ? "bg-primary/10 border-primary/30 text-primary"
-              : "bg-card border-border text-muted-foreground"
-          }`}
-        >
-          {isWork ? (
-            <Briefcase className="h-4 w-4" />
-          ) : (
-            <GraduationCap className="h-4 w-4" />
-          )}
-        </div>
-        {/* Vertical line (skip on last item) */}
-        {!isLast && <div className="w-px flex-1 bg-border mt-2 min-h-[2rem]" />}
+      {/* Timeline icon */}
+      <div
+        className={`absolute left-0 top-0 h-10 w-10 rounded-xl flex items-center justify-center border-2 z-10 ${
+          isWork
+            ? "bg-primary/10 border-primary/30 text-primary"
+            : "bg-card border-border text-muted-foreground"
+        }`}
+      >
+        {isWork ? (
+          <Briefcase className="h-4 w-4" />
+        ) : (
+          <GraduationCap className="h-4 w-4" />
+        )}
       </div>
+
+      {/* Connecting line — runs from below the icon to the bottom of this wrapper (which includes mb-6) */}
+      {!isLast && (
+        <div className="absolute left-5 top-10 bottom-0 w-px bg-border" />
+      )}
 
       {/* Card */}
       <div className="bg-card border border-border rounded-2xl p-6 md:p-7 mb-6 hover:border-primary/30 hover:shadow-md transition-all duration-300">

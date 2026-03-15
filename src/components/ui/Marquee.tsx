@@ -5,7 +5,7 @@ import { cn } from "@arno/lib/utils"
 
 interface MarqueeProps {
   items: string[]
-  /** Total animation duration in seconds — longer = slower */
+  /** Total animation duration in seconds - longer = slower */
   duration?: number
   className?: string
 }
@@ -25,7 +25,7 @@ export function Marquee({ items, duration = 32, className }: MarqueeProps) {
       {/* Right fade mask */}
       <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
 
-      {/* Scrolling track — two copies for seamless loop */}
+      {/* Scrolling track - two copies for seamless loop */}
       <div className="flex w-max animate-marquee">
         {[...items, ...items].map((item, i) => (
           <div

@@ -8,6 +8,7 @@ import FloatingInput from "@arno/components/ui/Input"
 import { Button } from "@arno/components/ui/Button"
 import { siteData } from "@arno/assets/site"
 import { easeOut } from "@arno/lib/animations"
+import { FloatingPaths } from "@arno/components/sections/Hero"
 
 // ── Static data ────────────────────────────────────────────────────────────
 
@@ -127,8 +128,18 @@ const Web3FormsContact: React.FC = () => {
   }
 
   return (
-    <Section id="contact">
-      <div ref={sectionRef}>
+    <Section id="contact" className="relative overflow-hidden">
+      {/* Floating paths — same as hero, rotated 180° */}
+      <div className="absolute inset-0 pointer-events-none select-none rotate-180" aria-hidden>
+        <div className="absolute inset-0 text-primary opacity-[0.75] dark:opacity-[0.65]">
+          <FloatingPaths position={1} />
+        </div>
+        <div className="absolute inset-0 text-muted-foreground opacity-[0.55] dark:opacity-[0.45]">
+          <FloatingPaths position={-1} />
+        </div>
+      </div>
+
+      <div ref={sectionRef} className="relative z-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -148,7 +159,7 @@ const Web3FormsContact: React.FC = () => {
         {/* 2-column layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
 
-          {/* Left — contact info */}
+          {/* Left - contact info */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
@@ -211,7 +222,7 @@ const Web3FormsContact: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Right — form card */}
+          {/* Right - form card */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
@@ -220,7 +231,7 @@ const Web3FormsContact: React.FC = () => {
             <div className="bg-card border border-border rounded-2xl p-6 md:p-8 min-h-[420px] flex flex-col">
               <AnimatePresence mode="wait">
 
-                {/* ── Idle / Error — show form ── */}
+                {/* ── Idle / Error - show form ── */}
                 {(status === "idle" || status === "sending" || status === "error") && (
                   <motion.div
                     key="form"
@@ -240,7 +251,7 @@ const Web3FormsContact: React.FC = () => {
                       className="flex flex-col gap-5 flex-1"
                     >
                       {/* Web3Forms hidden fields */}
-                      <input type="hidden" name="access_key" value="885bd2f6-9f53-4dc9-97a5-1f79f8eded9b" />
+                      <input type="hidden" name="access_key" value={process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? ""} />
                       <input type="hidden" name="subject" value="New Message On Portfolio Website" />
                       <input type="hidden" name="from_name" value="Arno Portfolio Website" />
                       <input type="checkbox" name="botcheck" className="hidden" />
@@ -303,7 +314,7 @@ const Web3FormsContact: React.FC = () => {
                   </motion.div>
                 )}
 
-                {/* ── Sent — success state ── */}
+                {/* ── Sent - success state ── */}
                 {status === "sent" && (
                   <motion.div
                     key="success"
@@ -330,7 +341,7 @@ const Web3FormsContact: React.FC = () => {
                         transition={{ delay: 0.85, duration: 0.3 }}
                         className="text-sm text-muted-foreground max-w-xs"
                       >
-                        Thanks for reaching out — I&apos;ll get back to you as soon as possible.
+                        Thanks for reaching out - I&apos;ll get back to you as soon as possible.
                       </motion.p>
                     </div>
 

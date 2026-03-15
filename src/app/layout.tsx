@@ -23,17 +23,48 @@ export function generateViewport() {
 }
 
 export const metadata: Metadata = {
-  title: "Arno Christie - Software Developer",
+  title: "Arno Christie – AI & Full-Stack Developer",
   description:
-    "Software developer specialising in AI-powered web applications. Building the future with React, Next.js, and modern AI technologies.",
-  keywords: ["software developer", "AI", "React", "Next.js", "TypeScript", "web development"],
-  authors: [{ name: "Arno Christie" }],
+    "BSc IT graduate (86.3% distinction) specialising in NLP fine-tuning and full-stack development. Currently Junior Fullstack Developer at Converge Solutions. Building AI-powered applications with Next.js, Python, and HuggingFace.",
+  keywords: [
+    "Arno Christie",
+    "software developer",
+    "AI developer",
+    "full-stack developer",
+    "NLP",
+    "HuggingFace",
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Python",
+    "Django",
+    "South Africa",
+    "portfolio",
+  ],
+  authors: [{ name: "Arno Christie", url: "https://github.com/TimeToTakeNotes" }],
   openGraph: {
-    title: "Arno Christie - Software Developer",
-    description: "Software developer specialising in AI-powered web applications.",
+    title: "Arno Christie – AI & Full-Stack Developer",
+    description:
+      "BSc IT graduate specialising in NLP fine-tuning and full-stack development. Junior Fullstack Developer at Converge Solutions.",
     type: "website",
+    locale: "en_ZA",
+    images: [
+      {
+        url: "/Arno - Selfie Web.png",
+        width: 1200,
+        height: 630,
+        alt: "Arno Christie – AI & Full-Stack Developer",
+      },
+    ],
   },
-  robots: "index, follow",
+  twitter: {
+    card: "summary_large_image",
+    title: "Arno Christie – AI & Full-Stack Developer",
+    description:
+      "BSc IT graduate specialising in NLP fine-tuning and full-stack development.",
+    images: ["/Arno - Selfie Web.png"],
+  },
+  robots: { index: true, follow: true },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

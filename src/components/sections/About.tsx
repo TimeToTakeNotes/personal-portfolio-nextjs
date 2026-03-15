@@ -3,7 +3,7 @@
 import * as React from "react"
 import Image from "next/image"
 import { motion, useInView } from "framer-motion"
-import { Award, GraduationCap, Star, BadgeCheck, MapPin } from "lucide-react"
+import { Award, GraduationCap, Star, BadgeCheck, MapPin, Rocket } from "lucide-react"
 import { Section } from "@arno/components/layout/Section"
 import { Badge } from "@arno/components/ui/Badge"
 import { siteData } from "@arno/assets/site"
@@ -18,6 +18,7 @@ const achievementIcon = (icon: string) => {
     case "award":          return <Award className={cls} />
     case "graduation-cap": return <GraduationCap className={cls} />
     case "star":           return <Star className={cls} />
+    case "rocket":         return <Rocket className={cls} />
     case "badge-check":    return <BadgeCheck className={cls} />
     default:               return <Award className={cls} />
   }
@@ -70,7 +71,7 @@ export function AboutSection() {
     <Section id="about" className="relative overflow-hidden">
       <div ref={sectionRef}>
 
-        {/* ── Background photo — xl+ only (≥1280px, wide desktop bleed) ──── */}
+        {/* ── Background photo - xl+ only (≥1280px, wide desktop bleed) ──── */}
         <div
           className="hidden xl:block absolute right-0 top-0 bottom-0 w-[52%] pointer-events-none select-none"
           aria-hidden
@@ -92,7 +93,7 @@ export function AboutSection() {
               }}
             >
               <Image
-                src="/Arno - Selfie.png"
+                src="/Arno - Selfie Web.png"
                 alt=""
                 fill
                 className="object-contain object-right-bottom"
@@ -104,13 +105,13 @@ export function AboutSection() {
 
         {/* ── Intro: responsive layout ─────────────────────────────────────── */}
         {/*
-          Mobile  (<md):  single col — photo above text
-          Tablet  (md–xl): 2-col grid — text left, contained photo right
-          Desktop (xl+):  single col — text only (absolute bleed photo above)
+          Mobile  (<md):  single col - photo above text
+          Tablet  (md–xl): 2-col grid - text left, contained photo right
+          Desktop (xl+):  single col - text only (absolute bleed photo above)
         */}
         <div className="relative z-10 mb-14 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-10 md:gap-14 items-center xl:min-h-[380px] xl:flex xl:flex-col xl:justify-center">
 
-          {/* Text — below photo on mobile, left col on md–xl, full on xl+ */}
+          {/* Text - below photo on mobile, left col on md–xl, full on xl+ */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
@@ -141,7 +142,7 @@ export function AboutSection() {
             </div>
           </motion.div>
 
-          {/* Photo — above text on mobile, right col on md–xl, hidden on xl+ */}
+          {/* Photo - above text on mobile, right col on md–xl, hidden on xl+ */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
@@ -151,7 +152,7 @@ export function AboutSection() {
             {/* Mobile: compact centered */}
             <div className="md:hidden relative w-52 h-64 overflow-hidden rounded-2xl border border-border/50 shadow-xl bg-muted/20">
               <Image
-                src="/Arno - Selfie.png"
+                src="/Arno - Selfie Mobile.png"
                 alt="Arno Christie"
                 fill
                 className="object-contain object-center"
@@ -162,7 +163,7 @@ export function AboutSection() {
             {/* md–xl: taller card, person right-aligned within container */}
             <div className="hidden md:block relative w-full max-w-[320px] aspect-[3/4] rounded-2xl overflow-hidden border border-border/40 shadow-2xl bg-muted/15">
               <Image
-                src="/Arno - Selfie.png"
+                src="/Arno - Selfie Mobile.png"
                 alt="Arno Christie"
                 fill
                 className="object-contain object-right-bottom"

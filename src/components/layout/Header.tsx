@@ -8,7 +8,11 @@ import { Button } from "@arno/components/ui/Button";
 import { ThemeToggle } from "@arno/components/ui/ThemeToggle";
 import { navLinks } from "@arno/assets/site";
 
-export default function Navbar() {
+interface Props {
+  activeSection: string;
+}
+
+export default function Navbar({ activeSection }: Props) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -33,11 +37,27 @@ export default function Navbar() {
             <Logo />
           </div>
           <div className="ml-auto flex items-center gap-8">
-            {navLinks.map(({ label, href }) => (
-              <a key={href} href={href} className="underline-animated text-sm">
-                {label}
-              </a>
-            ))}
+            {navLinks.map(({ label, href }) => {
+              const sectionId = href.replace("#", "");
+              const isActive = activeSection === sectionId;
+              return (
+                <a
+                  key={href}
+                  href={href}
+                  className={clsx(
+                    "text-sm font-medium transition-colors duration-200 relative",
+                    isActive
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {label}
+                  {isActive && (
+                    <span className="absolute -bottom-1 left-0 right-0 h-px bg-primary rounded-full" />
+                  )}
+                </a>
+              );
+            })}
             <Button variant="primary" size="sm" asChild>
               <a href="#contact">Get In Touch</a>
             </Button>

@@ -46,11 +46,9 @@ export interface Specialization {
 // ── Navigation ─────────────────────────────────────────────────────────────
 
 export const navLinks: NavLink[] = [
-  { label: "Home", href: "#home" },
   { label: "About", href: "#about" },
   { label: "Projects", href: "#projects" },
-  { label: "Experience", href: "#experience" },
-  { label: "Contact", href: "#contact" },
+  { label: "Experience", href: "#experience" }
 ]
 
 // ── Site Data ──────────────────────────────────────────────────────────────
@@ -59,23 +57,23 @@ export const siteData = {
   name: "Arno Christie",
   role: "AI & Full-Stack Developer",
   tagline:
-    "BSc IT graduate building intelligent web applications - where modern frontend meets real AI.",
-  bio: "I'm a BSc Information Technology graduate from North-West University (86.3% distinction) with a passion for building AI-powered web applications. I combine modern full-stack development with machine learning to create tools that genuinely solve problems.",
+    "BSc IT graduate specialising in NLP fine-tuning and full-stack development - building AI-powered applications that work in the real world.",
+  bio: "I'm a BSc Information Technology graduate from North-West University (86.3% distinction) with a focus on NLP model fine-tuning and full-stack web development. From training HuggingFace Transformers for domain-specific text generation to shipping multi-platform apps, I build systems that bridge AI research and production software.",
   typewriterRoles: [
     "AI & Full-Stack Developer",
     "Next.js & React Engineer",
-    "ML Integration Specialist",
+    "NLP Developer",
     "BSc IT Graduate",
   ],
   email: "arno.christie@gmail.com",
   phone: "(+27) 082 654 2130",
-  location: "South Africa",
-  available: true,
+  location: "Randfontein, Gauteng, South Africa",
+  available: false,
 
   metrics: [
     { value: "86.3%", label: "Degree Average" },
     { value: "5+", label: "Projects Built" },
-    { value: "2+", label: "Years Coding" },
+    { value: "4+", label: "Years Coding" },
     { value: "Top 15%", label: "Golden Key" },
   ] satisfies MetricItem[],
 
@@ -101,17 +99,19 @@ export const siteData = {
       skills: [
         { name: "Python / Django", level: 80 },
         { name: "C# / .NET", level: 75 },
-        { name: "Node.js", level: 70 },
+        { name: "Node.js / Express", level: 70 },
+        { name: "Java", level: 65 },
         { name: "REST APIs", level: 80 },
       ],
     },
     {
       category: "AI & ML",
       skills: [
-        { name: "OpenAI APIs", level: 75 },
-        { name: "HuggingFace", level: 70 },
-        { name: "PyTorch", level: 65 },
-        { name: "LLM Integration", level: 70 },
+        { name: "HuggingFace", level: 75 },
+        { name: "PyTorch", level: 70 },
+        { name: "NLP Fine-tuning", level: 70 },
+        { name: "Text Generation", level: 65 },
+        { name: "OpenAI APIs", level: 70 },
       ],
     },
     {
@@ -120,7 +120,7 @@ export const siteData = {
         { name: "Git / GitHub", level: 85 },
         { name: "Docker", level: 65 },
         { name: "MongoDB", level: 70 },
-        { name: "SQL", level: 75 },
+        { name: "MySQL / SQL", level: 75 },
         { name: "Scrum / Agile", level: 75 },
       ],
     },
@@ -130,8 +130,8 @@ export const siteData = {
     {
       title: "AI-Powered Applications",
       description:
-        "Integrating large language models, speech recognition, and ML pipelines into production web apps - from OpenAI Whisper voice transcription to HuggingFace model deployment.",
-      tags: ["OpenAI", "HuggingFace", "PyTorch", "LLM Integration"],
+        "Fine-tuning large language models for domain-specific text generation, integrating HuggingFace Transformers and OpenAI APIs into production workflows - from dataset preprocessing to containerised deployment.",
+      tags: ["HuggingFace", "PyTorch", "NLP Fine-tuning", "OpenAI"],
     },
     {
       title: "Full-Stack Development",
@@ -149,20 +149,29 @@ export const siteData = {
 
   projects: [
     {
-      title: "Hospital Management System",
+      title: "Themis to the Moon – NASA Space Apps",
       description:
-        "Full-stack hospital management system built as a university group project - adopted by NWU as a teaching resource and scored 94% in final assessment.",
-      tags: ["C#", ".NET", "SQL", "Team Project"],
-      github: "https://github.com/TimeToTakeNotes",
+        "Air quality forecasting web app built at the 2025 NASA Space Apps Challenge (Oct 4–5). Integrates NASA TEMPO satellite data with ground-based measurements and weather data to predict pollution levels and alert users to health risks. Built as a team across an advanced-difficulty global challenge.",
+      tags: ["TypeScript", "Vue", "Python", "NASA TEMPO", "Air Quality", "HTML"],
+      github: "https://github.com/TimeToTakeNotes/themis-to-the-moon",
       featured: true,
-      achievement: "University adopted · 94%",
+      achievement: "NASA Space Apps Challenge 2025",
+    },
+    {
+      title: "HMS App – Marvellous Machines",
+      description:
+        "Multi-platform student feedback application where students submit video assignments and receive structured faculty feedback. Built with a Node.js/Express backend (JWT auth, MySQL, Nextcloud video storage, rate limiting) and a Flutter mobile frontend. Scored 94% and selected by NWU as a teaching resource.",
+      tags: ["Node.js", "Express", "Flutter", "MySQL", "JWT", "Nextcloud"],
+      github: "https://github.com/JasonErasmus264/hms_app_marvellous_machines",
+      featured: true,
+      achievement: "Best among 5 finalist groups · 94%",
     },
     {
       title: "AI Notes App",
       description:
         "Smart note-taking application with OpenAI Whisper voice-to-text transcription - capture and organise notes by speaking naturally.",
       tags: ["Python", "OpenAI Whisper", "React", "Speech Recognition"],
-      github: "https://github.com/TimeToTakeNotes",
+      github: "https://github.com/TimeToTakeNotes/notes-app",
       featured: true,
     },
     {
@@ -178,7 +187,7 @@ export const siteData = {
       description:
         "Interactive Rock Paper Scissors game with a computer opponent, score tracking, and smooth animations.",
       tags: ["JavaScript", "HTML", "CSS"],
-      github: "https://github.com/TimeToTakeNotes",
+      github: "https://github.com/TimeToTakeNotes/rock-paper-scissors",
       live: "https://timetotakenotes.github.io/Rock-Paper-Scissors/",
     },
     {
@@ -186,23 +195,61 @@ export const siteData = {
       description:
         "Browser-based Flappy Bird clone with physics-accurate flight mechanics and collision detection via the Canvas API.",
       tags: ["JavaScript", "Canvas API", "Game Dev"],
-      github: "https://github.com/TimeToTakeNotes",
+      github: "https://github.com/TimeToTakeNotes/flappy-bird",
+    },
+    {
+      title: "Stock Price Prediction with LightGBM",
+      description:
+        "Time-series regression pipeline predicting S&P 500 stock prices (Open, High, Low, Close) using LightGBM wrapped in a MultiOutputRegressor. Includes lag features, rolling averages, one-hot encoding, and time-aware train/test splits. Achieved R² of 0.9717 and MAE of 2.93 on the test set.",
+      tags: ["Python", "LightGBM", "scikit-learn", "Pandas", "Google Colab", "Machine Learning"],
+      github: "https://github.com/TimeToTakeNotes/stock-price-prediction-lightgbm",
+    },
+    {
+      title: "Image Color Extractor",
+      description:
+        "Full-stack image upload and color extraction app. Users upload images to extract the center pixel color in hex, generate thumbnails, and manage their uploads per-user. Built with ASP.NET Core Web API and Angular standalone components, secured with JWT HttpOnly cookies, CSRF middleware, and IP-based rate limiting.",
+      tags: ["C#", "ASP.NET Core", "Angular", "JWT", "SQL Server", "Entity Framework"],
+      github: "https://github.com/TimeToTakeNotes/aspnet-angular-image-color-extractor",
     },
   ] satisfies Project[],
 
   experience: [
     {
       type: "work" as const,
+      title: "Junior Fullstack Developer",
+      org: "Converge Solutions",
+      period: "Jun 2025 – Present",
+      description: [
+        "Building and maintaining full-stack web applications using C#, ASP.NET Core, and Angular in a remote, full-time role.",
+        "Developing RESTful APIs and backend services with ASP.NET Core, integrated with Angular frontends.",
+        "Collaborating with a distributed team to deliver features across the full stack.",
+      ],
+      tags: ["C#", "ASP.NET Core", "Angular", "TypeScript", "Remote"],
+    },
+    {
+      type: "work" as const,
       title: "AI Development Intern",
       org: "Reverside Software Solutions",
       period: "Apr 2025 – May 2025",
       description: [
-        "Developed and deployed ML models using HuggingFace Transformers and PyTorch for internal AI tooling.",
+        "Fine-tuned HuggingFace Transformer models for long-form text generation on domain-specific datasets.",
         "Built Django REST APIs to expose model inference endpoints consumed by frontend applications.",
-        "Containerised services with Docker; participated in Scrum ceremonies throughout each sprint.",
-        "Integrated MongoDB for document storage of model outputs and structured experiment results.",
+        "Handled dataset preprocessing, evaluation, and model deployment via Docker containerisation.",
+        "Integrated MongoDB for document storage of model outputs; participated in Scrum ceremonies throughout each sprint.",
       ],
       tags: ["HuggingFace", "PyTorch", "Django", "MongoDB", "Docker", "Scrum"],
+    },
+    {
+      type: "work" as const,
+      title: "Sales Associate",
+      org: "Power Truck Parts",
+      period: "Jan 2021 – Sep 2021",
+      description: [
+        "Assisted customers with product selection and technical queries for heavy-vehicle parts.",
+        "Managed stock inventory and coordinated with suppliers to ensure parts availability.",
+        "Developed strong communication and client-facing skills in a fast-paced retail environment.",
+      ],
+      tags: ["Customer Service", "Sales", "Inventory Management"],
     },
     {
       type: "education" as const,
@@ -212,10 +259,20 @@ export const siteData = {
       description: [
         "Graduated with distinction - 86.3% overall average across all three years.",
         "Covered software engineering, AI fundamentals, databases, networks, and systems design.",
-        "Capstone Hospital Management System adopted by the university after scoring 94%.",
+        "Capstone project (Multi-Platform Student Feedback App) scored 94% and was adopted by NWU as a teaching resource.",
         "Inducted into the Golden Key International Honour Society (Top 15% of cohort).",
       ],
-      tags: ["Software Engineering", "AI", "Databases", "C#", "Python"],
+      tags: ["Software Engineering", "AI", "Databases", "C#", "Java", "Python"],
+    },
+    {
+      type: "education" as const,
+      title: "National Senior Certificate",
+      org: "Hoërskool Riebeeckrand",
+      period: "Jan 2016 – Dec 2020",
+      description: [
+        "Completed Matric in Randfontein, Gauteng.",
+      ],
+      tags: ["Matric"],
     },
   ] satisfies ExperienceItem[],
 
@@ -234,8 +291,14 @@ export const siteData = {
     {
       title: "University-Adopted Capstone Project",
       description:
-        "Hospital Management System selected by NWU as a teaching resource after scoring 94%.",
+        "Multi-Platform Student Feedback App selected as best among five finalist groups and adopted by NWU as a teaching resource after scoring 94%.",
       icon: "star",
+    },
+    {
+      title: "NASA Space Apps Challenge 2025",
+      description:
+        "Competed in the global NASA hackathon (Oct 4–5, 2025) - built an air quality forecasting app using NASA TEMPO satellite data alongside a team of developers.",
+      icon: "rocket",
     },
     {
       title: "Microsoft C# Certification",

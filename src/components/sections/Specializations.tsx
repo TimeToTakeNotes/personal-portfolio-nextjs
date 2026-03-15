@@ -35,7 +35,7 @@ export function SpecializationsSection() {
             Areas of Expertise
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Where my skills and interests intersect — from AI model integration to production-ready full-stack engineering.
+            Where my skills and interests intersect - from AI model integration to production-ready full-stack engineering.
           </p>
         </motion.div>
 
@@ -49,7 +49,7 @@ export function SpecializationsSection() {
               transition={{ duration: 0.45, ease: easeOut, delay: i * 0.12 }}
               className="group relative bg-card border border-border rounded-2xl p-6 md:p-8 flex flex-col gap-5 overflow-hidden card-glow hover:border-primary/40 transition-all duration-300"
             >
-              {/* Top gradient accent line — slides in on hover */}
+              {/* Top gradient accent line - slides in on hover */}
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
               {/* Subtle background glow on hover */}
