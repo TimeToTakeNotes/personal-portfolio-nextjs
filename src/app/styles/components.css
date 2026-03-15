@@ -12,12 +12,13 @@
 
   .input-field {
     @apply block w-full border border-border rounded-lg px-4 pt-6 pb-2
-          bg-background text-foreground placeholder-transparent transition-colors duration-150 ease-in-out;
+          bg-card text-foreground placeholder-transparent transition-colors duration-150 ease-in-out;
     outline-offset: 2px;
   }
 
   .input-field:focus {
     @apply border-primary ring-3 ring-ring ring-offset-1;
+    --tw-ring-offset-color: var(--color-card);
     outline: none;
   }
 
@@ -29,6 +30,6 @@
 
   .input-field:focus + .floating-label,
   .input-field:not(:placeholder-shown) + .floating-label {
-    @apply -translate-y-3 scale-80 text-primary top-1 bg-background;
+    @apply -translate-y-3 scale-80 text-primary top-1 bg-card;
   }
 }

@@ -10,11 +10,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-primary text-primary-foreground shadow-md hover:shadow-lg hover:scale-105 transform",
+        primary: "bg-primary text-primary-foreground shadow-md hover:shadow-lg hover:scale-[1.03] transform transition-[box-shadow,transform]",
         secondary: "bg-secondary text-secondary-foreground hover:bg-primary hover:text-secondary hover:-translate-y-0.5 hover:shadow-md",
         outline: "border border-border bg-transparent text-primary relative overflow-hidden hover:bg-secondary-hover",
         error: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive-hover hover:shadow-md hover:brightness-95",
-        ghost: "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground hover:scale-101 transform",
+        ghost: "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground hover:scale-[1.01] transform",
         link: "text-link no-underline double-underline-animated",
       },
       size: {
@@ -47,6 +47,21 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, rounded, loading = false, asChild = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
+
+    // When asChild=true, Slot requires a single React element as children.
+    // Wrapping in a Fragment when asChild=false preserves the loading spinner
+    // without ever passing [false, element] to Slot (which would throw).
+    const content = asChild ? (
+      children
+    ) : (
+      <>
+        {loading && (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+        )}
+        {children}
+      </>
+    )
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, rounded, className }))}
@@ -54,10 +69,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={loading || props.disabled}
         {...props}
       >
-        {loading && (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-        )}
-        {children}
+        {content}
       </Comp>
     )
   }

@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @layer utilities {
+  /* ── Accessibility ──────────────────────────────────────────────────────── */
   .visually-hidden {
     position: absolute !important;
     width: 1px;
@@ -11,5 +12,53 @@
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
+  }
+
+  /* ── Gradient text ──────────────────────────────────────────────────────── */
+  /*
+   * Applies a foreground → primary gradient to text.
+   * Works in both light and dark mode since both vars are themed.
+   */
+  .text-gradient-primary {
+    background: linear-gradient(
+      135deg,
+      var(--color-foreground) 0%,
+      color-mix(in oklch, var(--color-foreground) 60%, var(--color-primary)) 40%,
+      var(--color-primary) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Glow effects ───────────────────────────────────────────────────────── */
+
+  /* Primary button glow on hover */
+  .btn-glow:hover {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--color-primary) 30%, transparent),
+      0 4px 20px color-mix(in srgb, var(--color-primary) 40%, transparent),
+      0 8px 40px color-mix(in srgb, var(--color-primary) 20%, transparent);
+  }
+
+  /* Card hover glow — used on specialization + project cards */
+  .card-glow:hover {
+    box-shadow:
+      0 4px 20px color-mix(in srgb, var(--color-primary) 12%, transparent),
+      0 16px 48px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Subtle border glow for active/featured elements */
+  .border-glow {
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 25%, transparent);
+  }
+
+  /* ── Marquee ────────────────────────────────────────────────────────────── */
+  .animate-marquee {
+    animation: marquee var(--marquee-duration, 30s) linear infinite;
+  }
+
+  .animate-marquee:hover {
+    animation-play-state: paused;
   }
 }

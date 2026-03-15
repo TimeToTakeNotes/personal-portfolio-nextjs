@@ -2,170 +2,237 @@
 
 import * as React from "react"
 import { motion } from "framer-motion"
+import { ArrowRight, ChevronDown, Download, Github, Linkedin } from "lucide-react"
 import { Button } from "@arno/components/ui/Button"
 import { Badge } from "@arno/components/ui/Badge"
 import { Metrics } from "@arno/components/ui/Metrics"
-import { Section } from "@arno/components/layout/Section"
+import { TypeWriter } from "@arno/components/ui/TypeWriter"
+import { Marquee } from "@arno/components/ui/Marquee"
 import { siteData } from "@arno/assets/site"
-import { fadeInUp, fadeIn, easeOut, staggerContainer, scaleOnHover } from "@arno/lib/animations"
-import { ArrowRight, CarFront, Download, Eye } from "lucide-react"
-import  FloatingInput  from "@arno/components/ui/Input"
-import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "../ui/Card"
+import { fadeInUp, fadeIn, easeOut } from "@arno/lib/animations"
 
-const childVariant = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.3, ease: easeOut } },
-};
+// ── Floating path lines ────────────────────────────────────────────────────
+// Uses `currentColor` so colour is controlled by the wrapping element's
+// `text-*` class — no hardcoded colour values inside the component.
+
+const PATHS = Array.from({ length: 36 }, (_, i) => ({
+  id: i,
+  d: (pos: number) =>
+    `M-${380 - i * 5 * pos} -${189 + i * 6}` +
+    `C-${380 - i * 5 * pos} -${189 + i * 6}` +
+    ` -${312 - i * 5 * pos} ${216 - i * 6}` +
+    ` ${152 - i * 5 * pos} ${343 - i * 6}` +
+    `C${616 - i * 5 * pos} ${470 - i * 6}` +
+    ` ${684 - i * 5 * pos} ${875 - i * 6}` +
+    ` ${684 - i * 5 * pos} ${875 - i * 6}`,
+  width: 0.5 + i * 0.03,
+  // Deterministic duration — avoids SSR/client Math.random() hydration mismatch
+  duration: 20 + (i * 7) % 11,
+  strokeOpacity: 0.12 + i * 0.018,
+}))
+
+function FloatingPaths({ position }: { position: number }) {
+  return (
+    <div className="absolute inset-0 pointer-events-none">
+      <svg className="w-full h-full" viewBox="0 0 696 316" fill="none">
+        {PATHS.map((path) => (
+          <motion.path
+            key={path.id}
+            d={path.d(position)}
+            stroke="currentColor"
+            strokeWidth={path.width}
+            strokeOpacity={path.strokeOpacity}
+            initial={{ pathLength: 0.3, opacity: 0.5 }}
+            animate={{
+              pathLength: 1,
+              opacity: [0.25, 0.55, 0.25],
+              pathOffset: [0, 1, 0],
+            }}
+            transition={{
+              duration: path.duration,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+        ))}
+      </svg>
+    </div>
+  )
+}
+
+// ── Tech stack ─────────────────────────────────────────────────────────────
+
+const techStack = [
+  "Next.js", "React", "TypeScript", "Python", "Django",
+  "HuggingFace", "PyTorch", "Tailwind CSS", "Docker", "MongoDB",
+  "Node.js", "OpenAI", "C# / .NET", "Git",
+]
+
+// ── Hero section ───────────────────────────────────────────────────────────
 
 export const HeroSection: React.FC = () => {
   return (
-    <Section id="home" className="relative">
-      <div className="text-center max-w-4xl mx-auto">
+    <section
+      id="home"
+      className="relative min-h-screen flex items-center overflow-hidden"
+    >
 
-        {/* Name */}
-        <motion.h1
-          {...fadeInUp}
-          className="text-4xl md:text-6xl font-bold text-primary mb-4"
-        >
-          Hi, I'm {siteData.name}
-        </motion.h1>
-        {/* Role */}
-        <motion.h2
-          {...fadeInUp}
-          transition={{ ...fadeInUp.transition, delay: 0.2 }}
-          className="text-xl md:text-2xl lg:text-3xl text-muted-foreground mb-4"
-        >
-          {siteData.role}
-        </motion.h2>
+      {/* ── Background Layer ─────────────────────────────────────────────── */}
+      <div className="absolute inset-0 pointer-events-none select-none" aria-hidden>
 
-        <div className="flex flex-wrap gap-2 items-center">
-          <Badge variant="default" animation="tilt">Default</Badge>
-          <Badge variant="secondary" size="sm" animation="pulse">Secondary</Badge>
-          <Badge variant="tag" rounded={false}>Tag</Badge>
-          <Badge variant="destructive" size="lg" animation="glow">Destructive</Badge>
-          <Badge variant="outline" animation="bounce">Outline</Badge>
+        {/* Dot grid — structural base */}
+        <div
+          className="absolute inset-0 opacity-40 dark:opacity-20"
+          style={{
+            backgroundImage: "radial-gradient(circle, rgb(79 95 118 / 0.5) 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
+        />
 
-          {/* Icon-only badges */}
-          <Badge variant="icon" size="icon">
-            <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0z"/>
-            </svg>
-          </Badge>
-
-          <Badge variant="icon" size="icon">
-            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0z"/>
-            </svg>
-          </Badge>
+        {/* Floating paths — crimson (primary) sweep */}
+        <div className="absolute inset-0 text-primary opacity-[0.75] dark:opacity-[0.65]">
+          <FloatingPaths position={1} />
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4">
-          <Card variant="glass" padding="sm" size="full">
-          <CardHeader>
-            <CardTitle>Glass Card</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Perfect for modals or overlays.</p>
-          </CardContent>
-        </Card>
-        <Card size="auto" variant="default" padding="lg" animation="tilt">
-          <CardHeader>
-            <CardTitle>Test Card</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Testing different card styles.</p>
-          </CardContent>
-        </Card>   
-        <Card variant="interactive" size="auto">
-          <CardHeader>
-            <CardTitle>Interactive Card</CardTitle>
-            <CardDescription>Hover me for a smooth scale effect</CardDescription>
-          </CardHeader>
-          <CardContent>Some card content goes here</CardContent>
-          <CardFooter>Footer actions</CardFooter>
-        </Card>
-
-        <Card  size="auto" variant="outline" padding="sm">
-          <CardHeader>
-            <CardTitle >Test Card</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Testing different card styles.</p>
-          </CardContent>
-        </Card>
-        <Card variant="flat" padding="lg">
-          <CardHeader>
-            <CardTitle>Test Card</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Testing different card styles.</p>
-          </CardContent>
-        </Card>
+        {/* Floating paths — grey-blue (muted) counter-sweep */}
+        <div className="absolute inset-0 text-muted-foreground opacity-[0.55] dark:opacity-[0.45]">
+          <FloatingPaths position={-1} />
         </div>
-        <motion.p
-          {...fadeIn}
-          transition={{ ...fadeIn.transition, delay: 0.4 }}
-          className="text-lg md:text-xl text-foreground/80 mb-6"
-        >
-          {siteData.tagline}
-        </motion.p>
 
-        {/* Tech Stack Badges */}
-        <motion.div
-          variants={staggerContainer}
-          initial="initial"
-          animate="animate"
-          className="flex flex-wrap justify-center gap-2 mb-6"
-        >
-          {siteData.skills.frontend.map((skill) => (
-            <motion.div key={skill} variants={childVariant} whileHover={scaleOnHover.whileHover}>
-              <Badge variant="default">{skill}</Badge>
-              <Badge variant="secondary">{skill}</Badge>
-              <Badge variant="tag">{skill}</Badge>
-              <Badge variant="outline">{skill}</Badge>
-              <Badge variant="destructive">{skill}</Badge>
-            </motion.div>
-          ))}
-        </motion.div>
+        {/* Bottom fade — blends into the next section */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background to-transparent" />
+      </div>
 
-        {/* CTA Buttons */}
-        <motion.div
-          {...fadeInUp}
-          transition={{ ...fadeInUp.transition, delay: 0.8 }}
-          className="flex flex-col sm:flex-row justify-center gap-4 mb-8"
-        >
-          <Button size="lg" variant="primary" className="flex items-center gap-2">
-            test
-          </Button>
-          <Button size="md" variant="secondary" className="flex items-center gap-2">
-            test
-          </Button>
-          <Button variant="link" className="flex items-center gap-2">
-            testing button
-          </Button>
-        </motion.div>
-        <motion.div
-          {...fadeInUp}
-          transition={{ ...fadeInUp.transition, delay: 0.8 }}
-          className="flex flex-col sm:flex-row justify-center gap-4 mb-8"
-        >
-            <Button size="icon" variant="error" className="flex items-center gap-2">
-              test
+      {/* ── Content ──────────────────────────────────────────────────────── */}
+      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 py-28 md:py-36">
+        <div className="max-w-4xl mx-auto text-center">
+
+          {/* Available badge */}
+          <motion.div {...fadeIn} className="flex justify-center mb-8">
+            <Badge variant="tag" size="sm" className="gap-2 px-4 py-1.5 backdrop-blur-sm">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+              </span>
+              Open to opportunities
+            </Badge>
+          </motion.div>
+
+          {/* Name — gradient text */}
+          <motion.h1
+            {...fadeInUp}
+            transition={{ ...fadeInUp.transition, delay: 0.1 }}
+            className="text-5xl md:text-7xl lg:text-8xl font-bold mb-5 tracking-tight leading-[1.05]"
+          >
+            <span className="text-foreground">Hi, I&apos;m </span>
+            <span className="text-gradient-primary">{siteData.name}</span>
+          </motion.h1>
+
+          {/* Typewriter role */}
+          <motion.div
+            {...fadeInUp}
+            transition={{ ...fadeInUp.transition, delay: 0.22 }}
+            className="text-xl md:text-2xl lg:text-3xl font-medium text-muted-foreground mb-7 min-h-[2rem] flex items-center justify-center"
+          >
+            <TypeWriter words={siteData.typewriterRoles} />
+          </motion.div>
+
+          {/* Bio */}
+          <motion.p
+            {...fadeIn}
+            transition={{ ...fadeIn.transition, delay: 0.38 }}
+            className="text-base md:text-lg text-foreground/75 max-w-2xl mx-auto leading-relaxed mb-10"
+          >
+            {siteData.bio}
+          </motion.p>
+
+          {/* CTA buttons */}
+          <motion.div
+            {...fadeInUp}
+            transition={{ ...fadeInUp.transition, delay: 0.52 }}
+            className="flex flex-col sm:flex-row justify-center items-center gap-3 mb-5"
+          >
+            <Button size="lg" variant="primary" asChild className="btn-glow gap-2 w-full sm:w-auto">
+              <a href="#projects">
+                View My Work
+                <ArrowRight className="h-4 w-4" />
+              </a>
             </Button>
-            <Button size="xl" variant="ghost" className="flex items-center gap-2">
-              test
-            </Button>
-            <Button size="lg" variant="outline" className="flex items-center gap-2">
-              test
+            <Button size="lg" variant="outline" asChild className="w-full sm:w-auto backdrop-blur-sm">
+              <a href="#contact">Get In Touch</a>
             </Button>
           </motion.div>
 
-        {/* Metrics */}
-        <motion.div {...fadeInUp} transition={{ ...fadeInUp.transition, delay: 1.0 }}>
-          <Metrics metrics={siteData.metrics} />
-        </motion.div>
+          {/* Social icons + CV link */}
+          <motion.div
+            {...fadeIn}
+            transition={{ ...fadeIn.transition, delay: 0.65 }}
+            className="flex justify-center items-center gap-3 mb-14"
+          >
+            <a
+              href={siteData.links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              className="h-9 w-9 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
+            >
+              <Github className="h-4 w-4" />
+            </a>
+            <a
+              href={siteData.links.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="h-9 w-9 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
+            >
+              <Linkedin className="h-4 w-4" />
+            </a>
+            <div className="h-4 w-px bg-border/50" />
+            <Button size="sm" variant="ghost" className="gap-1.5 text-muted-foreground text-sm">
+              <Download className="h-3.5 w-3.5" />
+              Download CV
+            </Button>
+          </motion.div>
 
+          {/* Tech stack marquee */}
+          <motion.div
+            {...fadeIn}
+            transition={{ ...fadeIn.transition, delay: 0.8 }}
+            className="mb-12"
+          >
+            <div className="h-px bg-gradient-to-r from-transparent via-border/80 to-transparent mb-5" />
+            <p className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-[0.2em] mb-4">
+              Tech Stack
+            </p>
+            <Marquee items={techStack} duration={36} />
+            <div className="h-px bg-gradient-to-r from-transparent via-border/80 to-transparent mt-5" />
+          </motion.div>
+
+          {/* Metrics */}
+          <motion.div
+            {...fadeInUp}
+            transition={{ ...fadeInUp.transition, delay: 1.0 }}
+          >
+            <Metrics items={siteData.metrics} />
+          </motion.div>
+        </div>
       </div>
-    </Section>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.6, duration: 0.6, ease: easeOut }}
+      >
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <ChevronDown className="h-5 w-5 text-muted-foreground/50" />
+        </motion.div>
+      </motion.div>
+
+    </section>
   )
 }

@@ -3,110 +3,142 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+  Theme: Midnight Navy + Redline Crimson
+  ─────────────────────────────────────────────────────────────────
+  Source palette:
+    Blue Popsicle   #0f2862  oklch(0.22 0.11 264)
+    Redline         #9e363a  oklch(0.44 0.12 19)
+    Purple Shadow   #091f36  oklch(0.13 0.057 262)
+    Grey Blue Leaf  #4f5f76  oklch(0.42 0.05 257)
+
+  Dark mode DNA:  Purple Shadow bg → Blue Popsicle surfaces → Crimson accent
+  Light mode DNA: Cool blue-white bg → deep navy ink → Crimson primary
+  ─────────────────────────────────────────────────────────────────
+*/
+
 :root {
-  /* Updated color tokens to match Oxford Blue and Maize brand colors */
-  --background: oklch(1 0 0); /* White */
-  --foreground: oklch(0.322 0.123 268.5); /* Oxford Blue #0A174E */
+  /* ── Surfaces ───────────────────────────────────────────────── */
+  --background: oklch(0.981 0.005 255);      /* near-white with a cool blue breath */
+  --foreground: oklch(0.14 0.06 262);        /* Purple Shadow ink - not pure black */
 
-  --card: oklch(0.96 0.005 264); /* Light gray for cards */
-  --card-foreground: oklch(0.322 0.123 268.5); /* Oxford Blue text */
+  --card: oklch(0.974 0.005 255);            /* fractionally richer than bg */
+  --card-foreground: oklch(0.14 0.06 262);
 
-  --popover: oklch(1 0 0); /* White */
-  --popover-foreground: oklch(0.322 0.123 268.5); /* Oxford Blue */
+  --popover: oklch(0.981 0.005 255);
+  --popover-foreground: oklch(0.14 0.06 262);
 
-  --primary: oklch(0.322 0.123 268.5); /* Oxford Blue #0A174E */
-  --primary-hover: oklch(0.322 0.123 268.5 / 0.8); /* Slightly dimmer Oxford Blue for hover */
-  --primary-foreground: oklch(1 0 0); /* White text on primary */
+  /* ── Brand: Redline Crimson ─────────────────────────────────── */
+  --primary: oklch(0.44 0.12 19);            /* Redline #9e363a */
+  --primary-hover: oklch(0.38 0.12 19);      /* deeper on hover */
+  --primary-foreground: oklch(0.981 0.005 255);
 
-  --secondary: oklch(0.88 0.15 85); /* Maize #F5D042 */
-  --secondary-hover: oklch(0.88 0.15 85 / 0.8); /* Slightly dimmer Maize for hover */
-  --secondary-foreground: oklch(0.322 0.123 268.5); /* Oxford Blue text on maize */
+  /* ── Secondary / Supporting ─────────────────────────────────── */
+  --secondary: oklch(0.93 0.008 258);        /* cool blue-grey stone */
+  --secondary-hover: oklch(0.89 0.008 258);
+  --secondary-foreground: oklch(0.14 0.06 262);
 
-  --link: var(--primary); /* Oxford Blue for links */
-  --link-hover: oklch(0.322 0.123 268.5 / 0.8); /* Slightly dimmer Oxford Blue for hover */
+  /* ── Muted (Grey Blue Leaf territory) ──────────────────────── */
+  --muted: oklch(0.944 0.006 258);           /* cool light surface */
+  --muted-foreground: oklch(0.44 0.05 257);  /* Grey Blue Leaf #4f5f76 */
 
-  --muted: oklch(0.96 0.005 264); /* Light muted background */
-  --muted-foreground: oklch(0.45 0.02 264); /* Muted text */
+  /* ── Accent ─────────────────────────────────────────────────── */
+  --accent: oklch(0.44 0.12 19);
+  --accent-foreground: oklch(0.981 0.005 255);
 
-  --accent: oklch(0.88 0.15 85); /* Maize accent */
-  --accent-foreground: oklch(0.322 0.123 268.5); /* Oxford Blue text on accent */
+  /* ── Semantic ────────────────────────────────────────────────── */
+  --destructive: oklch(0.56 0.22 27);        /* more saturated - distinct from primary */
+  --destructive-hover: oklch(0.50 0.22 27);
+  --destructive-foreground: oklch(0.981 0.005 255);
 
-  --destructive: oklch(0.55 0.25 25);
-  --destructive-hover: oklch(0.55 0.25 25 / 0.8);
-  --destructive-foreground: oklch(1 0 0);
+  /* ── Links ──────────────────────────────────────────────────── */
+  --link: oklch(0.44 0.12 19);
+  --link-hover: oklch(0.38 0.12 19);
 
-  --border: oklch(0.82 0.005 264);; /* Light border */
-  --input: oklch(1 0 0); /* White input background */
-  --ring: oklch(0.322 0.123 268.5 / 0.2); /* Oxford Blue ring with opacity */
+  /* ── Chrome ─────────────────────────────────────────────────── */
+  --border: oklch(0.872 0.007 258);          /* cool blue-tinted divider */
+  --input: oklch(0.981 0.005 255);
+  --ring: oklch(0.44 0.12 19 / 0.3);        /* crimson focus ring */
 
-  --chart-1: oklch(0.322 0.123 268.5); /* Oxford Blue */
-  --chart-2: oklch(0.88 0.15 85); /* Maize */
-  --chart-3: oklch(0.6 0.118 184.704);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  
-  --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.322 0.123 268.5);
-  --sidebar-primary: oklch(0.88 0.15 85);
-  --sidebar-primary-foreground: oklch(0.322 0.123 268.5);
-  --sidebar-accent: oklch(0.96 0.005 264);
-  --sidebar-accent-foreground: oklch(0.322 0.123 268.5);
-  --sidebar-border: oklch(0.82 0.005 264);;
-  --sidebar-ring: oklch(0.322 0.123 268.5 / 0.2);
+  /* ── Charts ─────────────────────────────────────────────────── */
+  --chart-1: oklch(0.44 0.12 19);           /* Redline crimson */
+  --chart-2: oklch(0.40 0.10 264);          /* Blue Popsicle */
+  --chart-3: oklch(0.65 0.12 195);          /* teal complement */
+  --chart-4: oklch(0.42 0.05 257);          /* Grey Blue Leaf */
+  --chart-5: oklch(0.52 0.14 295);          /* dusty violet */
 
-  --radius: 0.75rem; /* Slightly larger radius for modern look */
+  /* ── Sidebar ────────────────────────────────────────────────── */
+  --sidebar: oklch(0.974 0.005 255);
+  --sidebar-foreground: oklch(0.14 0.06 262);
+  --sidebar-primary: oklch(0.44 0.12 19);
+  --sidebar-primary-foreground: oklch(0.981 0.005 255);
+  --sidebar-accent: oklch(0.944 0.006 258);
+  --sidebar-accent-foreground: oklch(0.14 0.06 262);
+  --sidebar-border: oklch(0.872 0.007 258);
+  --sidebar-ring: oklch(0.44 0.12 19 / 0.3);
+
+  --radius: 0.5rem;
 }
 
 .dark {
-  /* Dark mode tokens maintaining Oxford Blue and Maize theme */
-  --background: oklch(0.10 0.02 264); /* Very dark blue-tinted background */
-  --foreground: oklch(0.97 0.01 265); /* Light neutral with a blue hint */
+  /* ── Surfaces - Purple Shadow → Blue Popsicle hierarchy ─────── */
+  --background: oklch(0.10 0.055 262);       /* Purple Shadow #091f36 */
+  --foreground: oklch(0.94 0.007 240);       /* light with steel-blue breath */
 
-  --card: oklch(0.18 0.02 260); /* Dark card background */
-  --card-foreground: oklch(0.98 0.005 85); /* Light text on cards */
+  --card: oklch(0.165 0.078 264);            /* Blue Popsicle #0f2862 elevated */
+  --card-foreground: oklch(0.94 0.007 240);
 
-  --popover: oklch(0.18 0.02 260);
-  --popover-foreground: oklch(0.98 0.005 85);
+  --popover: oklch(0.18 0.074 263);
+  --popover-foreground: oklch(0.94 0.007 240);
 
-  --primary: oklch(0.88 0.15 85); /* Maize as primary in dark mode */
-  --primary-hover: oklch(0.88 0.15 85 / 0.8);
-  --primary-foreground: oklch(0.08 0.02 264); /* Dark text on maize */
+  /* ── Brand: Redline Crimson (lifted to glow on dark) ────────── */
+  --primary: oklch(0.60 0.14 19);            /* bright crimson - pops on navy */
+  --primary-hover: oklch(0.54 0.14 19);
+  --primary-foreground: oklch(0.981 0.005 255);
 
-  --secondary: oklch(0.322 0.123 268.5);
-  --secondary-hover: oklch(0.322 0.123 268.5 / 0.8);
-  --secondary-foreground: oklch(0.98 0.005 85);
+  /* ── Secondary - deep Blue Popsicle surface ─────────────────── */
+  --secondary: oklch(0.22 0.09 264);         /* Blue Popsicle #0f2862 */
+  --secondary-hover: oklch(0.28 0.09 264);
+  --secondary-foreground: oklch(0.94 0.007 240);
 
-  --color-link: var(--primary); /* Maize for dark mode */
-  --color-link-hover: oklch(0.88 0.15 85 / 0.8);
+  /* ── Muted ──────────────────────────────────────────────────── */
+  --muted: oklch(0.185 0.065 263);           /* lifted slightly for track/tint visibility */
+  --muted-foreground: oklch(0.72 0.03 258);  /* lifted & desaturated — readable paragraph contrast */
 
-  --muted: oklch(0.18 0.02 264);
-  --muted-foreground: oklch(0.7 0.02 264);
+  /* ── Accent ─────────────────────────────────────────────────── */
+  --accent: oklch(0.60 0.14 19);
+  --accent-foreground: oklch(0.981 0.005 255);
 
-  --accent: var(--primary); /* Maize in dark mode */
-  --accent-foreground: oklch(0.08 0.02 264); /* Oxford Blue text on Maize */
+  /* ── Semantic ────────────────────────────────────────────────── */
+  --destructive: oklch(0.60 0.22 27);
+  --destructive-hover: oklch(0.55 0.22 27);
+  --destructive-foreground: oklch(0.981 0.005 255);
 
-  --destructive: oklch(0.55 0.25 25);
-  --destructive-hover: oklch(0.55 0.25 25 / 0.8);
-  --destructive-foreground: oklch(1 0 0);
+  /* ── Links ──────────────────────────────────────────────────── */
+  --link: oklch(0.65 0.13 19);              /* brighter on dark for readability */
+  --link-hover: oklch(0.60 0.14 19);
 
-  --border: oklch(0.35 0.01 65);
-  --input: oklch(0.15 0.02 264);
-  --ring: oklch(0.88 0.15 85 / 0.3);
+  /* ── Chrome ─────────────────────────────────────────────────── */
+  --border: oklch(0.27 0.075 263);           /* Blue Popsicle-toned border */
+  --input: oklch(0.165 0.078 264);           /* same as card */
+  --ring: oklch(0.60 0.14 19 / 0.35);       /* crimson ring */
 
-  --chart-1: oklch(0.88 0.15 85);
-  --chart-2: oklch(0.322 0.123 268.5);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  /* ── Charts ─────────────────────────────────────────────────── */
+  --chart-1: oklch(0.60 0.14 19);           /* crimson */
+  --chart-2: oklch(0.48 0.10 264);          /* Blue Popsicle lifted */
+  --chart-3: oklch(0.68 0.12 195);          /* teal */
+  --chart-4: oklch(0.63 0.05 258);          /* Grey Blue Leaf lifted */
+  --chart-5: oklch(0.60 0.14 295);          /* violet */
 
-  --sidebar: oklch(0.12 0.02 264);
-  --sidebar-foreground: oklch(0.98 0.005 85);
-  --sidebar-primary: oklch(0.88 0.15 85);
-  --sidebar-primary-foreground: oklch(0.08 0.02 264);
-  --sidebar-accent: oklch(0.15 0.02 264);
-  --sidebar-accent-foreground: oklch(0.98 0.005 85);
-  --sidebar-border: oklch(0.2 0.02 264);
-  --sidebar-ring: oklch(0.88 0.15 85 / 0.3);
+  /* ── Sidebar ────────────────────────────────────────────────── */
+  --sidebar: oklch(0.12 0.06 262);
+  --sidebar-foreground: oklch(0.94 0.007 240);
+  --sidebar-primary: oklch(0.60 0.14 19);
+  --sidebar-primary-foreground: oklch(0.981 0.005 255);
+  --sidebar-accent: oklch(0.163 0.068 263);
+  --sidebar-accent-foreground: oklch(0.94 0.007 240);
+  --sidebar-border: oklch(0.27 0.075 263);
+  --sidebar-ring: oklch(0.60 0.14 19 / 0.35);
 }
 
 @theme inline {
@@ -137,7 +169,7 @@
   --color-accent-foreground: var(--accent-foreground);
 
   --color-destructive: var(--destructive);
-  --color-destructive-hover : var(--destructive-hover);
+  --color-destructive-hover: var(--destructive-hover);
   --color-destructive-foreground: var(--destructive-foreground);
 
   --color-border: var(--border);
@@ -150,7 +182,6 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -163,10 +194,10 @@
   --font-heading: var(--font-space-grotesk);
   --font-body: var(--font-dm-sans);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
 }
 
 @layer base {

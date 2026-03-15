@@ -34,6 +34,7 @@ export const slideInRight = {
 }
 
 export const staggerContainer = {
+  initial: {},
   animate: {
     transition: {
       staggerChildren: 0.1,

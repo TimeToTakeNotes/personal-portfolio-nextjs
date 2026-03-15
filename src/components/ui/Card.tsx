@@ -12,7 +12,7 @@ const card = tv({
         "bg-background text-foreground border-2 border-border shadow-none hover:border-primary/50 hover:shadow-sm",
       flat: "border-none shadow-none bg-transparent",
       glass:
-        "bg-white/10 backdrop-blur-md border-white/20 text-white shadow-lg",
+        "bg-background/10 backdrop-blur-md border-border/20 text-foreground shadow-lg",
       interactive:
         "cursor-pointer bg-card text-card-foreground border-border hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-transform",
     },
