@@ -46,6 +46,7 @@ export const metadata: Metadata = {
     title: "Arno Christie – AI & Full-Stack Developer",
     description:
       "BSc IT graduate specialising in NLP fine-tuning and full-stack development. Junior Fullstack Developer at Converge Solutions.",
+    url: "https://personal-portfolio-nextjs-rouge.vercel.app",
     type: "website",
     locale: "en_ZA",
     images: [
