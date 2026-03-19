@@ -1,6 +1,3 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-
 @layer components {
   /* Logo */
   .logo {
@@ -31,5 +28,79 @@
   .input-field:focus + .floating-label,
   .input-field:not(:placeholder-shown) + .floating-label {
     @apply -translate-y-3 scale-80 text-primary top-1 bg-card;
+  }
+
+  /* Autofill override - matches bg-card so the browser highlight blends in */
+  .input-field:-webkit-autofill,
+  .input-field:-webkit-autofill:hover,
+  .input-field:-webkit-autofill:focus,
+  .input-field:-webkit-autofill:active {
+    -webkit-text-fill-color: var(--color-card-foreground) !important;
+    box-shadow: 0 0 0px 1000px var(--color-card) inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Back to Top button */
+
+  .back-to-top-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    border: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 0px 4px var(--color-ring);
+    cursor: pointer;
+    transition-duration: 0.3s;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .back-to-top-btn .back-to-top-icon {
+    width: 12px;
+    transition-duration: 0.3s;
+  }
+
+  .back-to-top-btn .back-to-top-icon path {
+    fill: var(--color-primary-foreground);
+  }
+
+  .back-to-top-btn:hover {
+    width: 140px;
+    border-radius: 50px;
+    transition-duration: 0.3s;
+    background-color: var(--color-primary-hover);
+  }
+
+  .back-to-top-btn:hover .back-to-top-icon {
+    transition-duration: 0.3s;
+    transform: translateY(-200%);
+  }
+
+  .back-to-top-btn::before {
+    position: absolute;
+    bottom: -20px;
+    content: "Back to Top";
+    color: var(--color-primary-foreground);
+    font-size: 0px;
+  }
+
+  .back-to-top-btn:hover::before {
+    font-size: 13px;
+    opacity: 1;
+    bottom: unset;
+    transition-duration: 0.3s;
+  }
+}
+
+/* Mobile: slightly smaller back-to-top button */
+@media (max-width: 639px) {
+  .back-to-top-btn {
+    width: 40px;
+    height: 40px;
   }
 }

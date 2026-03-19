@@ -1,12 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { motion, useInView } from "framer-motion"
+import { motion } from "framer-motion"
 import { Briefcase, GraduationCap } from "lucide-react"
 import { Section } from "@arno/components/layout/Section"
 import { Badge } from "@arno/components/ui/Badge"
 import { siteData } from "@arno/assets/site"
-import { easeOut } from "@arno/lib/animations"
+import { easings, useViewportAnimation } from "@arno/lib/animations"
 import type { ExperienceItem } from "@arno/assets/site"
 
 function TimelineItem({
@@ -18,16 +18,15 @@ function TimelineItem({
   index: number
   isLast?: boolean
 }) {
-  const ref = React.useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: "-60px" })
+  const { ref, isInView } = useViewportAnimation({ once: true, margin: "-60px" })
   const isWork = item.type === "work"
 
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0, x: -20 }}
-      animate={inView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.45, ease: easeOut, delay: index * 0.1 }}
+      animate={isInView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.45, ease: easings.smooth, delay: index * 0.1 }}
       className="relative pl-14"
     >
       {/* Timeline icon */}
@@ -45,7 +44,7 @@ function TimelineItem({
         )}
       </div>
 
-      {/* Connecting line — runs from below the icon to the bottom of this wrapper (which includes mb-6) */}
+      {/* Connecting line - runs from below the icon to the bottom of this wrapper (which includes mb-6) */}
       {!isLast && (
         <div className="absolute left-5 top-10 bottom-0 w-px bg-border" />
       )}
@@ -67,9 +66,9 @@ function TimelineItem({
               {item.org}
             </p>
           </div>
-          <span className="text-xs text-muted-foreground bg-muted px-3 py-1.5 rounded-full whitespace-nowrap self-start">
+          <Badge variant="outline" size="sm" className="whitespace-nowrap self-start">
             {item.period}
-          </span>
+          </Badge>
         </div>
 
         {/* Description bullets */}
@@ -98,8 +97,7 @@ function TimelineItem({
 }
 
 export function ExperienceSection() {
-  const headerRef = React.useRef<HTMLDivElement>(null)
-  const headerInView = useInView(headerRef, { once: true, margin: "-80px" })
+  const { ref: headerRef, isInView: headerInView } = useViewportAnimation({ once: true, margin: "-80px" })
 
   return (
     <Section id="experience" className="bg-muted/30">
@@ -108,7 +106,7 @@ export function ExperienceSection() {
         ref={headerRef}
         initial={{ opacity: 0, y: 20 }}
         animate={headerInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.4, ease: easeOut }}
+        transition={{ duration: 0.4, ease: easings.smooth }}
         className="text-center mb-12"
       >
         <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">

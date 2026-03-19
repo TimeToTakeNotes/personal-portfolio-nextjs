@@ -1,25 +1,19 @@
 "use client"
 
 import * as React from "react"
-import { motion, useInView } from "framer-motion"
+import { motion } from "framer-motion"
 import { Github, ExternalLink, Trophy } from "lucide-react"
 import { Section } from "@arno/components/layout/Section"
 import { Badge } from "@arno/components/ui/Badge"
 import { Button } from "@arno/components/ui/Button"
 import { siteData } from "@arno/assets/site"
-import { easeOut } from "@arno/lib/animations"
+import { easings, cardEntrance, StaggerGroup, useViewportAnimation } from "@arno/lib/animations"
 import type { Project } from "@arno/assets/site"
 
-function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const ref = React.useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: "-60px" })
-
+function ProjectCard({ project }: { project: Project }) {
   return (
     <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 28 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.45, ease: easeOut, delay: (index % 3) * 0.1 }}
+      variants={cardEntrance}
       className="group relative bg-card border border-border rounded-2xl p-6 flex flex-col gap-4 overflow-hidden card-glow hover:border-primary/40 transition-all duration-300"
     >
       {/* Top gradient accent on hover */}
@@ -36,10 +30,14 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           </Badge>
         )}
         {project.achievement && (
-          <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-2 py-0.5 rounded-full">
+          <Badge
+            variant="tag"
+            size="sm"
+            className="gap-1 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800"
+          >
             <Trophy className="h-3 w-3" />
             {project.achievement}
-          </span>
+          </Badge>
         )}
       </div>
 
@@ -84,8 +82,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 }
 
 export function ProjectsSection() {
-  const headerRef = React.useRef<HTMLDivElement>(null)
-  const headerInView = useInView(headerRef, { once: true, margin: "-80px" })
+  const { ref: headerRef, isInView: headerInView } = useViewportAnimation({ once: true, margin: "-80px" })
 
   return (
     <Section id="projects">
@@ -95,7 +92,7 @@ export function ProjectsSection() {
           ref={headerRef}
           initial={{ opacity: 0, y: 20 }}
           animate={headerInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4, ease: easeOut }}
+          transition={{ duration: 0.4, ease: easings.smooth }}
           className="text-center mb-12"
         >
           <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
@@ -108,11 +105,11 @@ export function ProjectsSection() {
         </motion.div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {siteData.projects.map((project, i) => (
-            <ProjectCard key={project.title} project={project} index={i} />
+        <StaggerGroup stagger="loose" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {siteData.projects.map((project) => (
+            <ProjectCard key={project.title} project={project} />
           ))}
-        </div>
+        </StaggerGroup>
 
         {/* GitHub CTA */}
         <motion.div

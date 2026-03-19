@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
-import { motion, useInView } from "framer-motion"
+import { useEffect, useState } from "react"
+import { motion } from "framer-motion"
+import { easings, useViewportAnimation } from "@arno/lib/animations"
 
 export interface MetricItem {
   value: string | number
@@ -13,8 +14,7 @@ interface SingleMetricProps extends MetricItem {
 }
 
 function SingleMetric({ value, label, delay = 0 }: SingleMetricProps) {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true })
+  const { ref, isInView } = useViewportAnimation({ once: true })
   const [display, setDisplay] = useState("")
   const strValue = String(value)
 
@@ -59,7 +59,7 @@ function SingleMetric({ value, label, delay = 0 }: SingleMetricProps) {
       ref={ref}
       initial={{ opacity: 0, y: 16 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-      transition={{ delay, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+      transition={{ delay, duration: 0.4, ease: easings.smooth }}
       className="group flex flex-col items-center gap-1.5 px-4 py-5 rounded-xl border border-border/60 bg-card/70 backdrop-blur-sm shadow-sm hover:border-primary/30 hover:shadow-md transition-all duration-300"
     >
       <span className="text-3xl md:text-4xl font-bold tabular-nums text-gradient-primary">

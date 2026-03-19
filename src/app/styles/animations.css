@@ -1,10 +1,19 @@
-@import "tailwindcss";
+/* ------------------------------------------------------------------ */
+/* All @keyframes definitions and their associated trigger classes.    */
+/* Keyframes must be at the top level (not inside @layer).             */
+/* Component classes that apply animations go in @layer components.   */
+/* ------------------------------------------------------------------ */
 
-/* ── Keyframes ──────────────────────────────────────────────────────────── */
-
+/* Marquee - 2-copy infinite loop */
 @keyframes marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
+}
+
+/* Marquee - 4-copy loop used by .marquee-track */
+@keyframes marquee-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-25%); }
 }
 
 @keyframes fade-in-up {
@@ -12,65 +21,188 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.6; }
-  50%       { opacity: 1; }
+/* Button shimmer sweep */
+@keyframes shimmer-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
-/* ── Utility animations ─────────────────────────────────────────────────── */
+/* Aurora background shift */
+@keyframes aurora-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
 
-@layer utilities {
-  /* ── Single underline link animation ── */
-  .underline-animated {
-    @apply relative font-semibold text-link no-underline transition-colors duration-300 ease-in-out;
-    color: var(--color-link);
+/* Animated gradient divider */
+@keyframes gradient-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+/* Pulsing glow for CTA button */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(158, 54, 58, 0.3), 0 0 15px rgba(9, 59, 110, 0.2); }
+  50%       { box-shadow: 0 0 15px rgba(158, 54, 58, 0.5), 0 0 30px rgba(9, 59, 110, 0.3); }
+}
+
+/* Typing cursor blink */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* Star rating fill sweep */
+@keyframes star-fill {
+  0%   { clip-path: inset(0 100% 0 0); }
+  100% { clip-path: inset(0 0 0 0); }
+}
+
+/* Progress bar fill */
+@keyframes progress-fill {
+  from { width: 0%; }
+}
+
+/* ------------------------------------------------------------------ */
+
+@layer components {
+  /* Button shimmer */
+  .btn-shimmer {
+    @apply relative overflow-hidden;
   }
 
-  .underline-animated::after {
-    content: "";
-    @apply absolute bottom-0 left-0 h-[2px] w-full bg-primary;
+  .btn-shimmer::after {
+    content: '';
+    @apply absolute inset-0;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.3) 45%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0.3) 55%,
+      transparent 60%
+    );
+    animation: shimmer-sweep 3s ease-in-out infinite;
+  }
+
+  /* Aurora gradient backgrounds */
+  .aurora-gradient {
+    @apply absolute inset-0 pointer-events-none;
+    background: linear-gradient(
+      135deg,
+      rgba(9, 59, 110, 0.15),
+      rgba(158, 54, 58, 0.1),
+      rgba(79, 95, 118, 0.08),
+      rgba(9, 59, 110, 0.12)
+    );
+    background-size: 300% 300%;
+    animation: aurora-shift 10s ease-in-out infinite;
+  }
+
+  .dark .aurora-gradient {
+    background: linear-gradient(
+      135deg,
+      rgba(158, 54, 58, 0.1),
+      rgba(9, 59, 110, 0.15),
+      rgba(79, 95, 118, 0.05),
+      rgba(158, 54, 58, 0.08)
+    );
+  }
+
+  .aurora-gradient-dark {
+    @apply absolute inset-0 pointer-events-none;
+    background: linear-gradient(
+      135deg,
+      rgba(158, 54, 58, 0.35),
+      rgba(79, 95, 118, 0.18),
+      rgba(9, 59, 110, 0.28),
+      rgba(158, 54, 58, 0.30)
+    );
+    background-size: 400% 400%;
+    animation: aurora-shift 12s ease-in-out infinite;
+  }
+
+  /* Animated gradient dividers */
+  .animated-divider {
+    background: linear-gradient(180deg, var(--primary), var(--secondary), var(--primary));
+    background-size: 100% 200%;
+    animation: gradient-flow 4s ease-in-out infinite;
+  }
+
+  .animated-divider-horizontal {
+    background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
+    background-size: 200% 100%;
+    animation: gradient-flow 4s ease-in-out infinite;
+  }
+
+  /* CTA button pulse glow */
+  .btn-pulse-glow {
+    animation: pulse-glow 2.5s ease-in-out infinite;
+  }
+
+  /* Typing cursor */
+  .typing-cursor {
+    animation: cursor-blink 0.8s step-end infinite;
+  }
+
+  /* Marquee track - used by Testimonials / logo strip */
+  .marquee-track {
+    display: flex;
+    animation: marquee-scroll 30s linear infinite;
+    width: max-content;
     will-change: transform;
-    backface-visibility: hidden;
+  }
+
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+
+  /* Spotlight hover effect for cards */
+  .spotlight-card {
+    @apply relative overflow-hidden;
+  }
+
+  .spotlight-card::before {
+    content: '';
+    @apply absolute rounded-full pointer-events-none opacity-0 transition-opacity duration-300;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(158, 54, 58, 0.15) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+  }
+
+  .spotlight-card:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Scroll progress bar */
+  .scroll-progress {
     transform-origin: left;
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
   }
 
-  .underline-animated:hover::after,
-  .underline-animated:focus::after {
-    transform: scaleX(1);
+  /* Page transition wrapper - prevents layout shift during route changes */
+  .page-transition-wrapper {
+    width: 100%;
+    will-change: opacity, transform, filter;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Reduced motion - disable all animations for accessibility           */
+@media (prefers-reduced-motion: reduce) {
+  .btn-shimmer::after,
+  .aurora-gradient,
+  .aurora-gradient-dark,
+  .animated-divider,
+  .animated-divider-horizontal,
+  .btn-pulse-glow,
+  .typing-cursor,
+  .marquee-track {
+    animation: none !important;
   }
 
-  /* ── Double underline link animation ── */
-  .double-underline-animated {
-    @apply relative text-link font-semibold text-link no-underline transition-colors duration-300 ease-in-out;
-  }
-
-  .double-underline-animated::after,
-  .double-underline-animated::before {
-    content: "";
-    @apply absolute h-[2px] left-3 right-3 bg-current;
-    will-change: transform;
-    backface-visibility: hidden;
-    transition: transform 0.3s ease;
-  }
-
-  .double-underline-animated::after {
-    @apply bottom-1 left-3;
-    transform-origin: left;
-    transform: scaleX(0);
-  }
-
-  .double-underline-animated::before {
-    @apply top-1 right-3;
-    transform-origin: right;
-    transform: scaleX(0);
-  }
-
-  .double-underline-animated:hover::after,
-  .double-underline-animated:focus::after,
-  .double-underline-animated:hover::before,
-  .double-underline-animated:focus::before {
-    transform: scaleX(1);
+  [data-framer-component-type] {
+    transition: none !important;
+    animation: none !important;
   }
 }

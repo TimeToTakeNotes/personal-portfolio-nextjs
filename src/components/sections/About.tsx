@@ -2,12 +2,13 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { motion, useInView } from "framer-motion"
+import { motion } from "framer-motion"
 import { Award, GraduationCap, Star, BadgeCheck, MapPin, Rocket } from "lucide-react"
 import { Section } from "@arno/components/layout/Section"
 import { Badge } from "@arno/components/ui/Badge"
+import { Button } from "@arno/components/ui/Button"
 import { siteData } from "@arno/assets/site"
-import { easeOut } from "@arno/lib/animations"
+import { easings, durations, useViewportAnimation } from "@arno/lib/animations"
 import { cn } from "@arno/lib/utils"
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -27,8 +28,7 @@ const achievementIcon = (icon: string) => {
 // ── Sub-components ─────────────────────────────────────────────────────────
 
 function SkillBar({ name, level, delay }: { name: string; level: number; delay: number }) {
-  const ref = React.useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: "-40px" })
+  const { ref, isInView } = useViewportAnimation({ once: true, margin: "-40px" })
 
   return (
     <div ref={ref} className="space-y-1.5">
@@ -40,8 +40,8 @@ function SkillBar({ name, level, delay }: { name: string; level: number; delay: 
         <motion.div
           className="h-full bg-primary rounded-full origin-left"
           initial={{ scaleX: 0 }}
-          animate={inView ? { scaleX: 1 } : { scaleX: 0 }}
-          transition={{ duration: 0.7, ease: easeOut, delay }}
+          animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
+          transition={{ duration: 0.7, ease: easings.smooth, delay }}
           style={{ width: `${level}%` }}
         />
       </div>
@@ -64,8 +64,7 @@ const INFO_CHIPS = [
 
 export function AboutSection() {
   const [activeTab, setActiveTab] = React.useState<Tab>("Skills")
-  const sectionRef = React.useRef<HTMLDivElement>(null)
-  const inView = useInView(sectionRef, { once: true, margin: "-80px" })
+  const { ref: sectionRef, isInView } = useViewportAnimation({ once: true, margin: "-80px" })
 
   return (
     <Section id="about" className="relative overflow-hidden">
@@ -114,8 +113,8 @@ export function AboutSection() {
           {/* Text - below photo on mobile, left col on md–xl, full on xl+ */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.55, ease: easeOut, delay: 0.05 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.55, ease: easings.smooth, delay: 0.05 }}
             className="order-2 md:order-1 xl:max-w-lg"
           >
             <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
@@ -131,13 +130,15 @@ export function AboutSection() {
             {/* Quick-info chips */}
             <div className="flex flex-wrap gap-2">
               {INFO_CHIPS.map(({ icon, label }) => (
-                <span
+                <Badge
                   key={label}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-foreground bg-card/80 backdrop-blur-sm border border-border/70 rounded-full px-3 py-1.5"
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 bg-card/80 backdrop-blur-sm border-border/70 py-1.5"
                 >
                   {icon}
                   {label}
-                </span>
+                </Badge>
               ))}
             </div>
           </motion.div>
@@ -145,17 +146,17 @@ export function AboutSection() {
           {/* Photo - above text on mobile, right col on md–xl, hidden on xl+ */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.55, ease: easeOut, delay: 0.1 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.55, ease: easings.smooth, delay: 0.1 }}
             className="order-1 md:order-2 xl:hidden flex justify-center"
           >
-            {/* Mobile: compact centered */}
+            {/* Mobile: compact card, person right-aligned */}
             <div className="md:hidden relative w-52 h-64 overflow-hidden rounded-2xl border border-border/50 shadow-xl bg-muted/20">
               <Image
                 src="/Arno - Selfie Mobile.png"
                 alt="Arno Christie"
                 fill
-                className="object-contain object-center"
+                className="object-contain object-right-bottom"
                 priority
               />
             </div>
@@ -182,24 +183,26 @@ export function AboutSection() {
         {/* ── Tab bar ─────────────────────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4, ease: easeOut, delay: 0.25 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.4, ease: easings.smooth, delay: 0.25 }}
           className="relative z-10 flex justify-center mb-8"
         >
           <div className="inline-flex bg-muted rounded-xl p-1 gap-1">
             {TABS.map((tab) => (
-              <button
+              <Button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
+                variant="ghost"
+                size="sm"
                 className={cn(
-                  "px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                  "rounded-lg",
                   activeTab === tab
                     ? "bg-background dark:bg-secondary text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground"
                 )}
               >
                 {tab}
-              </button>
+              </Button>
             ))}
           </div>
         </motion.div>
@@ -209,7 +212,7 @@ export function AboutSection() {
           key={activeTab}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25, ease: easeOut }}
+          transition={{ duration: 0.25, ease: easings.smooth }}
           className="relative z-10"
         >
           {activeTab === "Skills" && (
@@ -249,9 +252,9 @@ export function AboutSection() {
                         <h3 className="text-lg font-semibold text-foreground">{edu.title}</h3>
                         <p className="text-primary font-medium">{edu.org}</p>
                       </div>
-                      <span className="text-sm text-muted-foreground bg-muted px-3 py-1 rounded-full whitespace-nowrap self-start">
+                      <Badge variant="outline" size="sm" className="whitespace-nowrap self-start">
                         {edu.period}
-                      </span>
+                      </Badge>
                     </div>
                     <ul className="space-y-2 mb-4">
                       {edu.description.map((point, i) => (
@@ -282,7 +285,7 @@ export function AboutSection() {
                   key={achievement.title}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, ease: easeOut, delay: i * 0.08 }}
+                  transition={{ duration: 0.3, ease: easings.smooth, delay: i * 0.08 }}
                   className="bg-card border border-border rounded-2xl p-5 flex gap-4"
                 >
                   <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">

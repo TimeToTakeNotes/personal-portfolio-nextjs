@@ -5,6 +5,8 @@ import { Space_Grotesk, DM_Sans } from "next/font/google"
 import { ThemeProvider } from "@arno/components/layout/ThemeProvider";
 import MainNavigation from "@arno/components/layout/MainNavigation";
 import Footer from "@arno/components/layout/Footer";
+import { PageTransition } from "@arno/lib/animations";
+import { BackToTop } from "@arno/components/ui/BackToTop";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -23,6 +25,7 @@ export function generateViewport() {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://personal-portfolio-nextjs-rouge.vercel.app"),
   title: "Arno Christie – AI & Full-Stack Developer",
   description:
     "BSc IT graduate (86.3% distinction) specialising in NLP fine-tuning and full-stack development. Currently Junior Fullstack Developer at Converge Solutions. Building AI-powered applications with Next.js, Python, and HuggingFace.",
@@ -74,8 +77,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${spaceGrotesk.variable} ${dmSans.variable} font-sans antialiased`}>
         <ThemeProvider defaultTheme="system">
           <MainNavigation />
-          <main className="pt-16">{children}</main>
+          <main className="pt-16">
+            <PageTransition>{children}</PageTransition>
+          </main>
           <Footer />
+          <BackToTop />
         </ThemeProvider>
       </body>
     </html>

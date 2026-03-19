@@ -19,7 +19,7 @@ export function HeroIntro() {
       return
     }
 
-    // Distance from center to the farthest corner — ensures the circle covers the full screen
+    // Distance from center to the farthest corner - ensures the circle covers the full screen
     const maxR = Math.hypot(window.innerWidth / 2, window.innerHeight / 2) + 80
 
     const controls = animate(radius, maxR, {

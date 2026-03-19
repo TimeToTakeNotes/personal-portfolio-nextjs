@@ -4,8 +4,6 @@ import { SpecializationsSection } from "@arno/components/sections/Specialization
 import { ProjectsSection } from "@arno/components/sections/Projects";
 import { ExperienceSection } from "@arno/components/sections/Experience";
 import Web3FormsContact from "@arno/components/sections/ContactForm";
-import { BackToTop } from "@arno/components/ui/BackToTop";
-
 export default function HomePage() {
   return (
     <div className="min-h-screen">
@@ -15,7 +13,6 @@ export default function HomePage() {
       <ProjectsSection />
       <ExperienceSection />
       <Web3FormsContact />
-      <BackToTop />
     </div>
   );
 }

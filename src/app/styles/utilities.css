@@ -1,5 +1,3 @@
-@import "tailwindcss";
-
 @layer utilities {
   /* ── Accessibility ──────────────────────────────────────────────────────── */
   .visually-hidden {
@@ -60,5 +58,62 @@
 
   .animate-marquee:hover {
     animation-play-state: paused;
+  }
+
+  /* ── Animated link underlines ───────────────────────────────────────────── */
+
+  /* Single underline: expands left → right on hover */
+  .underline-animated {
+    @apply relative font-semibold no-underline transition-colors duration-300 ease-in-out;
+    color: var(--color-link);
+  }
+
+  .underline-animated::after {
+    content: "";
+    @apply absolute bottom-0 left-0 h-[2px] w-full bg-primary;
+    will-change: transform;
+    backface-visibility: hidden;
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+
+  .underline-animated:hover::after,
+  .underline-animated:focus::after {
+    transform: scaleX(1);
+  }
+
+  /* Double underline: top line right → left, bottom line left → right */
+  .double-underline-animated {
+    @apply relative font-semibold no-underline transition-colors duration-300 ease-in-out;
+    color: var(--color-link);
+  }
+
+  .double-underline-animated::after,
+  .double-underline-animated::before {
+    content: "";
+    @apply absolute h-[2px] left-3 right-3 bg-current;
+    will-change: transform;
+    backface-visibility: hidden;
+    transition: transform 0.3s ease;
+  }
+
+  .double-underline-animated::after {
+    @apply bottom-1 left-3;
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+
+  .double-underline-animated::before {
+    @apply top-1 right-3;
+    transform-origin: right;
+    transform: scaleX(0);
+  }
+
+  .double-underline-animated:hover::after,
+  .double-underline-animated:focus::after,
+  .double-underline-animated:hover::before,
+  .double-underline-animated:focus::before {
+    transform: scaleX(1);
   }
 }

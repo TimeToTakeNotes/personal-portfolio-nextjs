@@ -25,11 +25,12 @@ const badgeVariants = cva(
         false: "rounded-md",
       },
       animation: {
-        none: "", // no animation
-        pulse: "hover:animate-pulse", // subtle scaling pulse
-        bounce: "hover:-translate-y-1 hover:animate-bounce", // lift & bounce
-        glow: "hover:shadow-[0_0_10px_rgba(59,130,246,0.5)]", // glowing hover
-        tilt: "hover:rotate-1 hover:scale-[1.05]", // slight tilt effect
+        none: "",
+        pulse: "hover:animate-pulse",
+        bounce: "hover:-translate-y-1 hover:animate-bounce",
+        glow: "hover:shadow-[0_0_10px_rgba(59,130,246,0.5)]",
+        tilt: "hover:rotate-1 hover:scale-[1.05]",
+        "pulse-glow": "btn-pulse-glow", // always-on crimson glow pulse
       },
     },
     defaultVariants: {

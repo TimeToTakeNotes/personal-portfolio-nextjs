@@ -1,13 +1,14 @@
 "use client"
 
 import React, { useRef, useState } from "react"
-import { motion, useInView, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { Mail, Phone, MapPin, Github, Linkedin, Send, RotateCcw } from "lucide-react"
 import { Section } from "@arno/components/layout/Section"
 import FloatingInput from "@arno/components/ui/Input"
 import { Button } from "@arno/components/ui/Button"
+import { Card } from "@arno/components/ui/Card"
 import { siteData } from "@arno/assets/site"
-import { easeOut } from "@arno/lib/animations"
+import { easings, useViewportAnimation } from "@arno/lib/animations"
 import { FloatingPaths } from "@arno/components/sections/Hero"
 
 // ── Static data ────────────────────────────────────────────────────────────
@@ -70,7 +71,7 @@ function SuccessCheckmark() {
         strokeWidth="1.8"
         initial={{ pathLength: 0, opacity: 0 }}
         animate={{ pathLength: 1, opacity: 1 }}
-        transition={{ duration: 0.55, ease: "easeOut" }}
+        transition={{ duration: 0.55, ease: easings.smooth }}
       />
       {/* Checkmark */}
       <motion.path
@@ -81,7 +82,7 @@ function SuccessCheckmark() {
         strokeLinejoin="round"
         initial={{ pathLength: 0 }}
         animate={{ pathLength: 1 }}
-        transition={{ duration: 0.4, delay: 0.45, ease: "easeOut" }}
+        transition={{ duration: 0.4, delay: 0.45, ease: easings.smooth }}
       />
     </svg>
   )
@@ -94,9 +95,8 @@ type Status = "idle" | "sending" | "sent" | "error"
 // ── Main component ──────────────────────────────────────────────────────────
 
 const Web3FormsContact: React.FC = () => {
-  const sectionRef = useRef<HTMLDivElement>(null)
+  const { ref: sectionRef, isInView: inView } = useViewportAnimation({ once: true, margin: "-80px" })
   const formRef = useRef<HTMLFormElement>(null)
-  const inView = useInView(sectionRef, { once: true, margin: "-80px" })
   const [status, setStatus] = useState<Status>("idle")
   const [errorMsg, setErrorMsg] = useState("")
 
@@ -129,7 +129,7 @@ const Web3FormsContact: React.FC = () => {
 
   return (
     <Section id="contact" className="relative overflow-hidden">
-      {/* Floating paths — same as hero, rotated 180° */}
+      {/* Floating paths - same as hero, rotated 180° */}
       <div className="absolute inset-0 pointer-events-none select-none rotate-180" aria-hidden>
         <div className="absolute inset-0 text-primary opacity-[0.75] dark:opacity-[0.65]">
           <FloatingPaths position={1} />
@@ -144,7 +144,7 @@ const Web3FormsContact: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4, ease: easeOut }}
+          transition={{ duration: 0.4, ease: easings.smooth }}
           className="text-center mb-12"
         >
           <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
@@ -163,10 +163,10 @@ const Web3FormsContact: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.45, ease: easeOut, delay: 0.1 }}
+            transition={{ duration: 0.45, ease: easings.smooth, delay: 0.1 }}
             className="flex flex-col gap-6"
           >
-            <div className="bg-card border border-border rounded-2xl p-6 md:p-8 flex flex-col gap-6 h-full">
+            <Card padding="md" className="md:p-8 flex flex-col gap-6 h-full">
               <div>
                 <h3 className="text-xl font-semibold text-foreground mb-2">
                   Contact Information
@@ -206,29 +206,35 @@ const Web3FormsContact: React.FC = () => {
                 <p className="text-xs text-muted-foreground mb-3">Find me online</p>
                 <div className="flex gap-3">
                   {socialLinks.map(({ icon, label, href }) => (
-                    <a
+                    <Button
                       key={label}
-                      href={href}
-                      target={href.startsWith("mailto") ? undefined : "_blank"}
-                      rel="noopener noreferrer"
-                      aria-label={label}
-                      className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all duration-200"
+                      variant="ghost"
+                      size="icon"
+                      asChild
+                      className="h-9 w-9 rounded-lg bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary"
                     >
-                      {icon}
-                    </a>
+                      <a
+                        href={href}
+                        target={href.startsWith("mailto") ? undefined : "_blank"}
+                        rel="noopener noreferrer"
+                        aria-label={label}
+                      >
+                        {icon}
+                      </a>
+                    </Button>
                   ))}
                 </div>
               </div>
-            </div>
+            </Card>
           </motion.div>
 
           {/* Right - form card */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.45, ease: easeOut, delay: 0.15 }}
+            transition={{ duration: 0.45, ease: easings.smooth, delay: 0.15 }}
           >
-            <div className="bg-card border border-border rounded-2xl p-6 md:p-8 min-h-[420px] flex flex-col">
+            <Card padding="md" className="md:p-8 min-h-[420px] flex flex-col">
               <AnimatePresence mode="wait">
 
                 {/* ── Idle / Error - show form ── */}
@@ -321,7 +327,7 @@ const Web3FormsContact: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.96 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.35, ease: easeOut }}
+                    transition={{ duration: 0.35, ease: easings.smooth }}
                     className="flex flex-col items-center justify-center flex-1 gap-5 py-8 text-center"
                   >
                     <SuccessCheckmark />
@@ -364,7 +370,7 @@ const Web3FormsContact: React.FC = () => {
                 )}
 
               </AnimatePresence>
-            </div>
+            </Card>
           </motion.div>
         </div>
       </div>
