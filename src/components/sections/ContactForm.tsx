@@ -1,112 +1,74 @@
 "use client"
 
-import React, { useRef, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Mail, Phone, MapPin, Github, Linkedin, Send, RotateCcw } from "lucide-react"
+import * as React from "react"
+import { AnimatePresence, motion } from "framer-motion"
+import { ArrowRight, ArrowUpRight, RotateCcw } from "lucide-react"
 import { Section } from "@arno/components/layout/Section"
-import FloatingInput from "@arno/components/ui/Input"
+import { FadeIn, RevealText, Rule } from "@arno/components/ui/Reveal"
+import { Field } from "@arno/components/ui/Input"
 import { Button } from "@arno/components/ui/Button"
-import { Card } from "@arno/components/ui/Card"
+import { TextLink } from "@arno/components/ui/TextLink"
 import { siteData } from "@arno/assets/site"
-import { easings, useViewportAnimation } from "@arno/lib/animations"
-import { FloatingPaths } from "@arno/components/sections/Hero"
+import { easings, durations } from "@arno/lib/animations"
 
-// ── Static data ────────────────────────────────────────────────────────────
+const copy = siteData.sections.contact
 
-const contactDetails = [
-  {
-    icon: <Mail className="h-4 w-4" />,
-    label: "Email",
-    value: siteData.email,
-    href: `mailto:${siteData.email}`,
-  },
-  {
-    icon: <Phone className="h-4 w-4" />,
-    label: "Phone",
-    value: siteData.phone,
-    href: `tel:${siteData.phone.replace(/\s/g, "")}`,
-  },
-  {
-    icon: <MapPin className="h-4 w-4" />,
-    label: "Location",
-    value: siteData.location,
-    href: undefined,
-  },
+const details = [
+  { label: "Email", value: siteData.email, href: `mailto:${siteData.email}` },
+  { label: "Phone", value: siteData.phone, href: `tel:${siteData.phone.replace(/[^\d+]/g, "")}` },
+  { label: "Location", value: siteData.location },
 ]
 
-const socialLinks = [
-  {
-    icon: <Github className="h-5 w-5" />,
-    label: "GitHub",
-    href: siteData.links.github,
-  },
-  {
-    icon: <Linkedin className="h-5 w-5" />,
-    label: "LinkedIn",
-    href: siteData.links.linkedin,
-  },
-  {
-    icon: <Mail className="h-5 w-5" />,
-    label: "Email",
-    href: `mailto:${siteData.links.email}`,
-  },
+const profiles = [
+  { label: "GitHub", href: siteData.links.github },
+  { label: "LinkedIn", href: siteData.links.linkedin },
 ]
 
-// ── Animated checkmark SVG ─────────────────────────────────────────────────
+// ── Animated checkmark ─────────────────────────────────────────────────────
 
 function SuccessCheckmark() {
   return (
-    <svg
-      viewBox="0 0 52 52"
-      className="w-20 h-20"
-      fill="none"
-      aria-hidden
-    >
-      {/* Circle */}
+    <svg viewBox="0 0 52 52" className="h-16 w-16 text-primary" fill="none" aria-hidden="true">
       <motion.circle
         cx="26"
         cy="26"
         r="24"
-        stroke="var(--color-primary)"
-        strokeWidth="1.8"
-        initial={{ pathLength: 0, opacity: 0 }}
-        animate={{ pathLength: 1, opacity: 1 }}
-        transition={{ duration: 0.55, ease: easings.smooth }}
+        stroke="currentColor"
+        strokeWidth="1.2"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: durations.xslow, ease: easings.expo }}
       />
-      {/* Checkmark */}
       <motion.path
-        d="M14 26.5 L22.5 35 L38 18"
-        stroke="var(--color-primary)"
-        strokeWidth="2.5"
+        d="M15 26.5 L22.5 34 L37 19"
+        stroke="currentColor"
+        strokeWidth="1.6"
         strokeLinecap="round"
         strokeLinejoin="round"
         initial={{ pathLength: 0 }}
         animate={{ pathLength: 1 }}
-        transition={{ duration: 0.4, delay: 0.45, ease: easings.smooth }}
+        transition={{ duration: durations.base, delay: 0.5, ease: easings.expo }}
       />
     </svg>
   )
 }
 
-// ── Form states ─────────────────────────────────────────────────────────────
+// ── Form ───────────────────────────────────────────────────────────────────
 
 type Status = "idle" | "sending" | "sent" | "error"
 
-// ── Main component ──────────────────────────────────────────────────────────
-
-const Web3FormsContact: React.FC = () => {
-  const { ref: sectionRef, isInView: inView } = useViewportAnimation({ once: true, margin: "-80px" })
-  const formRef = useRef<HTMLFormElement>(null)
-  const [status, setStatus] = useState<Status>("idle")
-  const [errorMsg, setErrorMsg] = useState("")
+function ContactFormPanel() {
+  const formRef = React.useRef<HTMLFormElement>(null)
+  const [status, setStatus] = React.useState<Status>("idle")
+  const [errorMsg, setErrorMsg] = React.useState("")
+  const sending = status === "sending"
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setStatus("sending")
     setErrorMsg("")
 
-    const data = new FormData(e.currentTarget)
-    const body = Object.fromEntries(data.entries())
+    const body = Object.fromEntries(new FormData(e.currentTarget).entries())
 
     try {
       const res = await fetch("https://api.web3forms.com/submit", {
@@ -128,254 +90,146 @@ const Web3FormsContact: React.FC = () => {
   }
 
   return (
-    <Section id="contact" className="relative overflow-hidden">
-      {/* Floating paths - same as hero, rotated 180° */}
-      <div className="absolute inset-0 pointer-events-none select-none rotate-180" aria-hidden>
-        <div className="absolute inset-0 text-primary opacity-[0.75] dark:opacity-[0.65]">
-          <FloatingPaths position={1} />
-        </div>
-        <div className="absolute inset-0 text-muted-foreground opacity-[0.55] dark:opacity-[0.45]">
-          <FloatingPaths position={-1} />
-        </div>
+    <div className="min-h-[30rem]">
+      <AnimatePresence mode="wait" initial={false}>
+        {status !== "sent" ? (
+          <motion.div
+            key="form"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: durations.quick }}
+          >
+            <p className="eyebrow">{copy.formTitle}</p>
+            <form ref={formRef} onSubmit={handleSubmit} className="mt-8 flex flex-col gap-8">
+              {/* Web3Forms hidden fields */}
+              <input type="hidden" name="access_key" value={process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? ""} />
+              <input type="hidden" name="subject" value="New Message On Portfolio Website" />
+              <input type="hidden" name="from_name" value="Arno Portfolio Website" />
+              <input type="checkbox" name="botcheck" className="hidden" tabIndex={-1} autoComplete="off" />
+
+              <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                <Field label="First Name" name="firstName" autoComplete="given-name" required disabled={sending} />
+                <Field label="Phone Number" name="phoneNumber" type="tel" autoComplete="tel" disabled={sending} />
+              </div>
+              <Field label="Email" name="email" type="email" autoComplete="email" required disabled={sending} />
+              <Field label="Message" name="message" as="textarea" rows={5} required disabled={sending} />
+
+              {status === "error" && (
+                <p className="text-sm text-destructive" role="alert">
+                  {errorMsg || "Something went wrong. Please try again."}
+                </p>
+              )}
+
+              <div>
+                <Button type="submit" size="lg" loading={sending} className="group">
+                  {sending ? "Sending…" : "Send Message"}
+                  {!sending && (
+                    <ArrowRight
+                      aria-hidden="true"
+                      className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                    />
+                  )}
+                </Button>
+              </div>
+            </form>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="success"
+            role="status"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: durations.quick }}
+            className="flex flex-col items-start gap-6 pt-2"
+          >
+            <SuccessCheckmark />
+            <div>
+              <h3 className="text-4xl">{copy.successTitle}</h3>
+              <p className="mt-3 max-w-sm text-muted-foreground">{copy.successBody}</p>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => setStatus("idle")}>
+              <RotateCcw aria-hidden="true" className="h-3.5 w-3.5" />
+              Send Another
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+// ── Section ────────────────────────────────────────────────────────────────
+
+export function ContactSection() {
+  return (
+    <Section id="contact" index="04" label={copy.label} aside={copy.eyebrow}>
+      <RevealText as="h2" className="text-6xl leading-[0.95] md:text-8xl lg:text-9xl">
+        {copy.title}
+      </RevealText>
+
+      <div className="mt-8 grid grid-cols-12 gap-y-8 md:mt-12 md:gap-x-10">
+        <FadeIn delay={0.2} className="col-span-12 md:col-span-7">
+          <p className="font-serif text-2xl italic leading-snug text-muted-foreground md:text-3xl">{copy.intro}</p>
+        </FadeIn>
       </div>
 
-      <div ref={sectionRef} className="relative z-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4, ease: easings.smooth }}
-          className="text-center mb-12"
+      <FadeIn delay={0.3} className="mt-12 md:mt-16">
+        <a
+          href={`mailto:${siteData.email}`}
+          className="group inline-flex max-w-full items-center gap-3 font-serif text-[clamp(1.75rem,5.5vw,4.5rem)] leading-none transition-colors hover:text-primary"
         >
-          <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
-            Let&apos;s talk
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Get In Touch</h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            Open to opportunities, collaborations, or just a conversation about AI and tech.
-          </p>
-        </motion.div>
+          <span className="link-underline break-all pb-1">{siteData.email}</span>
+          <ArrowUpRight
+            aria-hidden="true"
+            className="h-[0.7em] w-[0.7em] shrink-0 transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1"
+          />
+        </a>
+      </FadeIn>
 
-        {/* 2-column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+      <div className="mt-20 grid grid-cols-12 gap-y-16 md:mt-28 md:gap-x-10">
+        {/* Details */}
+        <div className="col-span-12 md:col-span-5">
+          <p className="eyebrow">{copy.detailsTitle}</p>
+          <p className="mt-6 max-w-md text-muted-foreground">{copy.details}</p>
 
-          {/* Left - contact info */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.45, ease: easings.smooth, delay: 0.1 }}
-            className="flex flex-col gap-6"
-          >
-            <Card padding="md" className="md:p-8 flex flex-col gap-6 h-full">
-              <div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">
-                  Contact Information
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Feel free to reach out via email or phone. I&apos;m based in South Africa and
-                  available for remote opportunities worldwide.
-                </p>
-              </div>
-
-              {/* Contact details */}
-              <div className="space-y-4">
-                {contactDetails.map(({ icon, label, value, href }) => (
-                  <div key={label} className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-                      {icon}
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-0.5">{label}</p>
-                      {href ? (
-                        <a
-                          href={href}
-                          className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-                        >
-                          {value}
-                        </a>
-                      ) : (
-                        <p className="text-sm font-medium text-foreground">{value}</p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Social links */}
-              <div className="mt-auto pt-4 border-t border-border/50">
-                <p className="text-xs text-muted-foreground mb-3">Find me online</p>
-                <div className="flex gap-3">
-                  {socialLinks.map(({ icon, label, href }) => (
-                    <Button
-                      key={label}
-                      variant="ghost"
-                      size="icon"
-                      asChild
-                      className="h-9 w-9 rounded-lg bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary"
-                    >
-                      <a
-                        href={href}
-                        target={href.startsWith("mailto") ? undefined : "_blank"}
-                        rel="noopener noreferrer"
-                        aria-label={label}
-                      >
-                        {icon}
-                      </a>
-                    </Button>
-                  ))}
+          <dl className="mt-10">
+            {details.map(({ label, value, href }) => (
+              <div key={label}>
+                <Rule />
+                <div className="grid grid-cols-3 gap-4 py-4">
+                  <dt className="eyebrow pt-1">{label}</dt>
+                  <dd className="col-span-2">
+                    {href ? <TextLink href={href}>{value}</TextLink> : value}
+                  </dd>
                 </div>
               </div>
-            </Card>
-          </motion.div>
+            ))}
+            <Rule />
+            <div className="grid grid-cols-3 gap-4 py-4">
+              <dt className="eyebrow pt-1">Elsewhere</dt>
+              <dd className="col-span-2">
+                <ul className="flex flex-wrap gap-x-6 gap-y-1">
+                  {profiles.map(({ label, href }) => (
+                    <li key={label}>
+                      <TextLink href={href} arrow="up-right" external>
+                        {label}
+                      </TextLink>
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+            <Rule />
+          </dl>
+        </div>
 
-          {/* Right - form card */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.45, ease: easings.smooth, delay: 0.15 }}
-          >
-            <Card padding="md" className="md:p-8 min-h-[420px] flex flex-col">
-              <AnimatePresence mode="wait">
-
-                {/* ── Idle / Error - show form ── */}
-                {(status === "idle" || status === "sending" || status === "error") && (
-                  <motion.div
-                    key="form"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                    className="flex flex-col flex-1"
-                  >
-                    <h3 className="text-xl font-semibold text-foreground mb-6">
-                      Send a Message
-                    </h3>
-
-                    <form
-                      ref={formRef}
-                      onSubmit={handleSubmit}
-                      className="flex flex-col gap-5 flex-1"
-                    >
-                      {/* Web3Forms hidden fields */}
-                      <input type="hidden" name="access_key" value={process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? ""} />
-                      <input type="hidden" name="subject" value="New Message On Portfolio Website" />
-                      <input type="hidden" name="from_name" value="Arno Portfolio Website" />
-                      <input type="checkbox" name="botcheck" className="hidden" />
-
-                      <FloatingInput
-                        label="First Name"
-                        name="firstName"
-                        required
-                        disabled={status === "sending"}
-                      />
-                      <FloatingInput
-                        label="Email"
-                        name="email"
-                        type="email"
-                        required
-                        disabled={status === "sending"}
-                      />
-                      <FloatingInput
-                        label="Phone Number"
-                        name="phoneNumber"
-                        disabled={status === "sending"}
-                      />
-                      <FloatingInput
-                        label="Message"
-                        name="message"
-                        as="textarea"
-                        rows={5}
-                        required
-                        disabled={status === "sending"}
-                      />
-
-                      {/* Error message */}
-                      {status === "error" && (
-                        <motion.p
-                          initial={{ opacity: 0, y: -4 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="text-sm text-destructive"
-                          role="alert"
-                        >
-                          {errorMsg || "Something went wrong. Please try again."}
-                        </motion.p>
-                      )}
-
-                      <Button
-                        type="submit"
-                        variant="primary"
-                        loading={status === "sending"}
-                        className="w-full mt-1 gap-2"
-                      >
-                        {status === "sending" ? (
-                          "Sending…"
-                        ) : (
-                          <>
-                            <Send className="h-4 w-4" />
-                            Send Message
-                          </>
-                        )}
-                      </Button>
-                    </form>
-                  </motion.div>
-                )}
-
-                {/* ── Sent - success state ── */}
-                {status === "sent" && (
-                  <motion.div
-                    key="success"
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.35, ease: easings.smooth }}
-                    className="flex flex-col items-center justify-center flex-1 gap-5 py-8 text-center"
-                  >
-                    <SuccessCheckmark />
-
-                    <div className="space-y-1">
-                      <motion.h3
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.7, duration: 0.3 }}
-                        className="text-xl font-semibold text-foreground"
-                      >
-                        Message Sent!
-                      </motion.h3>
-                      <motion.p
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.85, duration: 0.3 }}
-                        className="text-sm text-muted-foreground max-w-xs"
-                      >
-                        Thanks for reaching out - I&apos;ll get back to you as soon as possible.
-                      </motion.p>
-                    </div>
-
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 1.1, duration: 0.3 }}
-                    >
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="gap-2"
-                        onClick={() => setStatus("idle")}
-                      >
-                        <RotateCcw className="h-3.5 w-3.5" />
-                        Send Another
-                      </Button>
-                    </motion.div>
-                  </motion.div>
-                )}
-
-              </AnimatePresence>
-            </Card>
-          </motion.div>
+        {/* Form */}
+        <div className="col-span-12 md:col-span-6 md:col-start-7">
+          <ContactFormPanel />
         </div>
       </div>
     </Section>
   )
 }
-
-export default Web3FormsContact

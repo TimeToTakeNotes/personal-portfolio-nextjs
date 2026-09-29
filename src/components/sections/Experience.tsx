@@ -1,130 +1,131 @@
 "use client"
 
 import * as React from "react"
-import { motion } from "framer-motion"
-import { Briefcase, GraduationCap } from "lucide-react"
+import { motion, useScroll, useSpring } from "framer-motion"
 import { Section } from "@arno/components/layout/Section"
-import { Badge } from "@arno/components/ui/Badge"
+import { FadeIn, RevealText, Rule } from "@arno/components/ui/Reveal"
 import { siteData } from "@arno/assets/site"
-import { easings, useViewportAnimation } from "@arno/lib/animations"
 import type { ExperienceItem } from "@arno/assets/site"
+import { cn } from "@arno/lib/utils"
+import { useReducedMotion, useViewportAnimation } from "@arno/lib/animations"
 
-function TimelineItem({
-  item,
-  index,
-  isLast,
-}: {
-  item: ExperienceItem
-  index: number
-  isLast?: boolean
-}) {
-  const { ref, isInView } = useViewportAnimation({ once: true, margin: "-60px" })
-  const isWork = item.type === "work"
+const copy = siteData.sections.experience
+
+const groups = [
+  { label: copy.workLabel, items: siteData.experience.filter((e) => e.type === "work") },
+  { label: copy.educationLabel, items: siteData.experience.filter((e) => e.type === "education") },
+].filter((group) => group.items.length > 0)
+
+// ── Entry ──────────────────────────────────────────────────────────────────
+
+function Entry({ item }: { item: ExperienceItem }) {
+  // The marker on the timeline turns to the accent colour while the entry is in the reading zone.
+  const { ref, isInView: active } = useViewportAnimation({ once: false, amount: 0, margin: "-40% 0px -40% 0px" })
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, x: -20 }}
-      animate={isInView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.45, ease: easings.smooth, delay: index * 0.1 }}
-      className="relative pl-14"
-    >
-      {/* Timeline icon */}
-      <div
-        className={`absolute left-0 top-0 h-10 w-10 rounded-xl flex items-center justify-center border-2 z-10 ${
-          isWork
-            ? "bg-primary/10 border-primary/30 text-primary"
-            : "bg-card border-border text-muted-foreground"
-        }`}
-      >
-        {isWork ? (
-          <Briefcase className="h-4 w-4" />
-        ) : (
-          <GraduationCap className="h-4 w-4" />
+    <li ref={ref} className="relative pl-6 md:pl-10">
+      <span
+        aria-hidden="true"
+        className={cn(
+          "absolute -left-[3.5px] top-3 h-2 w-2 rounded-full border transition-colors duration-500",
+          active ? "border-primary bg-primary" : "border-border-strong/40 bg-background"
         )}
-      </div>
+      />
+      <FadeIn className="grid grid-cols-12 gap-y-4 pb-14 md:gap-x-10 md:pb-20">
+        <p className="eyebrow figures col-span-12 pt-2 md:col-span-3">{item.period}</p>
 
-      {/* Connecting line - runs from below the icon to the bottom of this wrapper (which includes mb-6) */}
-      {!isLast && (
-        <div className="absolute left-5 top-10 bottom-0 w-px bg-border" />
-      )}
-
-      {/* Card */}
-      <div className="bg-card border border-border rounded-2xl p-6 md:p-7 mb-6 hover:border-primary/30 hover:shadow-md transition-all duration-300">
-        {/* Header row */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
-          <div>
-            <span
-              className={`text-xs font-semibold uppercase tracking-wider mb-1 block ${
-                isWork ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              {isWork ? "Work Experience" : "Education"}
-            </span>
-            <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
-            <p className={`font-medium text-sm ${isWork ? "text-primary" : "text-foreground"}`}>
-              {item.org}
-            </p>
-          </div>
-          <Badge variant="outline" size="sm" className="whitespace-nowrap self-start">
-            {item.period}
-          </Badge>
+        <div className="col-span-12 md:col-span-6">
+          <h3 className="text-3xl md:text-4xl">{item.title}</h3>
+          <p className="mt-2 font-medium text-primary">{item.org}</p>
+          <ul className="mt-6 space-y-3">
+            {item.description.map((point) => (
+              <li key={point} className="relative pl-6 text-muted-foreground">
+                <span aria-hidden="true" className="absolute left-0 top-[0.8em] h-px w-3 bg-muted-foreground/60" />
+                {point}
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* Description bullets */}
-        <ul className="space-y-2 mb-4">
-          {item.description.map((point, i) => (
-            <li key={i} className="flex gap-2.5 text-sm text-muted-foreground">
-              <span className="text-primary mt-0.5 flex-shrink-0">▸</span>
-              <span>{point}</span>
-            </li>
-          ))}
-        </ul>
-
-        {/* Tags */}
         {item.tags && (
-          <div className="flex flex-wrap gap-2">
+          <ul className="col-span-12 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-foreground/75 md:col-span-3 md:flex-col md:pt-2">
             {item.tags.map((tag) => (
-              <Badge key={tag} variant="tag" size="sm">
-                {tag}
-              </Badge>
+              <li key={tag}>{tag}</li>
             ))}
-          </div>
+          </ul>
         )}
-      </div>
-    </motion.div>
+      </FadeIn>
+    </li>
   )
 }
 
-export function ExperienceSection() {
-  const { ref: headerRef, isInView: headerInView } = useViewportAnimation({ once: true, margin: "-80px" })
+// ── Timeline with scroll-linked progress line ──────────────────────────────
+
+function Timeline({ items }: { items: ExperienceItem[] }) {
+  const ref = React.useRef<HTMLOListElement>(null)
+  const prefersReduced = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 70%", "end 60%"] })
+  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 })
 
   return (
-    <Section id="experience" className="bg-muted/30">
-      {/* Header */}
-      <motion.div
-        ref={headerRef}
-        initial={{ opacity: 0, y: 20 }}
-        animate={headerInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.4, ease: easings.smooth }}
-        className="text-center mb-12"
-      >
-        <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
-          My journey
-        </p>
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-          Experience &amp; Education
-        </h2>
-        <p className="text-muted-foreground max-w-xl mx-auto">
-          From academic foundations to real-world AI development - here&apos;s how I got here.
-        </p>
-      </motion.div>
+    <ol ref={ref} className="relative">
+      <span aria-hidden="true" className="absolute bottom-0 left-0 top-3 w-px bg-border" />
+      <motion.span
+        aria-hidden="true"
+        className="absolute bottom-0 left-0 top-3 w-px origin-top bg-primary"
+        style={{ scaleY: prefersReduced ? 1 : progress }}
+      />
+      {items.map((item) => (
+        <Entry key={`${item.title}-${item.org}`} item={item} />
+      ))}
+    </ol>
+  )
+}
 
-      {/* Timeline */}
-      <div className="max-w-3xl mx-auto">
-        {siteData.experience.map((item, i) => (
-          <TimelineItem key={item.title} item={item} index={i} isLast={i === siteData.experience.length - 1} />
-        ))}
+// ── Section ────────────────────────────────────────────────────────────────
+
+export function ExperienceSection() {
+  return (
+    <Section id="experience" index="03" label={copy.label}>
+      <div className="grid grid-cols-12 gap-y-6 md:gap-x-10">
+        <div className="col-span-12 md:col-span-8">
+          <RevealText as="h2" className="text-5xl md:text-7xl">
+            {copy.title}
+          </RevealText>
+        </div>
+        <FadeIn delay={0.2} className="col-span-12 md:col-span-4 md:self-end">
+          <p className="text-muted-foreground md:text-lg">{copy.intro}</p>
+        </FadeIn>
+      </div>
+
+      {groups.map((group) => (
+        <div key={group.label} className="mt-20 md:mt-28">
+          <p className="eyebrow pb-4">{group.label}</p>
+          <Rule className="mb-10 md:mb-14" />
+          <Timeline items={group.items} />
+        </div>
+      ))}
+
+      {/* Achievements */}
+      <div className="mt-16 md:mt-24">
+        <p className="eyebrow pb-4">{copy.achievementsLabel}</p>
+        <ol>
+          {siteData.achievements.map((achievement, i) => (
+            <li key={achievement.title} className="group">
+              <Rule delay={i * 0.06} />
+              <FadeIn delay={i * 0.06} className="grid grid-cols-12 gap-y-2 py-6 md:gap-x-10 md:py-8">
+                <span className="eyebrow figures col-span-12 pt-2 transition-colors group-hover:text-primary md:col-span-1">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3 className="col-span-12 text-2xl md:col-span-5 md:text-3xl">{achievement.title}</h3>
+                <p className="col-span-12 text-muted-foreground md:col-span-5 md:col-start-8 md:pt-1">
+                  {achievement.description}
+                </p>
+              </FadeIn>
+            </li>
+          ))}
+        </ol>
+        <Rule />
       </div>
     </Section>
   )

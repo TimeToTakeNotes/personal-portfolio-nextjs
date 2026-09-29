@@ -1,6 +1,9 @@
-import type { MetricItem } from "@arno/components/ui/Metrics"
-
 // ── Types ──────────────────────────────────────────────────────────────────
+
+export interface MetricItem {
+  value: string
+  label: string
+}
 
 export interface NavLink {
   label: string
@@ -9,6 +12,7 @@ export interface NavLink {
 
 export interface SkillCategory {
   category: string
+  /** `level` is kept as reference data. The UI does not show it. */
   skills: Array<{ name: string; level: number }>
 }
 
@@ -34,6 +38,7 @@ export interface ExperienceItem {
 export interface Achievement {
   title: string
   description: string
+  /** Lucide icon key. Kept as reference data. The UI does not show it. */
   icon: string
 }
 
@@ -48,7 +53,8 @@ export interface Specialization {
 export const navLinks: NavLink[] = [
   { label: "About", href: "#about" },
   { label: "Projects", href: "#projects" },
-  { label: "Experience", href: "#experience" }
+  { label: "Experience", href: "#experience" },
+  { label: "Contact", href: "#contact" },
 ]
 
 // ── Site Data ──────────────────────────────────────────────────────────────
@@ -76,6 +82,53 @@ export const siteData = {
     { value: "4+", label: "Years Coding" },
     { value: "Top 15%", label: "Golden Key" },
   ] satisfies MetricItem[],
+
+  // Section copy. Components read these values; do not hardcode copy in JSX.
+  sections: {
+    about: {
+      label: "About",
+      practiceLabel: "What I do",
+      practiceTitle: "Areas of Expertise",
+      practiceIntro:
+        "Where my skills and interests intersect - from AI model integration to production-ready full-stack engineering.",
+      skillsLabel: "Skills",
+    },
+    projects: {
+      label: "Projects",
+      title: "What I've built",
+      intro: "A selection of projects ranging from AI-powered tools to interactive web apps.",
+      moreLabel: "More projects",
+      githubCta: "View all on GitHub",
+    },
+    experience: {
+      label: "Experience",
+      title: "Experience & Education",
+      intro: "From academic foundations to real-world AI development - here's how I got here.",
+      workLabel: "Work Experience",
+      educationLabel: "Education",
+      achievementsLabel: "Achievements",
+    },
+    contact: {
+      label: "Contact",
+      eyebrow: "Let's talk",
+      title: "Get In Touch",
+      intro: "Open to opportunities, collaborations, or just a conversation about AI and tech.",
+      detailsTitle: "Contact Information",
+      details:
+        "Feel free to reach out via email or phone. I'm based in South Africa and available for remote opportunities worldwide.",
+      formTitle: "Send a Message",
+      successTitle: "Message Sent!",
+      successBody: "Thanks for reaching out - I'll get back to you as soon as possible.",
+    },
+    footer: {
+      credit: "Built with Next.js, TypeScript & Tailwind CSS",
+    },
+  },
+
+  cv: {
+    href: "/Arno Christie - CV.pdf",
+    label: "Download CV",
+  },
 
   links: {
     github: "https://github.com/TimeToTakeNotes",

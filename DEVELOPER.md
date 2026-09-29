@@ -9,20 +9,17 @@ This document is the authoritative reference for both human and AI contributors.
 ## Table of Contents
 
 1. [Rules](#rules)
-2. [Tech Stack](#tech-stack)
-3. [Project Structure](#project-structure)
-4. [UI Component Reference](#ui-component-reference)
-   - [Button](#button)
-   - [Badge](#badge)
-   - [Card](#card)
-   - [Other UI Components](#other-ui-components)
-5. [CSS Architecture](#css-architecture)
-6. [Animation System](#animation-system)
-7. [Content Management](#content-management)
-8. [Security](#security)
-9. [Environment Variables](#environment-variables)
-10. [Commands](#commands)
-11. [Deployment](#deployment)
+2. [Design System](#design-system)
+3. [Tech Stack](#tech-stack)
+4. [Project Structure](#project-structure)
+5. [UI Component Reference](#ui-component-reference)
+6. [CSS Architecture](#css-architecture)
+7. [Animation System](#animation-system)
+8. [Content Management](#content-management)
+9. [Security](#security)
+10. [Environment Variables](#environment-variables)
+11. [Commands](#commands)
+12. [Deployment](#deployment)
 
 ---
 
@@ -34,12 +31,13 @@ These rules are mandatory. They are enforced by convention, not by a linter, so 
 
 ### RULE 1 - All content lives in `site.tsx` only
 
-Never hardcode copy, links, email addresses, phone numbers, names, metrics, or project data inside a component. All of it must come from `siteData` exported from `src/assets/site.tsx`.
+Never hardcode copy, links, email addresses, phone numbers, names, metrics, or project data inside a component. All of it must come from `siteData` exported from `src/assets/site.tsx`. Section headings and intro text are in `siteData.sections`.
 
 ```tsx
 // ✓ Correct
 import { siteData } from "@arno/assets/site"
 <p>{siteData.bio}</p>
+<RevealText as="h2">{siteData.sections.projects.title}</RevealText>
 
 // ✗ Wrong - hardcoded copy inside a component
 <p>Passionate developer based in South Africa...</p>
@@ -49,308 +47,158 @@ import { siteData } from "@arno/assets/site"
 
 ### RULE 2 - Use existing UI components; never raw HTML equivalents
 
-The following components exist specifically to enforce consistent styling and behaviour. Using a raw `<button>`, `<div>`, or `<span>` instead of the component is always wrong.
-
 | Instead of… | Use… |
 | --- | --- |
-| `<button>`, `<a>` styled as a button | `<Button>` |
-| `<span className="badge ...">` | `<Badge>` |
-| `<div className="bg-card rounded-2xl p-6 ...">` | `<Card>` |
-| Raw `<h2>` + description block for section headers | `<SectionHeader>` |
-| Raw `<section>` with padding | `<Section>` |
+| A raw `<section>` with padding and a heading row | `<Section id index label>` |
+| An `<a>` with custom underline or arrow styles | `<TextLink>` |
+| A `<button>` with custom background styles | `<Button>` |
+| A raw `<input>` or `<textarea>` in a form | `<Field>` |
+| A `<div className="h-px bg-border">` divider | `<Rule>` |
+| Hand-written word-by-word heading animation | `<RevealText>` |
 
 If a required visual style does not exist as a variant, **add a variant to the component** - do not bypass the component.
 
 ---
 
-### RULE 3 - Button usage rules
+### RULE 3 - Links and buttons
 
-Always specify `variant` and `size` explicitly. Never leave both as default without intent.
-
-**`asChild` rule:** When a `Button` wraps a link (`<a>`) or a Next.js `<Link>`, use `asChild`. This delegates rendering to the child element so you get correct HTML semantics (`<a>` not `<button>`).
+Use `<TextLink>` for navigation and outbound links. Use `<Button>` only for actions (submit, retry, toggle) or for a single primary call to action in a group.
 
 ```tsx
-// ✓ CTA link - asChild + variant
-<Button variant="primary" size="lg" asChild className="gap-2">
-  <a href="#projects">View My Work <ArrowRight className="h-4 w-4" /></a>
-</Button>
+// ✓ Outbound link with arrow
+<TextLink href={siteData.links.github} arrow="up-right" external>GitHub</TextLink>
 
-// ✓ Icon-only button - use size="icon" and provide aria-label
-<Button variant="ghost" size="icon" asChild aria-label="GitHub">
-  <a href={siteData.links.github} target="_blank" rel="noopener noreferrer">
-    <Github className="h-4 w-4" />
-  </a>
-</Button>
+// ✓ In-page link
+<TextLink href="#projects" arrow="down">Projects</TextLink>
 
-// ✓ Loading state - use loading prop, never render a spinner manually
-<Button variant="primary" loading={isSubmitting}>Submit</Button>
+// ✓ Form submit - use the loading prop, never render a spinner manually
+<Button type="submit" size="lg" loading={isSubmitting}>Send Message</Button>
 
-// ✗ Wrong - raw anchor styled like a button
-<a href="#projects" className="bg-primary text-white px-5 py-3 rounded-md">View My Work</a>
+// ✗ Wrong - a link styled as a filled button for plain navigation
+<Button asChild><a href="#projects">View My Work</a></Button>
 ```
 
-**Variant selection guide:**
-
-| Variant | Use for |
-| --- | --- |
-| `primary` | Primary CTAs - one per visual group maximum |
-| `secondary` | Secondary actions alongside a `primary` |
-| `outline` | Tertiary actions, "View all", external links |
-| `ghost` | Icon buttons, nav links, inline actions with no background |
-| `link` | Inline text links within paragraphs |
-| `error` | Destructive or error-state actions |
-
-**Size selection guide:**
-
-| Size | Use for |
-| --- | --- |
-| `sm` | Compact actions inside cards, tag rows |
-| `md` | Default - most UI contexts |
-| `lg` | Hero CTAs, section-level primary actions |
-| `xl` | Full-width CTA banners |
-| `icon` | Square icon-only buttons - always pair with `aria-label` |
+`external` sets `target="_blank"`, `rel="noopener noreferrer"` and a visually hidden "(opens in a new tab)" label. Always set it for links that leave the site.
 
 ---
 
-### RULE 4 - Badge usage rules
+### RULE 4 - No cards, no pills
 
-Badges are read-only labels. They are not interactive unless given an `onClick` intentionally. Do not use `<Button>` where a static label is needed, and do not use a raw `<span>` where a `<Badge>` would work.
+The layout separates content with space, hairline rules and a 12-column grid. Do not add boxed containers.
 
-```tsx
-// ✓ Tech tag
-<Badge variant="tag" size="sm">TypeScript</Badge>
-
-// ✓ Period / date label on a card
-<Badge variant="outline" size="sm" className="whitespace-nowrap">2021 – 2024</Badge>
-
-// ✓ Hero status with always-on glow pulse
-<Badge variant="tag" size="sm" animation="pulse-glow" className="gap-2 px-4 py-1.5">
-  <span className="inline-flex rounded-full h-2 w-2 bg-primary" />
-  Junior Fullstack Developer
-</Badge>
-
-// ✓ Achievement label on project card
-<Badge variant="tag" size="sm" className="gap-1 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800">
-  <Trophy className="h-3 w-3" />
-  1st Place
-</Badge>
-```
-
-**Variant selection guide:**
-
-| Variant | Use for |
-| --- | --- |
-| `default` | Primary accent badge - filled with `bg-primary` |
-| `secondary` | Neutral filled badge |
-| `tag` | Tech/skill tags, achievement labels - transparent with border |
-| `outline` | Period/date spans, info chips - transparent, subtle border |
-| `destructive` | Error or warning labels |
-| `icon` | Square icon-only badge |
-
-**Size selection guide:**
-
-| Size | Use for |
-| --- | --- |
-| `sm` | Tag rows, compact labels inside cards |
-| `md` | Standalone labels |
-| `lg` | Large status indicators |
-| `icon` | Icon-only square badge |
-
-**Animation selection guide:**
-
-| Animation | Effect | Use for |
-| --- | --- | --- |
-| `none` (default) | No animation | Most badges |
-| `pulse-glow` | Always-on crimson glow pulse | Hero status badge |
-| `pulse` | Pulse on hover | Attention-drawing labels |
-| `bounce` | Bounce on hover | Playful callouts |
-| `glow` | Glow on hover | Interactive highlight |
-| `tilt` | Tilt + scale on hover | Interactive tags |
-
-**Rounded:** Defaults to `true` (pill shape). Set `rounded={false}` for square-cornered badges.
-
----
-
-### RULE 5 - Card usage rules
-
-Use `<Card>` for any content container with a background, border, and shadow. Do not write `bg-card border border-border rounded-2xl` manually.
+- Do not wrap content in `bg-card border rounded-*` boxes.
+- Do not render tags as pill badges. Render them as monospaced text joined with `"  /  "`.
+- Do not put icons in tinted squares as decoration. Use an icon only when it carries meaning (arrows, close, theme).
+- Use `<Rule>` between list items and above section content.
 
 ```tsx
-// ✓ Standard section content card
-<Card padding="md">
-  <h3>Title</h3>
-  <p>Content</p>
-</Card>
+// ✓ Correct - tags as mono text
+<p className="font-mono text-xs">{project.tags.join("  /  ")}</p>
 
-// ✓ Override padding at a breakpoint
-<Card padding="md" className="md:p-8">
-  {/* form fields */}
-</Card>
-
-// ✓ Clickable card with lift animation
-<Card variant="interactive" animation="hover-lift" padding="md">
-  {/* card content */}
-</Card>
-
-// ✗ Wrong - manual card styles
-<div className="bg-card border border-border rounded-2xl p-6 shadow-sm">...</div>
-```
-
-**Variant selection guide:**
-
-| Variant | Use for |
-| --- | --- |
-| `default` | Standard content cards - bg-card, border, shadow |
-| `outline` | Emphasised border cards, feature boxes |
-| `flat` | Borderless, shadowless - inside another card, or on coloured backgrounds |
-| `glass` | Frosted-glass overlay cards - use sparingly |
-| `interactive` | Clickable cards - adds cursor-pointer, hover scale, active press |
-
-**Padding options:** `sm` (p-4) · `md` (p-6) · `lg` (p-8)
-
-**Size options:** `full` (w-full, default) · `auto` (max-w-md centered) · `lg` (max-w-4xl centered)
-
-**Sub-components** (optional, for structured content):
-
-```tsx
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@arno/components/ui/Card"
-
-<Card>
-  <CardHeader>
-    <CardTitle>Title</CardTitle>
-    <CardDescription>Supporting text</CardDescription>
-  </CardHeader>
-  <CardContent>…</CardContent>
-  <CardFooter>…</CardFooter>
-</Card>
+// ✗ Wrong - pill badges
+{project.tags.map((t) => <span className="rounded-full border px-2">{t}</span>)}
 ```
 
 ---
 
-### RULE 6 - Styling rules
+### RULE 5 - Styling rules
 
 **Never use raw colour values.** All colours must come from CSS variables via Tailwind token classes.
 
 ```tsx
 // ✓ Correct - token classes
 <p className="text-muted-foreground">…</p>
-<div className="bg-primary/10 border-primary/50">…</div>
-<div style={{ color: "var(--color-primary)" }}>…</div>
+<div className="border-border bg-muted">…</div>
 
 // ✗ Wrong - hardcoded values
 <p className="text-gray-500">…</p>
 <div style={{ color: "#9e363a" }}>…</div>
 ```
 
+**Do not use:** gradients on surfaces or text, glow shadows, glassmorphism panels, or a second accent colour.
+
 **Typography rules:**
 
-- Body text: `text-foreground` (primary) or `text-muted-foreground` (secondary/captions)
-- Headings: `text-foreground` - never `text-black` or `text-white`
-- Accent text: `text-primary`
-- Gradient accent: `className="text-gradient-primary"` (defined in `utilities.css`)
-- Section label (small uppercase above heading): `text-sm font-semibold text-primary uppercase tracking-widest`
-
-**Spacing rules:**
-
-- Section vertical padding is handled by the `<Section>` wrapper - do not add top/bottom padding to the `<section>` element directly.
-- Card gap between fields: `gap-4` or `gap-5`.
-- Card gap between major card groups: `gap-8` for desktop grids.
+| Role | Classes |
+| --- | --- |
+| Display heading (section title) | `<RevealText as="h2" className="text-5xl md:text-7xl">` - serif is applied by the base `h2` style |
+| Item heading | `<h3 className="text-3xl md:text-4xl">` |
+| Body text | default (`font-sans`), `text-muted-foreground` for secondary copy |
+| Metadata label (dates, indexes, captions) | `className="eyebrow"` |
+| Tags and tech lists | `font-mono text-xs` |
+| Numbers and dates | add `figures` for tabular figures |
+| Accent | `text-primary` - use for one element per block at most |
 
 **Dark mode:**
 
-- Do not use `dark:` variants to swap colours that are already handled by CSS variables. `bg-card`, `text-foreground`, `border-border`, etc. automatically invert.
-- Only add `dark:` when a visual tweak is not captured by the variable (e.g. `opacity-40 dark:opacity-20`).
+- Do not use `dark:` variants to swap colours that are already handled by CSS variables.
+- Only add `dark:` when a visual tweak is not captured by the variable.
 
-**Utility class rules:**
+**Utility and component classes:**
 
 | Class | Source | Use for |
 | --- | --- | --- |
-| `text-gradient-primary` | `utilities.css` | Crimson gradient on headings |
-| `btn-glow` | `utilities.css` | Subtle glow aura on primary CTA buttons |
-| `card-glow` | `utilities.css` | Hover glow on project cards |
-| `underline-animated` | `utilities.css` | Single animated underline on links |
-| `double-underline-animated` | `utilities.css` | Double animated underline (used by `Button variant="link"`) |
-| `btn-pulse-glow` | `animations.css` | Always-on crimson pulse (used by `Badge animation="pulse-glow"`) |
+| `container-page` | `components.css` | Page gutter and max width. Use on every full-width block |
+| `eyebrow` | `components.css` | Small monospaced uppercase metadata label |
+| `link-draw` | `components.css` | Underline that draws on hover (used by `TextLink`) |
+| `link-underline` | `components.css` | Permanent underline that redraws on hover (used by `TextLink underline="underline"`) |
+| `field-input` | `components.css` | Underline-only form input (used by `Field`) |
+| `figures` | `utilities.css` | Tabular lining figures |
+| `visually-hidden` | `utilities.css` | Hide visually, keep for screen readers |
 
 ---
 
-### RULE 7 - Animation rules
+### RULE 6 - Animation rules
 
 **Never use raw easing arrays, raw easing strings, or magic duration numbers.**
 
 ```ts
 // ✓ Correct
-transition={{ duration: durations.base, ease: easings.smooth }}
+transition={{ duration: durations.xslow, ease: easings.expo }}
 
 // ✗ Wrong - raw values
-transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-transition={{ duration: 0.5, ease: "easeOut" }}
+transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
 ```
 
 **Scroll-triggered animations must use `useViewportAnimation`** - not raw `useInView` + `useRef`:
 
 ```ts
 // ✓ Correct
-const { ref, isInView } = useViewportAnimation({ once: true, margin: "-80px" })
+const { ref, isInView } = useViewportAnimation({ margin: "0px 0px -10% 0px" })
 
 // ✗ Wrong - raw framer-motion hooks in section/UI components
 const ref = useRef(null)
 const isInView = useInView(ref, { once: true })
 ```
 
-**Load-time (on-mount) animations** use inline `initial/animate/transition` props with explicit delays - not `variants={}` - because variant-embedded transitions take precedence over element-level `transition` props, making per-element delay control impossible:
+**Prefer the reveal primitives** in `src/components/ui/Reveal.tsx` over one-off motion code:
 
-```tsx
-// ✓ Correct - load-time with delay
-<motion.div
-  initial={{ opacity: 0, y: 32 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: durations.slow, ease: easings.smooth, delay: 0.72 }}
-/>
+| Primitive | Effect | Use for |
+| --- | --- | --- |
+| `RevealText` | Words slide up from behind a mask | Section titles, project titles, hero name (`onMount`) |
+| `Rule` | Hairline draws from left to right | Dividers between items and under section headers |
+| `FadeIn` | Short fade and rise | Body copy, lists, supporting blocks |
 
-// ✗ Wrong for load-time - variants prevent delay overrides
-<motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ delay: 0.72 }} />
-```
+**Load-time (on-mount) animations** use inline `initial/animate/transition` props with explicit delays - not `variants={}` - because variant-embedded transitions take precedence over element-level `transition` props.
 
-**Scroll-triggered animations** use `variants` + `useViewportAnimation`:
+**Reduced motion:** `MotionProvider` sets `reducedMotion="user"`, so Framer Motion skips transform animations when the operating system requests it. Scroll-linked values (`useScroll` + `useTransform`) are not covered by this setting. Gate them with `useReducedMotion()`.
 
-```tsx
-// ✓ Correct - scroll-triggered
-const { ref, isInView } = useViewportAnimation({ once: true, margin: "-80px" })
-<motion.div ref={ref} variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"} />
-```
+**Do not add:** always-on pulsing or glowing elements, infinite marquees, typewriter effects, animated background paths, or hover scale on buttons.
 
-**Grids of 3+ cards** must use `StaggerGroup` + `cardEntrance` - no individual refs per card:
-
-```tsx
-<StaggerGroup stagger="loose" className="grid grid-cols-3 gap-6">
-  {items.map((item) => (
-    <motion.div key={item.id} variants={cardEntrance}>…</motion.div>
-  ))}
-</StaggerGroup>
-```
-
-**`position: fixed` elements** must be siblings of `<PageTransition>` in `layout.tsx`, not children. Framer Motion's `motion.div` applies CSS `transform` during transitions, which breaks fixed positioning. The `<BackToTop />` placement is the reference pattern:
-
-```tsx
-// layout.tsx - correct structure
-<PageTransition>{children}</PageTransition>
-<BackToTop />
-```
+**`position: fixed` elements** must be siblings of `<PageTransition>` in `layout.tsx`, not children. Framer Motion applies CSS `transform` during transitions, which breaks fixed positioning. `<MainNavigation />` is the reference pattern.
 
 ---
 
-### RULE 8 - CSS architecture rules
+### RULE 7 - CSS architecture rules
 
 - `@import "tailwindcss"` and `@import "tw-animate-css"` appear **once** - in `globals.css` only. Never in partials.
-- `@keyframes` definitions belong in `animations.css` only.
-- `transition`-based effects belong in `utilities.css` or `components.css`.
+- `@keyframes` used by a component class go at the top level of the same partial as that class.
 - New CSS variables must be added to `theme.css` under both `:root` and `.dark`, and mapped in the `@theme inline` block.
 - Never write `color: #hex` or `background: rgb(...)` in CSS files. Use CSS variable references.
 
 ---
 
-### RULE 9 - Import rules
+### RULE 8 - Import rules
 
 All imports use the `@arno/*` path alias - never relative paths:
 
@@ -366,6 +214,49 @@ import { Button } from "../../components/ui/Button"
 
 ---
 
+## Design System
+
+The site uses an editorial layout: typography and whitespace carry the design, not decoration.
+
+| Element | Decision |
+| --- | --- |
+| Display font | Instrument Serif (`font-serif`) - all headings, names and large figures |
+| Body font | Schibsted Grotesk (`font-sans`) - body copy and interface text |
+| Metadata font | JetBrains Mono (`font-mono`, `.eyebrow`) - labels, dates, indexes, tags |
+| Palette | Warm paper and ink neutrals with one accent (Redline crimson) |
+| Structure | Numbered sections (`01 About`), 12-column grid, hairline rules |
+| Texture | Static paper grain on `body::before` (see `base.css`) |
+| Radius | `--radius: 0.25rem`. Most elements have no radius |
+
+**Section pattern:**
+
+```tsx
+<Section id="projects" index="02" label={copy.label} aside="08 entries">
+  <RevealText as="h2" className="text-5xl md:text-7xl">{copy.title}</RevealText>
+  {/* content on the 12-column grid */}
+</Section>
+```
+
+**List pattern** (projects, specialisations, achievements):
+
+```tsx
+<ol>
+  {items.map((item, i) => (
+    <li key={item.title} className="group">
+      <Rule />
+      <div className="grid grid-cols-12 gap-y-4 py-8 md:gap-x-10">
+        <span className="eyebrow figures col-span-12 md:col-span-1 group-hover:text-primary">{pad(i + 1)}</span>
+        <h3 className="col-span-12 md:col-span-6">{item.title}</h3>
+        <p className="col-span-12 md:col-span-5 md:col-start-8">{item.description}</p>
+      </div>
+    </li>
+  ))}
+</ol>
+<Rule />
+```
+
+---
+
 ## Tech Stack
 
 | Layer | Library | Version |
@@ -377,8 +268,8 @@ import { Button } from "../../components/ui/Button"
 | Animation | Framer Motion | 12.x |
 | Icons | Lucide React | 0.539.x |
 | UI Variants | Class Variance Authority (CVA) | 0.7.x |
-| UI Variants | tailwind-variants (tv) | - |
 | UI Primitives | Radix UI | 2.x |
+| Fonts | Instrument Serif, Schibsted Grotesk, JetBrains Mono via `next/font` | - |
 | Form | Web3Forms API | - |
 | Deploy | Vercel | - |
 
@@ -390,56 +281,47 @@ import { Button } from "../../components/ui/Button"
 src/
 ├── app/
 │   ├── globals.css          # Single CSS entry point - imports all partials
-│   ├── layout.tsx           # Root layout: fonts, metadata, PageTransition, BackToTop
+│   ├── layout.tsx           # Root layout: fonts, metadata, theme script, providers
 │   ├── page.tsx             # Home page - composes all sections
-│   ├── error.tsx            # Error boundary (animated)
-│   ├── not-found.tsx        # 404 page (animated)
-│   ├── loading.tsx          # Route loading spinner
+│   ├── error.tsx            # Error boundary (uses StatusPage)
+│   ├── not-found.tsx        # 404 page (uses StatusPage)
+│   ├── loading.tsx          # Route loading indicator
 │   ├── sitemap.ts           # Next.js sitemap generator
 │   ├── robots.ts            # Robots.txt generator
 │   └── styles/
 │       ├── theme.css        # CSS variables (:root, .dark) + @theme inline tokens
-│       ├── base.css         # HTML/body resets, typography, scrollbar, autofill
-│       ├── components.css   # CSS class components (.input-field, .floating-label, etc.)
-│       ├── utilities.css    # Utility classes (.text-gradient-primary, .btn-glow, .card-glow, etc.)
-│       └── animations.css   # @keyframes + trigger classes (.btn-pulse-glow, .btn-shimmer, etc.)
+│       ├── base.css         # Resets, typography, paper grain, focus, reduced motion
+│       ├── components.css   # .container-page, .eyebrow, .link-draw, .link-underline, .field-input
+│       └── utilities.css    # .figures, .visually-hidden
 │
 ├── assets/
 │   └── site.tsx             # SINGLE SOURCE OF TRUTH for all content data
 │
 ├── components/
 │   ├── layout/
-│   │   ├── MainNavigation.tsx   # Orchestrator: Header + MobileHeader + Sidebar
-│   │   ├── Header.tsx           # Desktop nav bar
-│   │   ├── MobileHeader.tsx     # Mobile top bar with burger toggle
-│   │   ├── Sidebar.tsx          # Mobile slide-in drawer
+│   │   ├── MainNavigation.tsx   # Fixed header: hides on scroll down, active-section tracking
+│   │   ├── MobileMenu.tsx       # Full-screen menu below 1024px
 │   │   ├── Footer.tsx           # Footer
-│   │   ├── Section.tsx          # Section wrapper - consistent padding + max-width
+│   │   ├── Section.tsx          # Numbered section shell: header row + rule + content
+│   │   ├── StatusPage.tsx       # Shared layout for 404 and error pages
+│   │   ├── MotionProvider.tsx   # MotionConfig with reducedMotion="user"
 │   │   └── ThemeProvider.tsx    # Dark/light mode context
 │   │
 │   ├── sections/
-│   │   ├── Hero.tsx             # Hero + FloatingPaths background animation
-│   │   ├── About.tsx            # About - skill bars, tabs (Skills / Education / Achievements)
-│   │   ├── Specializations.tsx  # 3-card expertise grid
-│   │   ├── Projects.tsx         # Project cards grid
-│   │   ├── Experience.tsx       # Timeline - work + education
-│   │   └── ContactForm.tsx      # Web3Forms contact form + contact info panel
+│   │   ├── Hero.tsx             # Name, rotating role, tagline, count-up figures
+│   │   ├── About.tsx            # Portrait, bio, facts, areas of expertise, skills
+│   │   ├── Projects.tsx         # Featured projects + expandable project index
+│   │   ├── Experience.tsx       # Work + education timeline, achievements
+│   │   └── ContactForm.tsx      # Contact details + Web3Forms form
 │   │
 │   └── ui/
-│       ├── Badge.tsx            # CVA badge - variants: default, secondary, tag, outline, destructive, icon
-│       ├── Button.tsx           # CVA button - variants: primary, secondary, outline, ghost, link, error
-│       ├── BackToTop.tsx        # Fixed scroll-to-top button (placed outside PageTransition)
-│       ├── Card.tsx             # tailwind-variants card - variants: default, outline, flat, glass, interactive
-│       ├── Input.tsx            # Floating-label input/textarea
-│       ├── Marquee.tsx          # Infinite scrolling tech-stack strip
-│       ├── Metrics.tsx          # Animated counter stat cards
-│       ├── SectionHeader.tsx    # Reusable badge + h2 + description header
-│       ├── TypeWriter.tsx       # Typewriter word cycling
-│       ├── ThemeToggle.tsx      # Dark/light toggle button
-│       ├── BurgerMenu.tsx       # Animated burger icon
+│       ├── Button.tsx           # CVA button - variants: primary, outline, secondary, ghost, link, error
 │       ├── DropdownMenu.tsx     # Radix dropdown wrapper
-│       ├── Logo.tsx             # Site logo
-│       └── Magnet.tsx           # Magnetic cursor effect wrapper
+│       ├── Input.tsx            # Field - label above, underline-only input/textarea
+│       ├── Logo.tsx             # Serif wordmark
+│       ├── Reveal.tsx           # RevealText, Rule, FadeIn motion primitives
+│       ├── TextLink.tsx         # Text link with optional directional arrow
+│       └── ThemeToggle.tsx      # Light / dark / system menu
 │
 └── lib/
     ├── animations/          # Modular animation system (see Animation System section)
@@ -454,256 +336,69 @@ All imports use `@arno/*` → `./src/*`. Never use relative paths.
 
 ## UI Component Reference
 
+### Section
+
+**Source:** `src/components/layout/Section.tsx`
+
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `id` | `string` | Anchor target. Must match the `navLinks` href |
+| `index` | `string` | Two-digit number, for example `"02"` |
+| `label` | `string` | Short name shown next to the number |
+| `aside` | `ReactNode` | Optional text on the right of the header row |
+| `className` | `string` | Merged via `cn()` |
+
+### Reveal primitives
+
+**Source:** `src/components/ui/Reveal.tsx`
+
+| Component | Props | Notes |
+| --- | --- | --- |
+| `RevealText` | `children: string`, `as`, `className`, `delay`, `stagger`, `onMount` | Renders a visually hidden copy for screen readers. `children` must be a plain string |
+| `Rule` | `className`, `delay`, `strong` | `strong` uses the ink colour (`--border-strong`) |
+| `FadeIn` | `as`, `className`, `delay` | `as`: `div`, `li`, `dl`, `ul` |
+
+### TextLink
+
+**Source:** `src/components/ui/TextLink.tsx`
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `href` | `string` | - | Required |
+| `arrow` | `"up-right"` \| `"right"` \| `"down"` \| `"up"` | - | The arrow moves in its direction on hover |
+| `external` | `boolean` | `false` | New tab, safe `rel`, hidden screen reader note |
+| `underline` | `"draw"` \| `"underline"` | `"draw"` | `draw` shows the line on hover only |
+
 ### Button
 
 **Source:** `src/components/ui/Button.tsx` · Built with CVA
 
-```tsx
-import { Button } from "@arno/components/ui/Button"
-```
-
-**Props:**
-
 | Prop | Type | Default | Notes |
 | --- | --- | --- | --- |
-| `variant` | see table | `"primary"` | Required in practice - always specify |
-| `size` | see table | `"md"` | Required in practice - always specify |
-| `rounded` | `boolean` | `false` | `true` → pill shape |
-| `asChild` | `boolean` | `false` | Delegates rendering to child element - use when wrapping `<a>` or `<Link>` |
-| `loading` | `boolean` | `false` | Shows spinner, disables button - use for async actions |
-| `disabled` | `boolean` | `false` | Disables button |
+| `variant` | see table | `"primary"` | |
+| `size` | `"sm"` \| `"md"` \| `"lg"` \| `"icon"` | `"md"` | Always add `aria-label` or hidden text to `icon` buttons |
+| `asChild` | `boolean` | `false` | Delegates rendering to the child element |
+| `loading` | `boolean` | `false` | Shows a spinner and disables the button |
 
-**Variants:**
-
-| Value | Appearance | Use for |
+| Variant | Appearance | Use for |
 | --- | --- | --- |
-| `primary` | Filled crimson, shadow | Primary CTAs |
-| `secondary` | Muted fill → primary on hover | Secondary actions |
-| `outline` | Transparent, border | Tertiary/external links |
-| `ghost` | Transparent, no border | Icon buttons, nav links, quiet actions |
-| `link` | Underline animation | Inline text links |
-| `error` | Filled destructive red | Dangerous/error actions |
+| `primary` | Solid ink, turns crimson on hover | Form submit, main action |
+| `outline` | Hairline ink border, fills on hover | Secondary action next to `primary` |
+| `secondary` | Muted fill | Low-emphasis action |
+| `ghost` | No fill until hover | Icon buttons (theme toggle) |
+| `link` | Underlined text | Inline action inside text |
+| `error` | Destructive fill | Destructive action |
 
-**Sizes:**
+### Field
 
-| Value | Classes | Use for |
-| --- | --- | --- |
-| `sm` | `text-sm px-3 py-1.5` | Compact card actions, tag rows |
-| `md` | `text-base px-4 py-2` | Default - general UI |
-| `lg` | `text-lg px-5 py-3` | Hero and section CTAs |
-| `xl` | `text-xl px-6 py-3.5` | Full-width banner buttons |
-| `icon` | `h-10 w-10 p-0` | Square icon-only - always add `aria-label` |
-
-**Common patterns:**
+**Source:** `src/components/ui/Input.tsx`
 
 ```tsx
-// Primary hero CTA
-<Button variant="primary" size="lg" asChild className="btn-glow gap-2">
-  <a href="#projects">View My Work <ArrowRight className="h-4 w-4" /></a>
-</Button>
-
-// Outline secondary CTA
-<Button variant="outline" size="lg" asChild>
-  <a href="#contact">Get In Touch</a>
-</Button>
-
-// Ghost icon button (nav, social)
-<Button variant="ghost" size="icon" asChild
-  className="h-9 w-9 rounded-lg bg-card/50 border border-border/50
-             text-muted-foreground hover:text-foreground hover:border-primary/50">
-  <a href={siteData.links.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-    <Github className="h-4 w-4" />
-  </a>
-</Button>
-
-// Async form submit
-<Button type="submit" variant="primary" loading={status === "sending"} className="w-full gap-2">
-  {status === "sending" ? "Sending…" : <><Send className="h-4 w-4" /> Send Message</>}
-</Button>
+<Field label="Email" name="email" type="email" autoComplete="email" required />
+<Field label="Message" name="message" as="textarea" rows={5} required />
 ```
 
----
-
-### Badge
-
-**Source:** `src/components/ui/Badge.tsx` · Built with CVA
-
-```tsx
-import { Badge } from "@arno/components/ui/Badge"
-```
-
-**Props:**
-
-| Prop | Type | Default | Notes |
-| --- | --- | --- | --- |
-| `variant` | see table | `"default"` | Always specify |
-| `size` | see table | `"md"` | Always specify |
-| `rounded` | `boolean` | `true` | `false` → `rounded-md` corners |
-| `animation` | see table | `"none"` | |
-| `className` | `string` | - | Merged via `cn()` |
-
-**Variants:**
-
-| Value | Appearance | Use for |
-| --- | --- | --- |
-| `default` | `bg-primary`, filled | Featured label, primary accent |
-| `secondary` | `bg-secondary`, filled | Neutral labels |
-| `tag` | Transparent, `border-border` | Tech tags, skill chips, achievement labels |
-| `outline` | Transparent, subtle border | Period/date spans, info chips |
-| `destructive` | `bg-destructive`, filled | Error/warning labels |
-| `icon` | Square icon, `bg-primary` | Icon-only badge |
-
-**Animations:**
-
-| Value | Effect | Use for |
-| --- | --- | --- |
-| `none` | - | Default - most badges |
-| `pulse-glow` | Always-on crimson glow pulse | Hero status badge |
-| `pulse` | Hover pulse | Attention labels |
-| `bounce` | Hover bounce | Playful callouts |
-| `glow` | Hover blue glow | Interactive highlight |
-| `tilt` | Hover tilt + scale | Interactive tags |
-
-**Common patterns:**
-
-```tsx
-// Tech/skill tag
-<Badge variant="tag" size="sm">TypeScript</Badge>
-
-// Period/date label
-<Badge variant="outline" size="sm" className="whitespace-nowrap self-start">2021 – 2024</Badge>
-
-// Info chip with icon
-<Badge variant="outline" size="sm" className="gap-1.5 bg-card/80 backdrop-blur-sm py-1.5">
-  <MapPin className="h-3 w-3 text-primary" />
-  South Africa
-</Badge>
-
-// Hero status badge with always-on glow
-<Badge variant="tag" size="sm" animation="pulse-glow" className="gap-2 px-4 py-1.5 backdrop-blur-sm">
-  <span className="inline-flex rounded-full h-2 w-2 bg-primary" />
-  Junior Fullstack Developer @ Converge Solutions
-</Badge>
-
-// Achievement label on a project card
-<Badge variant="tag" size="sm"
-  className="gap-1 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800">
-  <Trophy className="h-3 w-3" />
-  1st Place
-</Badge>
-```
-
----
-
-### Card
-
-**Source:** `src/components/ui/Card.tsx` · Built with `tailwind-variants` (`tv()`)
-
-```tsx
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@arno/components/ui/Card"
-```
-
-**Props:**
-
-| Prop | Type | Default | Notes |
-| --- | --- | --- | --- |
-| `variant` | see table | `"default"` | |
-| `padding` | `"sm"` \| `"md"` \| `"lg"` | `"md"` | Override with `className="md:p-8"` for responsive padding |
-| `animation` | see table | `"none"` | |
-| `size` | `"full"` \| `"auto"` \| `"lg"` | `"full"` | |
-
-**Variants:**
-
-| Value | Appearance | Use for |
-| --- | --- | --- |
-| `default` | `bg-card`, border, shadow | Standard content cards |
-| `outline` | `border-2`, no fill | Feature boxes, emphasis |
-| `flat` | No border, no shadow | Nested cards, coloured backgrounds |
-| `glass` | Frosted glass | Overlays - use sparingly |
-| `interactive` | Cursor pointer, hover scale + press | Clickable cards |
-
-**Animations:**
-
-| Value | Effect |
-| --- | --- |
-| `none` | No animation |
-| `hover-lift` | Lifts up + deeper shadow on hover |
-| `hover-glow` | Glow on hover |
-| `tilt` | Tilt + scale on hover |
-| `pulse` | Pulse on hover |
-
-**Common patterns:**
-
-```tsx
-// Standard content card
-<Card padding="md">
-  <h3 className="text-lg font-semibold text-foreground">Title</h3>
-  <p className="text-sm text-muted-foreground">Description</p>
-</Card>
-
-// Contact info panel - md padding with responsive override
-<Card padding="md" className="md:p-8 flex flex-col gap-6 h-full">
-  {/* fields */}
-</Card>
-
-// Clickable project card
-<Card variant="interactive" animation="hover-lift" padding="md">
-  {/* project content */}
-</Card>
-
-// Structured card with sub-components
-<Card>
-  <CardHeader>
-    <CardTitle>Title</CardTitle>
-    <CardDescription>Supporting text</CardDescription>
-  </CardHeader>
-  <CardContent>…</CardContent>
-  <CardFooter>…</CardFooter>
-</Card>
-```
-
----
-
-### Other UI Components
-
-| Component | Import | Use for |
-| --- | --- | --- |
-| `SectionHeader` | `@arno/components/ui/SectionHeader` | Badge + h2 + description header at the top of each section |
-| `Section` | `@arno/components/layout/Section` | Section wrapper - consistent vertical padding and max-width |
-| `FloatingInput` | `@arno/components/ui/Input` | Floating-label input or textarea - always use inside forms, never raw `<input>` |
-| `Marquee` | `@arno/components/ui/Marquee` | Infinite scroll strip (tech stack) |
-| `Metrics` | `@arno/components/ui/Metrics` | Animated stat counter cards |
-| `TypeWriter` | `@arno/components/ui/TypeWriter` | Cycling typewriter text |
-| `BackToTop` | `@arno/components/ui/BackToTop` | Fixed scroll-to-top button - placed in layout, not in pages |
-| `ThemeToggle` | `@arno/components/ui/ThemeToggle` | Dark/light mode toggle |
-
-**`SectionHeader` usage:**
-
-```tsx
-import SectionHeader from "@arno/components/ui/SectionHeader"
-
-<SectionHeader
-  badge="What I've built"
-  title="Projects"
-  description="A selection of projects ranging from AI-powered tools to interactive web apps."
-  align="center"
-/>
-```
-
-**`Section` usage:**
-
-```tsx
-import { Section } from "@arno/components/layout/Section"
-
-<Section id="projects">
-  {/* section content */}
-</Section>
-
-// With modifier classes
-<Section id="about" className="relative overflow-hidden">
-  {/* section content */}
-</Section>
-```
+Always set `autoComplete` where a standard token exists (`given-name`, `email`, `tel`).
 
 ---
 
@@ -714,18 +409,24 @@ import { Section } from "@arno/components/layout/Section"
 | File | Layer | Contains |
 | --- | --- | --- |
 | `theme.css` | - | CSS variables (`:root`, `.dark`) and `@theme inline` token mapping |
-| `base.css` | `@layer base` | HTML/body resets, headings, links, scrollbar, autofill fix |
-| `components.css` | `@layer components` | CSS class components - `.input-field`, `.floating-label`, `.back-to-top-btn` |
-| `utilities.css` | `@layer utilities` | Utility classes - `.text-gradient-primary`, `.btn-glow`, `.card-glow`, `.animate-marquee`, `.underline-animated` |
-| `animations.css` | top-level + `@layer components` | `@keyframes` + trigger classes - `.btn-pulse-glow`, `.btn-shimmer`, `.aurora-gradient`, `.typing-cursor` |
+| `base.css` | `@layer base` | Resets, heading and body typography, paper grain, focus ring, selection, autofill, reduced motion |
+| `components.css` | `@layer components` | `.container-page`, `.eyebrow`, `.link-draw`, `.link-underline`, `.field-input` and their keyframes |
+| `utilities.css` | `@layer utilities` | `.figures`, `.visually-hidden` |
 
 **Rule:** `@import "tailwindcss"` and `@import "tw-animate-css"` appear **once**, in `globals.css` only. Partials must never contain their own `@import`.
 
-**Rule:** If it uses `@keyframes` → `animations.css`. If it uses CSS `transition` → `utilities.css` or `components.css`.
-
 ### Theme tokens
 
-Theme: **Midnight Navy + Redline Crimson**.
+Theme: **Paper + Ink + Redline**. See the header comment in `theme.css` for the palette rules.
+
+| Token | Use for |
+| --- | --- |
+| `background` / `foreground` | Page surface and main text |
+| `muted` / `muted-foreground` | Hover fills and secondary text |
+| `primary` | The single accent: active states, key labels, focus ring |
+| `border` | Hairline rules |
+| `border-strong` | Section header rules (ink colour) |
+| `card`, `popover` | Dropdown menus and other raised surfaces |
 
 ```css
 /* CSS variable - use in raw CSS and Framer Motion inline styles */
@@ -735,10 +436,11 @@ var(--color-primary)
 text-primary  ·  bg-primary  ·  border-primary
 ```
 
-Fonts:
+Fonts (loaded in `layout.tsx`, mapped in `theme.css`):
 
-- `var(--font-heading)` → Space Grotesk
-- `var(--font-body)` → DM Sans
+- `font-serif` → Instrument Serif (`--font-instrument-serif`)
+- `font-sans` → Schibsted Grotesk (`--font-schibsted-grotesk`)
+- `font-mono` → JetBrains Mono (`--font-jetbrains-mono`)
 
 ---
 
@@ -791,6 +493,7 @@ src/lib/animations/
 | `easings.sharp` | `[0.4, 0.0, 0.6, 1]` | Fast in/out - quick dismissals |
 | `easings.out` | `[0.0, 0.0, 0.2, 1]` | Fast in, slow out - large entrances |
 | `easings.in` | `[0.4, 0.0, 1.0, 1]` | Slow in, fast out - exits |
+| `easings.expo` | `[0.16, 1, 0.3, 1]` | Exponential ease-out - reveals, rules, editorial entrances (default for this design) |
 
 ### Duration tokens
 
@@ -801,8 +504,8 @@ src/lib/animations/
 | `durations.quick` | 0.35s | Dropdown open/close |
 | `durations.base` | 0.5s | Standard UI transitions |
 | `durations.slow` | 0.7s | Section entrances, card reveals |
-| `durations.xslow` | 1.0s | Hero headlines, blur reveals |
-| `durations.crawl` | 1.5s | Ambient / background effects |
+| `durations.xslow` | 1.0s | Text reveals, section entrances |
+| `durations.crawl` | 1.5s | Rules drawing, portrait reveal, count-up figures |
 
 ### Variant convention
 
@@ -823,10 +526,12 @@ Variants in `text.ts`: `textBlock`, `headline`, `textSlideIn`, `badgePop`, `word
 
 | Situation | Pattern |
 | --- | --- |
-| Animates on page load (Hero) | Inline `initial/animate/transition` with explicit `delay` per element |
-| Animates when scrolled into view | `useViewportAnimation` + `variants` + `animate={isInView ? "visible" : "hidden"}` |
-| Grid of 3+ cards | `StaggerGroup` + `motion.div variants={cardEntrance}` |
-| Single block wrapper | `AnimatedSection variant={fadeUp}` |
+| Animates on page load (Hero) | Inline `initial/animate/transition` with explicit `delay` per element, or `RevealText onMount` |
+| Heading enters the viewport | `RevealText` |
+| Divider enters the viewport | `Rule` |
+| Body block enters the viewport | `FadeIn` |
+| List of items | `Rule` + `FadeIn` per item with `delay={i * 0.06}` to `delay={i * 0.1}` |
+| Scroll-linked value | `useScroll` + `useTransform` or `useSpring`, gated by `useReducedMotion()` |
 
 ### StaggerGroup
 
@@ -848,7 +553,7 @@ Stagger presets: `"default"` · `"tight"` · `"loose"` · `"cascade"`
 
 ## Content Management
 
-**Everything visible on the site** - name, bio, links, metrics, projects, skills, experience, achievements, typewriter roles - lives in:
+**Everything visible on the site** - name, bio, links, metrics, projects, skills, experience, achievements, rotating roles, section copy - lives in:
 
 ```text
 src/assets/site.tsx

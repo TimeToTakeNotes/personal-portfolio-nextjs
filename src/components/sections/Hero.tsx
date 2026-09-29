@@ -1,251 +1,208 @@
 "use client"
 
 import * as React from "react"
-import { motion } from "framer-motion"
-import { ArrowRight, ChevronDown, Download, Github, Linkedin } from "lucide-react"
-import { Button } from "@arno/components/ui/Button"
-import { Badge } from "@arno/components/ui/Badge"
-import { Metrics } from "@arno/components/ui/Metrics"
-import { TypeWriter } from "@arno/components/ui/TypeWriter"
-import { Marquee } from "@arno/components/ui/Marquee"
+import {
+  AnimatePresence,
+  animate,
+  motion,
+  useScroll,
+  useTransform,
+} from "framer-motion"
 import { siteData } from "@arno/assets/site"
-import { easings, durations } from "@arno/lib/animations"
+import type { MetricItem } from "@arno/assets/site"
+import { easings, useReducedMotion, durations, useViewportAnimation } from "@arno/lib/animations"
+import { RevealText, Rule } from "@arno/components/ui/Reveal"
+import { TextLink } from "@arno/components/ui/TextLink"
 
-// ── Floating path lines ────────────────────────────────────────────────────
-// Uses `currentColor` so colour is controlled by the wrapping element's
-// `text-*` class - no hardcoded colour values inside the component.
+const ROLE_INTERVAL_MS = 2800
 
-const PATHS = Array.from({ length: 36 }, (_, i) => ({
-  id: i,
-  d: (pos: number) =>
-    `M-${380 - i * 5 * pos} -${189 + i * 6}` +
-    `C-${380 - i * 5 * pos} -${189 + i * 6}` +
-    ` -${312 - i * 5 * pos} ${216 - i * 6}` +
-    ` ${152 - i * 5 * pos} ${343 - i * 6}` +
-    `C${616 - i * 5 * pos} ${470 - i * 6}` +
-    ` ${684 - i * 5 * pos} ${875 - i * 6}` +
-    ` ${684 - i * 5 * pos} ${875 - i * 6}`,
-  width: 0.5 + i * 0.03,
-  // Deterministic duration - avoids SSR/client Math.random() hydration mismatch
-  duration: 20 + (i * 7) % 11,
-  strokeOpacity: 0.12 + i * 0.018,
-}))
+const currentRole = siteData.experience.find((item) => item.period.includes("Present"))
 
-export function FloatingPaths({ position }: { position: number }) {
+// ── Rotating role ──────────────────────────────────────────────────────────
+
+/**
+ * Cycles through siteData.typewriterRoles. Each role slides up from behind
+ * a mask. Screen readers get the primary role only, once.
+ */
+function RotatingRole({ words }: { words: string[] }) {
+  const [index, setIndex] = React.useState(0)
+  const prefersReduced = useReducedMotion()
+
+  React.useEffect(() => {
+    if (prefersReduced || words.length < 2) return
+    const timer = setInterval(() => setIndex((i) => (i + 1) % words.length), ROLE_INTERVAL_MS)
+    return () => clearInterval(timer)
+  }, [prefersReduced, words.length])
+
   return (
-    <div className="absolute inset-0 pointer-events-none">
-      <svg className="w-full h-full" viewBox="0 0 696 316" fill="none">
-        {PATHS.map((path) => (
-          <motion.path
-            key={path.id}
-            d={path.d(position)}
-            stroke="currentColor"
-            strokeWidth={path.width}
-            strokeOpacity={path.strokeOpacity}
-            initial={{ pathLength: 0.3, opacity: 0.5 }}
-            animate={{
-              pathLength: 1,
-              opacity: [0.25, 0.55, 0.25],
-              pathOffset: [0, 1, 0],
-            }}
-            transition={{
-              duration: path.duration,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-        ))}
-      </svg>
-    </div>
+    <>
+      <span className="visually-hidden">{siteData.role}</span>
+      <span aria-hidden="true" className="inline-grid overflow-hidden pb-[0.1em] align-bottom">
+        <AnimatePresence initial={false}>
+          <motion.span
+            key={words[index]}
+            className="col-start-1 row-start-1 whitespace-nowrap"
+            initial={{ y: "105%" }}
+            animate={{ y: "0%" }}
+            exit={{ y: "-105%" }}
+            transition={{ duration: durations.xslow, ease: easings.expo }}
+          >
+            {words[index]}
+          </motion.span>
+        </AnimatePresence>
+      </span>
+    </>
   )
 }
 
-// ── Tech stack ─────────────────────────────────────────────────────────────
+// ── Count-up figure ────────────────────────────────────────────────────────
 
-const techStack = [
-  "Next.js", "React", "TypeScript", "Python", "Django",
-  "HuggingFace", "PyTorch", "Tailwind CSS", "Docker", "MongoDB",
-  "Node.js", "OpenAI", "C# / .NET", "Git",
-]
+const FIGURE_PATTERN = /^([^\d]*)(\d+(?:\.\d+)?)(.*)$/
+
+function CountUp({ value }: { value: string }) {
+  const { ref, isInView: inView } = useViewportAnimation({ margin: "0px" })
+  const prefersReduced = useReducedMotion()
+  const match = value.match(FIGURE_PATTERN)
+  const [display, setDisplay] = React.useState(value)
+
+  React.useEffect(() => {
+    if (!inView || !match || prefersReduced) return
+    const [, prefix, number, suffix] = match
+    const decimals = number.includes(".") ? number.split(".")[1].length : 0
+    const controls = animate(0, parseFloat(number), {
+      duration: durations.crawl,
+      ease: easings.expo,
+      onUpdate: (latest) => setDisplay(`${prefix}${latest.toFixed(decimals)}${suffix}`),
+    })
+    return () => controls.stop()
+    // match is derived from value; value is the stable dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inView, value, prefersReduced])
+
+  return (
+    <span ref={ref} className="figures">
+      {display}
+    </span>
+  )
+}
+
+function Figures({ items }: { items: MetricItem[] }) {
+  return (
+    <dl className="grid grid-cols-2 md:grid-cols-4">
+      {items.map((item, i) => (
+        <motion.div
+          key={item.label}
+          className="flex flex-col-reverse gap-2 border-l border-border py-1 pl-4 pr-2 md:pl-6"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: durations.xslow, ease: easings.expo, delay: 1.05 + i * 0.08 }}
+        >
+          <dt className="eyebrow">{item.label}</dt>
+          <dd className="font-serif text-4xl leading-none md:text-5xl">
+            <CountUp value={item.value} />
+          </dd>
+        </motion.div>
+      ))}
+    </dl>
+  )
+}
 
 // ── Hero section ───────────────────────────────────────────────────────────
 
-export const HeroSection: React.FC = () => {
+export function HeroSection() {
+  const ref = React.useRef<HTMLElement>(null)
+  const prefersReduced = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] })
+  // The name drifts up slower than the page scroll, which gives a subtle depth effect.
+  const nameY = useTransform(scrollYProgress, [0, 1], ["0%", prefersReduced ? "0%" : "35%"])
+
   return (
     <section
+      ref={ref}
       id="home"
-      className="relative min-h-screen flex items-center overflow-hidden"
+      aria-label="Introduction"
+      className="relative flex min-h-[100svh] flex-col pb-10 pt-24 md:pt-28"
     >
+      <div className="container-page flex flex-1 flex-col">
+        {/* Meta row */}
+        <motion.div
+          className="eyebrow flex flex-wrap items-center justify-between gap-x-6 gap-y-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: durations.xslow, delay: 0.1 }}
+        >
+          {currentRole && (
+            <p className="flex items-start gap-2.5">
+              <span className="mt-[0.45em] h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+              <span>
+                Currently {currentRole.title}, {currentRole.org}
+              </span>
+            </p>
+          )}
+          <p>{siteData.location}</p>
+        </motion.div>
 
-      {/* ── Background Layer ─────────────────────────────────────────────── */}
-      <div className="absolute inset-0 pointer-events-none select-none" aria-hidden>
-
-        {/* Dot grid - structural base */}
-        <div
-          className="absolute inset-0 opacity-40 dark:opacity-20"
-          style={{
-            backgroundImage: "radial-gradient(circle, rgb(79 95 118 / 0.5) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          }}
-        />
-
-        {/* Floating paths - crimson (primary) sweep */}
-        <div className="absolute inset-0 text-primary opacity-[0.75] dark:opacity-[0.65]">
-          <FloatingPaths position={1} />
+        {/* Name */}
+        <div className="flex flex-1 flex-col justify-center py-14 md:py-10">
+          <motion.div style={{ y: nameY }}>
+            <h1 className="font-serif text-[clamp(3.5rem,21vw,19.5rem)] leading-[0.86] tracking-[-0.035em]">
+              <RevealText onMount delay={0.2} stagger={0.12}>
+                {siteData.name}
+              </RevealText>
+            </h1>
+          </motion.div>
         </div>
 
-        {/* Floating paths - grey-blue (muted) counter-sweep */}
-        <div className="absolute inset-0 text-muted-foreground opacity-[0.55] dark:opacity-[0.45]">
-          <FloatingPaths position={-1} />
-        </div>
+        <Rule strong delay={0.5} />
 
-        {/* Bottom fade - blends into the next section */}
-        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background to-transparent" />
-      </div>
-
-      {/* ── Content ──────────────────────────────────────────────────────── */}
-      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 py-28 md:py-36">
-        <div className="max-w-4xl mx-auto text-center">
-
-          {/* Available badge - badgePop: drops in from above with scale */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: -12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: durations.base, ease: easings.back }}
-            className="flex justify-center mb-8"
-          >
-            <Badge variant="tag" size="sm" animation="pulse-glow" className="gap-2 px-4 py-1.5 backdrop-blur-sm">
-              <span className="inline-flex rounded-full h-2 w-2 bg-primary" />
-              Junior Fullstack Developer @ Converge Solutions
-            </Badge>
-          </motion.div>
-
-          {/* Name - headline: large y travel + slight scale for impact */}
-          <motion.h1
-            initial={{ opacity: 0, y: 48, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: durations.xslow, ease: easings.smooth, delay: 0.15 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-bold mb-5 tracking-tight leading-[1.05]"
-          >
-            <span className="text-foreground">Hi, I&apos;m </span>
-            <span className="text-gradient-primary">{siteData.name}</span>
-          </motion.h1>
-
-          {/* Typewriter role - blurReveal: blur + fade + rise, premium feel */}
-          <motion.div
-            initial={{ opacity: 0, filter: "blur(10px)", y: 20 }}
-            animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-            transition={{ duration: durations.xslow, ease: easings.smooth, delay: 0.3 }}
-            className="text-xl md:text-2xl lg:text-3xl font-medium text-muted-foreground mb-7 min-h-[2rem] flex items-center justify-center"
-          >
-            <TypeWriter words={siteData.typewriterRoles} />
-          </motion.div>
-
-          {/* Bio - textBlock: softer blur + fade + rise for body copy */}
+        {/* Role, tagline and links */}
+        <div className="grid grid-cols-12 gap-y-8 pt-8 md:gap-x-8 md:pt-10">
           <motion.p
-            initial={{ opacity: 0, y: 28, filter: "blur(4px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: durations.xslow, ease: easings.smooth, delay: 0.45 }}
-            className="text-base md:text-lg text-foreground/75 max-w-2xl mx-auto leading-relaxed mb-10"
+            className="col-span-12 font-serif text-3xl italic leading-tight text-primary md:col-span-5 md:text-4xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: durations.xslow, delay: 0.75 }}
           >
-            {siteData.bio}
+            <RotatingRole words={siteData.typewriterRoles} />
           </motion.p>
 
-          {/* CTA buttons - scaleUp: grows from slightly smaller with backOut snap */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.88 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: durations.base, ease: easings.back, delay: 0.6 }}
-            className="flex flex-col sm:flex-row justify-center items-center gap-3 mb-5"
-          >
-            <Button size="lg" variant="primary" asChild className="btn-glow gap-2 w-full sm:w-auto">
-              <a href="#projects">
-                View My Work
-                <ArrowRight className="h-4 w-4" />
-              </a>
-            </Button>
-            <Button size="lg" variant="outline" asChild className="w-full sm:w-auto backdrop-blur-sm">
-              <a href="#contact">Get In Touch</a>
-            </Button>
-          </motion.div>
-
-          {/* Social icons + CV - fadeUp: rises from below */}
-          <motion.div
-            initial={{ opacity: 0, y: 32 }}
+            className="col-span-12 flex flex-col gap-6 md:col-span-6 md:col-start-7"
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: durations.slow, ease: easings.smooth, delay: 0.72 }}
-            className="flex justify-center items-center gap-3 mb-14"
+            transition={{ duration: durations.xslow, ease: easings.expo, delay: 0.85 }}
           >
-            <Button
-              variant="ghost"
-              size="icon"
-              asChild
-              className="h-9 w-9 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 text-muted-foreground hover:text-foreground hover:border-primary/50 hover:bg-primary/5"
-            >
-              <a href={siteData.links.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-                <Github className="h-4 w-4" />
-              </a>
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              asChild
-              className="h-9 w-9 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 text-muted-foreground hover:text-foreground hover:border-primary/50 hover:bg-primary/5"
-            >
-              <a href={siteData.links.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-                <Linkedin className="h-4 w-4" />
-              </a>
-            </Button>
-            <div className="h-4 w-px bg-border/50" />
-            <Button size="sm" variant="ghost" className="gap-1.5 text-muted-foreground text-sm" asChild>
-              <a href="/Arno Christie - CV.pdf" download="Arno Christie - CV.pdf">
-                <Download className="h-3.5 w-3.5" />
-                Download CV
-              </a>
-            </Button>
-          </motion.div>
-
-          {/* Tech stack marquee - clipRevealX: horizontal wipe-in */}
-          <motion.div
-            initial={{ clipPath: "inset(0 100% 0 0)", opacity: 0 }}
-            animate={{ clipPath: "inset(0 0% 0 0)", opacity: 1 }}
-            transition={{ duration: durations.slow, ease: easings.smooth, delay: 0.85 }}
-            className="mb-12"
-          >
-            <div className="h-px bg-gradient-to-r from-transparent via-border/80 to-transparent mb-5" />
-            <p className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-[0.2em] mb-4">
-              Tech Stack
-            </p>
-            <Marquee items={techStack} duration={36} />
-            <div className="h-px bg-gradient-to-r from-transparent via-border/80 to-transparent mt-5" />
-          </motion.div>
-
-          {/* Metrics - fadeUp: clean rise from below */}
-          <motion.div
-            initial={{ opacity: 0, y: 32 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: durations.slow, ease: easings.smooth, delay: 1.0 }}
-          >
-            <Metrics items={siteData.metrics} />
+            <p className="max-w-xl text-lg leading-relaxed md:text-xl">{siteData.tagline}</p>
+            <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium">
+              <li>
+                <TextLink href="#projects" arrow="down">
+                  {siteData.sections.projects.label}
+                </TextLink>
+              </li>
+              <li>
+                <TextLink href={siteData.links.github} arrow="up-right" external>
+                  GitHub
+                </TextLink>
+              </li>
+              <li>
+                <TextLink href={siteData.links.linkedin} arrow="up-right" external>
+                  LinkedIn
+                </TextLink>
+              </li>
+              <li>
+                <TextLink href={siteData.cv.href} download={siteData.cv.href.slice(1)} arrow="down">
+                  {siteData.cv.label}
+                </TextLink>
+              </li>
+            </ul>
           </motion.div>
         </div>
+
+        {/* Figures */}
+        <div className="pt-14 md:pt-20">
+          <Figures items={siteData.metrics} />
+        </div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.6, duration: 0.6, ease: easings.smooth }}
-      >
-        <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <ChevronDown className="h-5 w-5 text-muted-foreground/50" />
-        </motion.div>
-      </motion.div>
-
     </section>
   )
 }

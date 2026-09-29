@@ -1,89 +1,94 @@
 @layer base {
-  /* Autofill fixes for inputs/textareas */
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  input:-webkit-autofill:active,
-  textarea:-webkit-autofill,
-  textarea:-webkit-autofill:hover,
-  textarea:-webkit-autofill:focus,
-  textarea:-webkit-autofill:active {
-    background-color: var(--color-background) !important;
-    -webkit-text-fill-color: var(--color-foreground) !important;
-    box-shadow: 0 0 0px 1000px var(--color-background) inset !important;
-    transition: background-color 5000s ease-in-out 0s;
-  }
-
-  /* Borders for all elements */
   *, ::before, ::after {
-    @apply border-border outline-ring/50;
-  }
-
-  /* HTML and body resets */
-  html, body {
-    max-width: 100vw;
-    overflow-x: hidden;
+    @apply border-border;
   }
 
   html {
     scroll-behavior: smooth;
-    font-family: var(--font-body);
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
+    @apply bg-background text-foreground font-sans;
     margin: 0;
-    padding: 0;
-    font-weight: 400;
     font-size: 16px;
     line-height: 1.6;
+    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "ss01", "cv11";
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply text-foreground font-bold;
-    font-family: var(--font-heading);
-    margin-top: 0;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
+  /* Paper grain. Static, low-opacity noise that removes the flat digital look. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-  h1 { font-size: 2.5rem; }
-  h2 { font-size: 2rem; }
-  h3 { font-size: 1.5rem; }
-  h4 { font-size: 1.25rem; }
 
-  /* Paragraphs */
+  .dark body::before {
+    opacity: 0.07;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-serif text-foreground;
+    font-weight: 400;
+    margin: 0;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
   p {
-    margin: 0 0 1rem 0;
-    @apply text-foreground;
+    margin: 0;
+    text-wrap: pretty;
   }
 
-  /* Links */
   a {
-    @apply text-link font-semibold no-underline transition-colors duration-300 ease-in-out;
-  }
-  a:hover, a:focus {
-    @apply text-link-hover;
+    color: inherit;
+    text-decoration: none;
   }
 
-  /* Sections with IDs for anchor scrolling */
+  ::selection {
+    @apply bg-primary text-primary-foreground;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 3px;
+  }
+
   section[id] {
-    scroll-margin-top: 80px;
+    scroll-margin-top: 4rem;
   }
 
-  /* Scrollbar - thin amber accent on dark track */
-  body::-webkit-scrollbar {
-    width: 5px;
+  /* Autofill: keep inputs on the paper surface */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-foreground);
+    box-shadow: 0 0 0 1000px var(--color-background) inset;
+    transition: background-color 5000s ease-in-out 0s;
   }
-  body::-webkit-scrollbar-track {
-    @apply bg-muted;
+}
+
+/* Reduced motion: stop CSS transitions and smooth scrolling.
+   Framer Motion animations are controlled by MotionProvider. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
-  body::-webkit-scrollbar-thumb {
-    background: var(--primary);
-    border-radius: 999px;
-    opacity: 0.7;
-  }
-  body::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-hover);
+
+  *, ::before, ::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
