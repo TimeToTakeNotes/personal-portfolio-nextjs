@@ -1,106 +1,67 @@
 @layer components {
-  /* Logo */
-  .logo {
-    @apply h-8 w-8 text-primary;
+  /* Page gutter and max width. Use on every full-width block. */
+  .container-page {
+    @apply mx-auto w-full max-w-[88rem] px-5 sm:px-8 lg:px-12;
   }
 
-  /* Inputs (Web3Form) */
-  .input-group { @apply relative; }
-
-  .input-field {
-    @apply block w-full border border-border rounded-lg px-4 pt-6 pb-2
-          bg-card text-foreground placeholder-transparent transition-colors duration-150 ease-in-out;
-    outline-offset: 2px;
+  /* Small monospaced metadata label */
+  .eyebrow {
+    @apply font-mono text-[0.7rem] font-medium uppercase tracking-[0.14em] text-muted-foreground;
   }
 
-  .input-field:focus {
-    @apply border-primary ring-3 ring-ring ring-offset-1;
-    --tw-ring-offset-color: var(--color-card);
+  /* Text link with an underline that draws from left to right on hover */
+  .link-draw {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 1px;
+    transition: background-size 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+  }
+
+  .link-draw:hover,
+  .link-draw:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /* Text link with a permanent underline that retracts and redraws on hover */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 100% 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 1px;
+    transition: background-size 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+  }
+
+  .link-underline:hover,
+  .link-underline:focus-visible {
+    animation: link-redraw 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Form field: underline only, label above */
+  .field-input {
+    @apply block w-full border-0 border-b border-input bg-transparent px-0 py-3 text-base text-foreground
+           placeholder:text-muted-foreground/60 transition-colors duration-200;
+    border-radius: 0;
+  }
+
+  .field-input:hover {
+    @apply border-muted-foreground;
+  }
+
+  .field-input:focus {
+    @apply border-foreground;
     outline: none;
   }
 
-  .floating-label {
-    @apply absolute left-4 top-5 text-muted-foreground text-base pointer-events-none
-           transition-all duration-150 ease-in-out origin-left bg-transparent px-1;
-    transform-origin: left top;
-  }
-
-  .input-field:focus + .floating-label,
-  .input-field:not(:placeholder-shown) + .floating-label {
-    @apply -translate-y-3 scale-80 text-primary top-1 bg-card;
-  }
-
-  /* Autofill override - matches bg-card so the browser highlight blends in */
-  .input-field:-webkit-autofill,
-  .input-field:-webkit-autofill:hover,
-  .input-field:-webkit-autofill:focus,
-  .input-field:-webkit-autofill:active {
-    -webkit-text-fill-color: var(--color-card-foreground) !important;
-    box-shadow: 0 0 0px 1000px var(--color-card) inset !important;
-    transition: background-color 5000s ease-in-out 0s;
-  }
-
-  /* ------------------------------------------------------------------ */
-  /* Back to Top button */
-
-  .back-to-top-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: var(--color-primary);
-    border: none;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0px 0px 0px 4px var(--color-ring);
-    cursor: pointer;
-    transition-duration: 0.3s;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .back-to-top-btn .back-to-top-icon {
-    width: 12px;
-    transition-duration: 0.3s;
-  }
-
-  .back-to-top-btn .back-to-top-icon path {
-    fill: var(--color-primary-foreground);
-  }
-
-  .back-to-top-btn:hover {
-    width: 140px;
-    border-radius: 50px;
-    transition-duration: 0.3s;
-    background-color: var(--color-primary-hover);
-  }
-
-  .back-to-top-btn:hover .back-to-top-icon {
-    transition-duration: 0.3s;
-    transform: translateY(-200%);
-  }
-
-  .back-to-top-btn::before {
-    position: absolute;
-    bottom: -20px;
-    content: "Back to Top";
-    color: var(--color-primary-foreground);
-    font-size: 0px;
-  }
-
-  .back-to-top-btn:hover::before {
-    font-size: 13px;
-    opacity: 1;
-    bottom: unset;
-    transition-duration: 0.3s;
+  .field-input:focus-visible {
+    outline: none;
+    box-shadow: 0 1px 0 0 var(--color-foreground);
   }
 }
 
-/* Mobile: slightly smaller back-to-top button */
-@media (max-width: 639px) {
-  .back-to-top-btn {
-    width: 40px;
-    height: 40px;
-  }
+@keyframes link-redraw {
+  0%   { background-size: 100% 1px; background-position: 100% 100%; }
+  45%  { background-size: 0% 1px;   background-position: 100% 100%; }
+  46%  { background-size: 0% 1px;   background-position: 0 100%; }
+  100% { background-size: 100% 1px; background-position: 0 100%; }
 }

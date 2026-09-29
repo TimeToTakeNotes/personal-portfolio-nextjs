@@ -1,15 +1,36 @@
-import type { MetricItem } from "@arno/components/ui/Metrics"
-
 // ── Types ──────────────────────────────────────────────────────────────────
+
+export interface MetricItem {
+  value: string
+  label: string
+}
 
 export interface NavLink {
   label: string
   href: string
 }
 
+export interface Skill {
+  name: string
+  /** Kept as reference data. The UI does not show it. */
+  level: number
+  /** One or two sentences shown when the skill is selected */
+  summary: string
+  /**
+   * Extra project or experience tags that count as a use of this skill.
+   * The name is already split on "/" and "&" and matched against tags.
+   */
+  aliases?: string[]
+  /**
+   * Set when the skill applies to every project, for example version control.
+   * The note then says so once, instead of listing every project.
+   */
+  allProjects?: boolean
+}
+
 export interface SkillCategory {
   category: string
-  skills: Array<{ name: string; level: number }>
+  skills: Skill[]
 }
 
 export interface Project {
@@ -20,6 +41,13 @@ export interface Project {
   live?: string
   featured?: boolean
   achievement?: string
+  /**
+   * Employer for client or company work. Must match an experience `org`, so
+   * the project and the role link to each other.
+   */
+  client?: string
+  /** Set when the source code is private. The UI says so instead of linking to it. */
+  privateRepo?: boolean
 }
 
 export interface ExperienceItem {
@@ -34,6 +62,7 @@ export interface ExperienceItem {
 export interface Achievement {
   title: string
   description: string
+  /** Lucide icon key. Kept as reference data. The UI does not show it. */
   icon: string
 }
 
@@ -48,7 +77,8 @@ export interface Specialization {
 export const navLinks: NavLink[] = [
   { label: "About", href: "#about" },
   { label: "Projects", href: "#projects" },
-  { label: "Experience", href: "#experience" }
+  { label: "Experience", href: "#experience" },
+  { label: "Contact", href: "#contact" },
 ]
 
 // ── Site Data ──────────────────────────────────────────────────────────────
@@ -68,6 +98,9 @@ export const siteData = {
   email: "arno.christie@gmail.com",
   phone: "(+27) 082 654 2130",
   location: "Randfontein, Gauteng, South Africa",
+  /** IANA time zone for the live local time in the Hero */
+  timeZone: "Africa/Johannesburg",
+  timeZoneLabel: "SAST",
   available: false,
 
   metrics: [
@@ -77,51 +110,226 @@ export const siteData = {
     { value: "Top 15%", label: "Golden Key" },
   ] satisfies MetricItem[],
 
+  // Section copy. Components read these values; do not hardcode copy in JSX.
+  sections: {
+    about: {
+      label: "About",
+      practiceLabel: "What I do",
+      practiceTitle: "Areas of Expertise",
+      practiceIntro:
+        "Where my skills and interests intersect - from AI model integration to production-ready full-stack engineering.",
+      skillsLabel: "Skills",
+      skillsHint: "Select a skill for a short note",
+      skillUsedInLabel: "Where I've used it",
+      skillAllProjects: "Every project on this page",
+    },
+    projects: {
+      label: "Projects",
+      title: "What I've built",
+      intro: "A selection of projects ranging from AI-powered tools to interactive web apps.",
+      moreLabel: "More projects",
+      clientLabel: "Client work",
+      privateRepoLabel: "Private repository",
+      liveSiteLabel: "Live site",
+      liveDemoLabel: "Live demo",
+      sourceLabel: "Source",
+      githubCta: "View all on GitHub",
+    },
+    experience: {
+      label: "Experience",
+      title: "Experience & Education",
+      intro: "From academic foundations to real-world AI development - here's how I got here.",
+      workLabel: "Work Experience",
+      educationLabel: "Education",
+      achievementsLabel: "Achievements",
+      relatedProjectLabel: "Project",
+    },
+    contact: {
+      label: "Contact",
+      eyebrow: "Let's talk",
+      title: "Get In Touch",
+      intro: "Open to opportunities, collaborations, or just a conversation about AI and tech.",
+      detailsTitle: "Contact Information",
+      details:
+        "Feel free to reach out via email or phone. I'm based in South Africa and available for remote opportunities worldwide.",
+      formTitle: "Send a Message",
+      copyHint: "Click to copy",
+      copied: "Copied to clipboard",
+      mailAppLabel: "Or open in your mail app",
+      successTitle: "Message Sent!",
+      successBody: "Thanks for reaching out - I'll get back to you as soon as possible.",
+    },
+    console: {
+      greeting: "Hi there. You're reading the console, so we'll probably get along.",
+      sourceLabel: "The source for this site is on GitHub:",
+      contactLabel: "Say hello:",
+    },
+    commandMenu: {
+      placeholder: "Type a command or search",
+      empty: "No matching commands",
+      triggerLabel: "Open command menu",
+    },
+    footer: {
+      credit: "Built with Next.js, TypeScript & Tailwind CSS",
+    },
+  },
+
+  cv: {
+    href: "/Arno Christie - CV.pdf",
+    label: "Download CV",
+  },
+
   links: {
     github: "https://github.com/TimeToTakeNotes",
     linkedin: "https://www.linkedin.com/in/arno-christie-5003a1209",
     email: "arno.christie@gmail.com",
+    source: "https://github.com/TimeToTakeNotes/personal-portfolio-nextjs",
   },
 
   skillCategories: [
     {
       category: "Frontend",
       skills: [
-        { name: "React / Next.js", level: 85 },
-        { name: "TypeScript", level: 80 },
-        { name: "Tailwind CSS", level: 85 },
-        { name: "HTML & CSS", level: 90 },
-        { name: "Framer Motion", level: 70 },
+        {
+          name: "React / Next.js",
+          level: 85,
+          summary:
+            "React builds interfaces from reusable components. Next.js adds routing, server rendering and static generation on top. This site uses both.",
+        },
+        {
+          name: "TypeScript",
+          level: 80,
+          summary:
+            "JavaScript with static types. It catches whole classes of bugs before the code runs and makes large codebases safer to change.",
+        },
+        {
+          name: "Tailwind CSS",
+          level: 85,
+          summary:
+            "A utility-first CSS framework. Styles are composed in the markup from small, consistent building blocks instead of separate stylesheets.",
+        },
+        {
+          name: "HTML & CSS",
+          level: 90,
+          summary:
+            "The foundation of every web page. HTML gives content structure and meaning; CSS controls layout, type and colour.",
+        },
+        {
+          name: "Framer Motion",
+          level: 70,
+          summary:
+            "A React animation library. It drives the text reveals, drawn rules and scroll effects on this page.",
+        },
       ],
     },
     {
       category: "Backend",
       skills: [
-        { name: "Python / Django", level: 80 },
-        { name: "C# / .NET", level: 75 },
-        { name: "Node.js / Express", level: 70 },
-        { name: "Java", level: 65 },
-        { name: "REST APIs", level: 80 },
+        {
+          name: "Python / Django",
+          level: 80,
+          summary:
+            "Python is the main language for data and machine learning work. Django is its full-featured web framework, with an ORM, admin and auth built in.",
+        },
+        {
+          name: "C# / .NET",
+          level: 75,
+          summary:
+            "C# is a statically typed language from Microsoft, and .NET is the runtime and framework around it. ASP.NET Core with C# is my day-to-day stack at work.",
+          aliases: ["ASP.NET Core"],
+        },
+        {
+          name: "Node.js / Express",
+          level: 70,
+          summary:
+            "Node.js runs JavaScript on the server. Express is a minimal framework for building HTTP APIs on top of it.",
+        },
+        {
+          name: "Java",
+          level: 65,
+          summary:
+            "A statically typed, object-oriented language that runs on the JVM. Common in enterprise systems and used throughout my degree.",
+        },
+        {
+          name: "REST APIs",
+          level: 80,
+          summary:
+            "A convention for designing web APIs around resources and standard HTTP methods, so clients and servers can change independently.",
+          aliases: ["Express", "ASP.NET Core"],
+        },
       ],
     },
     {
       category: "AI & ML",
       skills: [
-        { name: "HuggingFace", level: 75 },
-        { name: "PyTorch", level: 70 },
-        { name: "NLP Fine-tuning", level: 70 },
-        { name: "Text Generation", level: 65 },
-        { name: "OpenAI APIs", level: 70 },
+        {
+          name: "HuggingFace",
+          level: 75,
+          summary:
+            "The open hub for machine learning models and datasets. Its Transformers library makes it practical to load, fine-tune and serve pretrained models.",
+        },
+        {
+          name: "PyTorch",
+          level: 70,
+          summary:
+            "A deep learning framework with dynamic computation graphs. It is the engine under most modern NLP research and HuggingFace models.",
+        },
+        {
+          name: "NLP Fine-tuning",
+          level: 70,
+          summary:
+            "Further training a pretrained language model on a smaller, domain-specific dataset so it performs better on one task.",
+        },
+        {
+          name: "Text Generation",
+          level: 65,
+          summary:
+            "Using language models to produce text, from short completions to long-form writing. Quality depends on the data, the decoding settings and careful evaluation.",
+        },
+        {
+          name: "OpenAI APIs",
+          level: 70,
+          summary:
+            "Hosted APIs for OpenAI models such as GPT and Whisper. They add language and speech features to an application without training a model.",
+          aliases: ["OpenAI Whisper"],
+        },
       ],
     },
     {
       category: "Tools & Infra",
       skills: [
-        { name: "Git / GitHub", level: 85 },
-        { name: "Docker", level: 65 },
-        { name: "MongoDB", level: 70 },
-        { name: "MySQL / SQL", level: 75 },
-        { name: "Scrum / Agile", level: 75 },
+        {
+          name: "Git / GitHub",
+          level: 85,
+          summary:
+            "Git records every change to a codebase. GitHub hosts the repositories and adds pull requests, code review and CI on top.",
+          allProjects: true,
+        },
+        {
+          name: "Docker",
+          level: 65,
+          summary:
+            "Packages an application and its dependencies into a container, so it runs the same way on a laptop, a server or in the cloud.",
+        },
+        {
+          name: "MongoDB",
+          level: 70,
+          summary:
+            "A document database that stores flexible, JSON-like records. A good fit for data whose shape changes often.",
+        },
+        {
+          name: "PostgreSQL / MySQL",
+          level: 75,
+          summary:
+            "Two widely used open-source relational databases, both queried with SQL. PostgreSQL adds strong support for advanced types, JSON and extensions.",
+          aliases: ["SQL", "SQL Server"],
+        },
+        {
+          name: "Scrum / Agile",
+          level: 75,
+          summary:
+            "An iterative way to deliver software in short sprints, with regular planning, review and retrospectives.",
+        },
       ],
     },
   ] satisfies SkillCategory[],
@@ -148,6 +356,16 @@ export const siteData = {
   ] satisfies Specialization[],
 
   projects: [
+    {
+      title: "Intellidata – Company Website",
+      description:
+        "Redesign and rebuild of the marketing website for Intellidata, the FinTech and Analytics division of Converge Group. It presents the Themis detection and Maestro orchestration platforms to executive, compliance and investigations audiences. Built on the Next.js App Router with light and dark themes, WebGL hero backgrounds, reduced-motion support throughout, a server-side contact form and Docker deployment.",
+      tags: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Three.js", "WebGL", "Resend", "Docker"],
+      live: "https://intellidata.converge-solutions.com/",
+      featured: true,
+      client: "Converge Solutions",
+      privateRepo: true,
+    },
     {
       title: "Themis to the Moon – NASA Space Apps",
       description:
@@ -223,8 +441,9 @@ export const siteData = {
         "Building and maintaining full-stack web applications using C#, ASP.NET Core, and Angular in a remote, full-time role.",
         "Developing RESTful APIs and backend services with ASP.NET Core, integrated with Angular frontends.",
         "Collaborating with a distributed team to deliver features across the full stack.",
+        "Redesigned and rebuilt the Intellidata company website with Next.js, TypeScript and Tailwind CSS.",
       ],
-      tags: ["C#", "ASP.NET Core", "Angular", "TypeScript", "Remote"],
+      tags: ["C#", "ASP.NET Core", "Angular", "TypeScript", "Next.js", "PostgreSQL", "MySQL", "Docker", "Git", "Remote"],
     },
     {
       type: "work" as const,
@@ -237,7 +456,7 @@ export const siteData = {
         "Handled dataset preprocessing, evaluation, and model deployment via Docker containerisation.",
         "Integrated MongoDB for document storage of model outputs; participated in Scrum ceremonies throughout each sprint.",
       ],
-      tags: ["HuggingFace", "PyTorch", "Django", "MongoDB", "Docker", "Scrum"],
+      tags: ["HuggingFace", "PyTorch", "Django", "MongoDB", "MySQL", "Docker", "Git", "Scrum"],
     },
     {
       type: "work" as const,

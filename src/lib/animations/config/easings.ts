@@ -19,6 +19,8 @@ export const easings = {
   out:     [0.0, 0.0, 0.2, 1] as const,
   /** Slow in, fast out - exits */
   in:      [0.4, 0.0, 1.0, 1] as const,
+  /** Exponential ease-out - masked text reveals, rules, large editorial entrances */
+  expo:    [0.16, 1, 0.3, 1] as const,
 } as const;
 
 export type EasingKey = keyof typeof easings;

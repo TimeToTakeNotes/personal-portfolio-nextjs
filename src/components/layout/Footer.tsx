@@ -1,47 +1,62 @@
-import { Github, Linkedin, Mail } from "lucide-react";
-import { siteData } from "@arno/assets/site";
+import { navLinks, siteData } from "@arno/assets/site"
+import { Rule } from "@arno/components/ui/Reveal"
+import { TextLink } from "@arno/components/ui/TextLink"
 
-const socialLinks = [
-  { icon: Github, label: "GitHub", href: siteData.links.github },
-  { icon: Linkedin, label: "LinkedIn", href: siteData.links.linkedin },
-  { icon: Mail, label: "Email", href: `mailto:${siteData.links.email}` },
-];
+const profiles = [
+  { label: "GitHub", href: siteData.links.github, external: true },
+  { label: "LinkedIn", href: siteData.links.linkedin, external: true },
+  { label: "Email", href: `mailto:${siteData.links.email}`, external: false },
+]
 
 export default function Footer() {
-  const year = new Date().getFullYear();
+  const year = new Date().getFullYear()
 
   return (
-    <footer className="py-8 px-4 sm:px-6 lg:px-8 bg-muted border-t border-border">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          {/* Name & tagline */}
-          <div className="text-center md:text-left space-y-1">
-            <p className="text-xl font-bold text-primary">{siteData.name}</p>
-            <p className="text-sm text-muted-foreground">{siteData.tagline}</p>
+    <footer className="relative pb-8 pt-10">
+      <div className="container-page">
+        <Rule strong />
+
+        <div className="grid grid-cols-12 gap-y-10 py-12 md:gap-x-10 md:py-16">
+          <div className="col-span-12 md:col-span-6">
+            <p className="font-serif text-4xl leading-none">{siteData.name}</p>
+            <p className="mt-4 max-w-md text-sm text-muted-foreground">{siteData.tagline}</p>
           </div>
 
-          {/* Social icons */}
-          <div className="flex items-center gap-4">
-            {socialLinks.map(({ icon: Icon, label, href }) => (
-              <a
-                key={label}
-                href={href}
-                aria-label={label}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors duration-200"
-              >
-                <Icon className="h-5 w-5" />
-              </a>
-            ))}
+          <nav aria-label="Footer" className="col-span-6 md:col-span-3">
+            <p className="eyebrow">Index</p>
+            <ul className="mt-4 space-y-2 text-sm">
+              {navLinks.map(({ label, href }) => (
+                <li key={href}>
+                  <TextLink href={href}>{label}</TextLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="col-span-6 md:col-span-3">
+            <p className="eyebrow">Elsewhere</p>
+            <ul className="mt-4 space-y-2 text-sm">
+              {profiles.map(({ label, href, external }) => (
+                <li key={label}>
+                  <TextLink href={href} external={external} arrow={external ? "up-right" : undefined}>
+                    {label}
+                  </TextLink>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-muted-foreground">
-          <span>&copy; {year} {siteData.name}. All rights reserved.</span>
-          <span>Built with Next.js, TypeScript &amp; Tailwind CSS</span>
+        <div className="eyebrow flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            &copy; {year} {siteData.name}
+          </p>
+          <p>{siteData.sections.footer.credit}</p>
+          <TextLink href="#home" arrow="up">
+            Back to top
+          </TextLink>
         </div>
       </div>
     </footer>
-  );
+  )
 }
