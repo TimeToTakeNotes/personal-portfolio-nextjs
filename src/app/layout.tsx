@@ -70,9 +70,9 @@ export const metadata: Metadata = {
     locale: "en_ZA",
     images: [
       {
-        url: "/Arno - Selfie Web.png",
-        width: 1200,
-        height: 630,
+        url: "/arno-lookout.jpg",
+        width: 1599,
+        height: 1199,
         alt: "Arno Christie – AI & Full-Stack Developer",
       },
     ],
@@ -82,7 +82,7 @@ export const metadata: Metadata = {
     title: "Arno Christie – AI & Full-Stack Developer",
     description:
       "BSc IT graduate specialising in NLP fine-tuning and full-stack development.",
-    images: ["/Arno - Selfie Web.png"],
+    images: ["/arno-lookout.jpg"],
   },
   robots: { index: true, follow: true },
 }

@@ -69,7 +69,7 @@ src/
 │   │   └── ThemeProvider.tsx    # Dark / light / system theme context
 │   ├── sections/
 │   │   ├── Hero.tsx             # Name, rotating role, tagline, count-up figures
-│   │   ├── About.tsx            # Portrait, bio, areas of expertise, skills
+│   │   ├── About.tsx            # Wide photo, bio, areas of expertise, skills
 │   │   ├── Projects.tsx         # Featured projects + expandable project index
 │   │   ├── Experience.tsx       # Scroll-linked timeline - work, education, achievements
 │   │   └── ContactForm.tsx      # Contact details + Web3Forms form
@@ -92,7 +92,7 @@ src/
 
 - **Editorial design** - serif display type, numbered sections, hairline rules and a 12-column grid instead of card layouts. See the Design System section in [DEVELOPER.md](DEVELOPER.md)
 - **Single data source** - all content (bio, projects, experience, skills, achievements, section copy) lives in `src/assets/site.tsx`
-- **Considered motion** - masked word reveals, rules that draw in, a rotating role line, a clip-path portrait reveal, count-up figures and a scroll-linked experience timeline
+- **Considered motion** - masked word reveals, rules that draw in, a rotating role line, a wide About photo with a clip-path reveal and scroll parallax, count-up figures and a scroll-linked experience timeline
 - **Reduced motion support** - Framer Motion and CSS transitions respect `prefers-reduced-motion`
 - **Scroll spy navigation** - `IntersectionObserver` marks the active section in the header and the mobile menu. The header hides on scroll down and returns on scroll up
 - **Dark / light / system theme** - persisted via `ThemeProvider`, applied before first paint to prevent a theme flash
@@ -179,7 +179,7 @@ These files are served directly at the root URL by Vercel:
 ```text
 public/
 ├── Arno Christie - CV.pdf     # Downloaded via the "Download CV" link in Hero
-├── Arno - Selfie Web.png      # Open Graph / Twitter Card social preview image
+├── arno-lookout.jpg           # About photo and Open Graph / Twitter Card preview image
 └── favicon.ico
 ```
 

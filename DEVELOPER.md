@@ -226,6 +226,7 @@ The site uses an editorial layout: typography and whitespace carry the design, n
 | Palette | Warm paper and ink neutrals with one accent (Redline crimson) |
 | Structure | Numbered sections (`01 About`), 12-column grid, hairline rules |
 | Texture | Static paper grain on `body::before` (see `base.css`) |
+| Photography | Full-width, opaque photos only. Do not use background-removed cutouts or boxed portraits |
 | Radius | `--radius: 0.25rem`. Most elements have no radius |
 
 **Section pattern:**
@@ -309,7 +310,7 @@ src/
 │   │
 │   ├── sections/
 │   │   ├── Hero.tsx             # Name, rotating role, tagline, count-up figures
-│   │   ├── About.tsx            # Portrait, bio, facts, areas of expertise, skills
+│   │   ├── About.tsx            # Wide photo, bio, facts, areas of expertise, skills
 │   │   ├── Projects.tsx         # Featured projects + expandable project index
 │   │   ├── Experience.tsx       # Work + education timeline, achievements
 │   │   └── ContactForm.tsx      # Contact details + Web3Forms form

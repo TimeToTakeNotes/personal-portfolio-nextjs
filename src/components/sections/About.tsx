@@ -2,11 +2,11 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { motion } from "framer-motion"
+import { motion, useScroll, useTransform } from "framer-motion"
 import { Section } from "@arno/components/layout/Section"
 import { FadeIn, RevealText, Rule } from "@arno/components/ui/Reveal"
 import { siteData } from "@arno/assets/site"
-import { easings, durations, useViewportAnimation } from "@arno/lib/animations"
+import { easings, durations, useReducedMotion, useViewportAnimation } from "@arno/lib/animations"
 
 const copy = siteData.sections.about
 const degree = siteData.experience.find((item) => item.type === "education")
@@ -18,19 +18,23 @@ const facts = [
   { label: "Honours", value: honour.title },
 ].filter((fact) => fact.value)
 
-// ── Portrait ───────────────────────────────────────────────────────────────
+// ── Photo ──────────────────────────────────────────────────────────────────
 
 /**
- * Portrait with a clip-path reveal: the frame opens from the bottom edge
- * while the photo settles from a slight zoom.
+ * Wide photo with a clip-path reveal and a slow scroll parallax.
+ * The frame opens from the bottom edge while the photo settles from a slight
+ * zoom. The crop keeps the face in view at every aspect ratio.
  */
-function Portrait() {
+function Photo() {
   const { ref, isInView: inView } = useViewportAnimation({ margin: "0px 0px -15% 0px" })
+  const prefersReduced = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] })
+  const y = useTransform(scrollYProgress, [0, 1], prefersReduced ? ["0%", "0%"] : ["-6%", "6%"])
 
   return (
-    <figure ref={ref} className="lg:sticky lg:top-24">
+    <figure ref={ref}>
       <motion.div
-        className="relative aspect-[4/5] overflow-hidden bg-muted"
+        className="relative aspect-[4/5] overflow-hidden bg-muted sm:aspect-[4/3] md:aspect-[16/8] lg:aspect-[16/7]"
         initial={{ clipPath: "inset(100% 0% 0% 0%)" }}
         animate={inView ? { clipPath: "inset(0% 0% 0% 0%)" } : {}}
         transition={{ duration: durations.crawl, ease: easings.expo }}
@@ -41,13 +45,16 @@ function Portrait() {
           animate={inView ? { scale: 1 } : {}}
           transition={{ duration: durations.crawl, ease: easings.expo }}
         >
-          <Image
-            src="/Arno - Selfie Mobile.png"
-            alt={`Portrait of ${siteData.name}`}
-            fill
-            sizes="(min-width: 1024px) 30vw, (min-width: 768px) 40vw, 90vw"
-            className="object-cover object-[80%_top]"
-          />
+          {/* Oversized by 8% top and bottom so the parallax never shows an edge */}
+          <motion.div className="absolute inset-x-0 -inset-y-[8%]" style={{ y }}>
+            <Image
+              src="/arno-lookout.jpg"
+              alt={`${siteData.name} at a lookout above a forested river valley`}
+              fill
+              sizes="(min-width: 1408px) 1312px, 92vw"
+              className="object-cover object-[88%_40%]"
+            />
+          </motion.div>
         </motion.div>
       </motion.div>
       <figcaption className="eyebrow mt-3 flex justify-between gap-4">
@@ -63,32 +70,25 @@ function Portrait() {
 export function AboutSection() {
   return (
     <Section id="about" index="01" label={copy.label}>
-      {/* Intro: portrait and bio */}
-      <div className="grid grid-cols-12 gap-y-12 md:gap-x-10">
-        <div className="col-span-12 sm:col-span-8 sm:col-start-3 md:col-span-5 md:col-start-1 lg:col-span-4">
-          <Portrait />
-        </div>
+      <Photo />
 
-        <div className="col-span-12 md:col-span-7 lg:col-span-7 lg:col-start-6">
-          <FadeIn>
-            <p className="font-serif text-[1.75rem] leading-[1.25] md:text-[2.25rem] lg:text-[2.6rem]">
-              {siteData.bio}
-            </p>
-          </FadeIn>
+      {/* Bio and facts */}
+      <div className="mt-16 grid grid-cols-12 gap-y-14 md:mt-24 md:gap-x-10">
+        <FadeIn className="col-span-12 lg:col-span-10">
+          <p className="font-serif text-[1.75rem] leading-[1.25] md:text-[2.5rem] lg:text-[3rem]">
+            {siteData.bio}
+          </p>
+        </FadeIn>
 
-          <dl className="mt-14 md:mt-20">
-            {facts.map((fact, i) => (
-              <FadeIn key={fact.label} delay={i * 0.08}>
-                <Rule delay={i * 0.08} />
-                <div className="grid grid-cols-3 gap-4 py-4">
-                  <dt className="eyebrow pt-1">{fact.label}</dt>
-                  <dd className="col-span-2">{fact.value}</dd>
-                </div>
-              </FadeIn>
-            ))}
-            <Rule />
-          </dl>
-        </div>
+        <dl className="col-span-12 grid grid-cols-1 gap-x-10 md:grid-cols-3">
+          {facts.map((fact, i) => (
+            <FadeIn key={fact.label} delay={i * 0.08}>
+              <Rule delay={i * 0.08} />
+              <dt className="eyebrow pt-4">{fact.label}</dt>
+              <dd className="mt-2 pb-6">{fact.value}</dd>
+            </FadeIn>
+          ))}
+        </dl>
       </div>
 
       {/* Areas of expertise */}
