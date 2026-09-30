@@ -1,38 +1,34 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-
-import { cn } from "@arno/lib/utils"
 import { Loader2 } from "lucide-react"
 
+import { cn } from "@arno/lib/utils"
+
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors transition-transform duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-95 cursor-pointer",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-sm font-medium transition-colors duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
   {
     variants: {
       variant: {
-        primary: "bg-primary text-primary-foreground shadow-md hover:shadow-lg hover:scale-[1.03] transform transition-[box-shadow,transform]",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-primary hover:text-secondary hover:-translate-y-0.5 hover:shadow-md",
-        outline: "border border-border bg-transparent text-primary relative overflow-hidden hover:bg-secondary-hover",
-        error: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive-hover hover:shadow-md hover:brightness-95",
-        ghost: "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground hover:scale-[1.01] transform",
-        link: "text-link no-underline double-underline-animated",
+        // Solid ink. Turns to the accent colour on hover.
+        primary: "bg-foreground text-background hover:bg-primary hover:text-primary-foreground",
+        // Hairline outline. Fills with ink on hover.
+        outline: "border border-foreground/70 bg-transparent text-foreground hover:bg-foreground hover:text-background",
+        secondary: "bg-muted text-foreground hover:bg-border",
+        ghost: "bg-transparent text-foreground hover:bg-muted",
+        error: "bg-destructive text-destructive-foreground hover:bg-destructive-hover",
+        link: "text-foreground underline underline-offset-4 decoration-1 hover:text-primary",
       },
       size: {
-        sm: "text-sm px-3 py-1.5",
-        md: "text-base px-4 py-2",
-        lg: "text-lg px-5 py-3",
-        xl: "text-xl px-6 py-3.5",
+        sm: "h-9 px-3.5 text-sm",
+        md: "h-11 px-5 text-sm",
+        lg: "h-13 px-7 text-base",
         icon: "h-10 w-10 p-0",
-      },
-      rounded: {
-        true: "rounded-full",
-        false: "rounded-md",
       },
     },
     defaultVariants: {
       variant: "primary",
       size: "md",
-      rounded: false,
     },
   }
 )
@@ -45,26 +41,23 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, rounded, loading = false, asChild = false, children, ...props }, ref) => {
+  ({ className, variant, size, loading = false, asChild = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
 
-    // When asChild=true, Slot requires a single React element as children.
-    // Wrapping in a Fragment when asChild=false preserves the loading spinner
-    // without ever passing [false, element] to Slot (which would throw).
+    // Slot requires a single React element child, so the spinner is only
+    // added when the component renders its own <button>.
     const content = asChild ? (
       children
     ) : (
       <>
-        {loading && (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-        )}
+        {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
         {children}
       </>
     )
 
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, rounded, className }))}
+        className={cn(buttonVariants({ variant, size }), className)}
         ref={ref}
         disabled={loading || props.disabled}
         {...props}

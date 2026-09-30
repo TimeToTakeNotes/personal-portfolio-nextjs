@@ -1,141 +1,111 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
-  Theme: Midnight Navy + Redline Crimson
-  ─────────────────────────────────────────────────────────────────
-  Source palette:
-    Blue Popsicle   #0f2862  oklch(0.22 0.11 264)
-    Redline         #9e363a  oklch(0.44 0.12 19)
-    Purple Shadow   #091f36  oklch(0.13 0.057 262)
-    Grey Blue Leaf  #4f5f76  oklch(0.42 0.05 257)
+  Theme: Paper + Ink + Redline
+  -----------------------------------------------------------------
+  Editorial palette. Warm neutral surfaces carry the layout.
+  One accent colour (Redline crimson) marks emphasis only:
+  active states, key figures, focus rings and links.
 
-  Dark mode DNA:  Purple Shadow bg → Blue Popsicle surfaces → Crimson accent
-  Light mode DNA: Cool blue-white bg → deep navy ink → Crimson primary
-  ─────────────────────────────────────────────────────────────────
+    Paper    oklch(0.972 0.006 85)   light background
+    Ink      oklch(0.2 0.012 60)     light foreground
+    Redline  oklch(0.47 0.14 25)     accent (derived from #9e363a)
+
+  Rules:
+    - Do not add gradients to surfaces or text.
+    - Do not add a second accent colour.
+    - Use --border hairlines to separate content, not filled boxes.
+  -----------------------------------------------------------------
 */
 
 :root {
-  /* ── Surfaces ───────────────────────────────────────────────── */
-  --background: oklch(0.981 0.005 255);      /* near-white with a cool blue breath */
-  --foreground: oklch(0.14 0.06 262);        /* Purple Shadow ink - not pure black */
+  /* Surfaces */
+  --background: oklch(0.972 0.006 85);
+  --foreground: oklch(0.2 0.012 60);
 
-  --card: oklch(0.974 0.005 255);            /* fractionally richer than bg */
-  --card-foreground: oklch(0.14 0.06 262);
+  --card: oklch(0.955 0.007 85);
+  --card-foreground: oklch(0.2 0.012 60);
 
-  --popover: oklch(0.981 0.005 255);
-  --popover-foreground: oklch(0.14 0.06 262);
+  --popover: oklch(0.985 0.004 85);
+  --popover-foreground: oklch(0.2 0.012 60);
 
-  /* ── Brand: Redline Crimson ─────────────────────────────────── */
-  --primary: oklch(0.44 0.12 19);            /* Redline #9e363a */
-  --primary-hover: oklch(0.38 0.12 19);      /* deeper on hover */
-  --primary-foreground: oklch(0.981 0.005 255);
+  /* Accent: Redline */
+  --primary: oklch(0.47 0.14 25);
+  --primary-hover: oklch(0.41 0.14 25);
+  --primary-foreground: oklch(0.985 0.004 85);
 
-  /* ── Secondary / Supporting ─────────────────────────────────── */
-  --secondary: oklch(0.93 0.008 258);        /* cool blue-grey stone */
-  --secondary-hover: oklch(0.89 0.008 258);
-  --secondary-foreground: oklch(0.14 0.06 262);
+  /* Secondary: solid ink, used for high-emphasis buttons */
+  --secondary: oklch(0.2 0.012 60);
+  --secondary-hover: oklch(0.3 0.012 60);
+  --secondary-foreground: oklch(0.972 0.006 85);
 
-  /* ── Muted (Grey Blue Leaf territory) ──────────────────────── */
-  --muted: oklch(0.944 0.006 258);           /* cool light surface */
-  --muted-foreground: oklch(0.44 0.05 257);  /* Grey Blue Leaf #4f5f76 */
+  /* Muted */
+  --muted: oklch(0.935 0.008 85);
+  --muted-foreground: oklch(0.47 0.012 60);
 
-  /* ── Accent ─────────────────────────────────────────────────── */
-  --accent: oklch(0.44 0.12 19);
-  --accent-foreground: oklch(0.981 0.005 255);
+  --accent: oklch(0.935 0.008 85);
+  --accent-foreground: oklch(0.2 0.012 60);
 
-  /* ── Semantic ────────────────────────────────────────────────── */
-  --destructive: oklch(0.56 0.22 27);        /* more saturated - distinct from primary */
-  --destructive-hover: oklch(0.50 0.22 27);
-  --destructive-foreground: oklch(0.981 0.005 255);
+  /* Semantic */
+  --destructive: oklch(0.52 0.2 29);
+  --destructive-hover: oklch(0.46 0.2 29);
+  --destructive-foreground: oklch(0.985 0.004 85);
 
-  /* ── Links ──────────────────────────────────────────────────── */
-  --link: oklch(0.44 0.12 19);
-  --link-hover: oklch(0.38 0.12 19);
+  /* Links */
+  --link: oklch(0.47 0.14 25);
+  --link-hover: oklch(0.41 0.14 25);
 
-  /* ── Chrome ─────────────────────────────────────────────────── */
-  --border: oklch(0.872 0.007 258);          /* cool blue-tinted divider */
-  --input: oklch(0.981 0.005 255);
-  --ring: oklch(0.44 0.12 19 / 0.3);        /* crimson focus ring */
+  /* Chrome */
+  --border: oklch(0.86 0.01 80);
+  --border-strong: oklch(0.2 0.012 60);
+  --input: oklch(0.86 0.01 80);
+  --ring: oklch(0.47 0.14 25);
 
-  /* ── Charts ─────────────────────────────────────────────────── */
-  --chart-1: oklch(0.44 0.12 19);           /* Redline crimson */
-  --chart-2: oklch(0.40 0.10 264);          /* Blue Popsicle */
-  --chart-3: oklch(0.65 0.12 195);          /* teal complement */
-  --chart-4: oklch(0.42 0.05 257);          /* Grey Blue Leaf */
-  --chart-5: oklch(0.52 0.14 295);          /* dusty violet */
-
-  /* ── Sidebar ────────────────────────────────────────────────── */
-  --sidebar: oklch(0.974 0.005 255);
-  --sidebar-foreground: oklch(0.14 0.06 262);
-  --sidebar-primary: oklch(0.44 0.12 19);
-  --sidebar-primary-foreground: oklch(0.981 0.005 255);
-  --sidebar-accent: oklch(0.944 0.006 258);
-  --sidebar-accent-foreground: oklch(0.14 0.06 262);
-  --sidebar-border: oklch(0.872 0.007 258);
-  --sidebar-ring: oklch(0.44 0.12 19 / 0.3);
-
-  --radius: 0.5rem;
+  --radius: 0.25rem;
 }
 
 .dark {
-  /* ── Surfaces - Purple Shadow → Blue Popsicle hierarchy ─────── */
-  --background: oklch(0.10 0.055 262);       /* Purple Shadow #091f36 */
-  --foreground: oklch(0.94 0.007 240);       /* light with steel-blue breath */
+  /* Surfaces */
+  --background: oklch(0.17 0.006 60);
+  --foreground: oklch(0.93 0.01 85);
 
-  --card: oklch(0.165 0.078 264);            /* Blue Popsicle #0f2862 elevated */
-  --card-foreground: oklch(0.94 0.007 240);
+  --card: oklch(0.2 0.007 60);
+  --card-foreground: oklch(0.93 0.01 85);
 
-  --popover: oklch(0.18 0.074 263);
-  --popover-foreground: oklch(0.94 0.007 240);
+  --popover: oklch(0.21 0.007 60);
+  --popover-foreground: oklch(0.93 0.01 85);
 
-  /* ── Brand: Redline Crimson (lifted to glow on dark) ────────── */
-  --primary: oklch(0.60 0.14 19);            /* bright crimson - pops on navy */
-  --primary-hover: oklch(0.54 0.14 19);
-  --primary-foreground: oklch(0.981 0.005 255);
+  /* Accent: Redline, lifted for contrast on dark surfaces */
+  --primary: oklch(0.7 0.13 28);
+  --primary-hover: oklch(0.76 0.12 28);
+  --primary-foreground: oklch(0.17 0.006 60);
 
-  /* ── Secondary - deep Blue Popsicle surface ─────────────────── */
-  --secondary: oklch(0.22 0.09 264);         /* Blue Popsicle #0f2862 */
-  --secondary-hover: oklch(0.28 0.09 264);
-  --secondary-foreground: oklch(0.94 0.007 240);
+  /* Secondary: solid paper on dark */
+  --secondary: oklch(0.93 0.01 85);
+  --secondary-hover: oklch(0.84 0.01 85);
+  --secondary-foreground: oklch(0.17 0.006 60);
 
-  /* ── Muted ──────────────────────────────────────────────────── */
-  --muted: oklch(0.185 0.065 263);           /* lifted slightly for track/tint visibility */
-  --muted-foreground: oklch(0.72 0.03 258);  /* lifted & desaturated - readable paragraph contrast */
+  /* Muted */
+  --muted: oklch(0.23 0.008 60);
+  --muted-foreground: oklch(0.7 0.01 80);
 
-  /* ── Accent ─────────────────────────────────────────────────── */
-  --accent: oklch(0.60 0.14 19);
-  --accent-foreground: oklch(0.981 0.005 255);
+  --accent: oklch(0.23 0.008 60);
+  --accent-foreground: oklch(0.93 0.01 85);
 
-  /* ── Semantic ────────────────────────────────────────────────── */
-  --destructive: oklch(0.60 0.22 27);
-  --destructive-hover: oklch(0.55 0.22 27);
-  --destructive-foreground: oklch(0.981 0.005 255);
+  /* Semantic */
+  --destructive: oklch(0.68 0.18 29);
+  --destructive-hover: oklch(0.74 0.16 29);
+  --destructive-foreground: oklch(0.17 0.006 60);
 
-  /* ── Links ──────────────────────────────────────────────────── */
-  --link: oklch(0.65 0.13 19);              /* brighter on dark for readability */
-  --link-hover: oklch(0.60 0.14 19);
+  /* Links */
+  --link: oklch(0.7 0.13 28);
+  --link-hover: oklch(0.76 0.12 28);
 
-  /* ── Chrome ─────────────────────────────────────────────────── */
-  --border: oklch(0.27 0.075 263);           /* Blue Popsicle-toned border */
-  --input: oklch(0.165 0.078 264);           /* same as card */
-  --ring: oklch(0.60 0.14 19 / 0.35);       /* crimson ring */
-
-  /* ── Charts ─────────────────────────────────────────────────── */
-  --chart-1: oklch(0.60 0.14 19);           /* crimson */
-  --chart-2: oklch(0.48 0.10 264);          /* Blue Popsicle lifted */
-  --chart-3: oklch(0.68 0.12 195);          /* teal */
-  --chart-4: oklch(0.63 0.05 258);          /* Grey Blue Leaf lifted */
-  --chart-5: oklch(0.60 0.14 295);          /* violet */
-
-  /* ── Sidebar ────────────────────────────────────────────────── */
-  --sidebar: oklch(0.12 0.06 262);
-  --sidebar-foreground: oklch(0.94 0.007 240);
-  --sidebar-primary: oklch(0.60 0.14 19);
-  --sidebar-primary-foreground: oklch(0.981 0.005 255);
-  --sidebar-accent: oklch(0.163 0.068 263);
-  --sidebar-accent-foreground: oklch(0.94 0.007 240);
-  --sidebar-border: oklch(0.27 0.075 263);
-  --sidebar-ring: oklch(0.60 0.14 19 / 0.35);
+  /* Chrome */
+  --border: oklch(0.31 0.008 60);
+  --border-strong: oklch(0.93 0.01 85);
+  --input: oklch(0.31 0.008 60);
+  --ring: oklch(0.7 0.13 28);
 }
 
 @theme inline {
@@ -170,38 +140,17 @@
   --color-destructive-foreground: var(--destructive-foreground);
 
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-
-  --font-heading: var(--font-space-grotesk);
-  --font-body: var(--font-dm-sans);
+  /* Typography: serif display, grotesk body, mono metadata */
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-sans: var(--font-schibsted-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
 
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 2px);
-  --radius-xl: calc(var(--radius) + 6px);
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+  --radius-xl: calc(var(--radius) + 4px);
 }

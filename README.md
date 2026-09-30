@@ -22,20 +22,20 @@ Live at: **[personal-portfolio-nextjs-rouge.vercel.app](https://personal-portfol
 | ---- | ------- | ------- |
 | [Tailwind CSS](https://tailwindcss.com/) | 4 | Utility-first styling with OKLCH colour system |
 | [tw-animate-css](https://github.com/jamiebuilds/tailwindcss-animate) | 1.3 | CSS keyframe animation utilities |
-| Space Grotesk + DM Sans | via `next/font` | Typography - display headings + body copy |
+| Instrument Serif + Schibsted Grotesk + JetBrains Mono | via `next/font` | Typography - serif display, grotesk body, mono metadata |
 
 ### Animation & Motion
 
 | Tech | Version | Purpose |
 | ---- | ------- | ------- |
-| [Framer Motion](https://www.framer.com/motion/) | 12 | Page animations, scroll-triggered reveals, SVG path animations |
+| [Framer Motion](https://www.framer.com/motion/) | 12 | Masked text reveals, drawn rules, scroll-linked timeline, page transitions |
 
 ### UI Utilities
 
 | Tech | Purpose |
 | ---- | ------- |
 | [Radix UI (Dropdown Menu, Slot)](https://www.radix-ui.com/) | Accessible headless primitives |
-| [class-variance-authority (CVA)](https://cva.style/) | Component variant management (Button, Badge) |
+| [class-variance-authority (CVA)](https://cva.style/) | Component variant management (Button) |
 | [clsx](https://github.com/lukeed/clsx) + [tailwind-merge](https://github.com/dcastil/tailwind-merge) | Conditional class merging |
 | [Lucide React](https://lucide.dev/) | Icon library |
 
@@ -52,55 +52,62 @@ Live at: **[personal-portfolio-nextjs-rouge.vercel.app](https://personal-portfol
 ```text
 src/
 ├── app/
-│   ├── layout.tsx               # Root layout - fonts, metadata, Open Graph tags
+│   ├── layout.tsx               # Root layout - fonts, metadata, theme script, providers
 │   ├── page.tsx                 # Home page - section composition
-│   └── globals.css              # Global styles, CSS custom properties, OKLCH theme
+│   ├── globals.css              # CSS entry point - imports the partials in styles/
+│   └── styles/                  # theme.css, base.css, components.css, utilities.css
 ├── assets/
 │   └── site.tsx                 # Single source of truth for all portfolio content
 ├── components/
 │   ├── layout/
-│   │   ├── MainNavigation.tsx   # Scroll spy + active section state
-│   │   ├── Header.tsx           # Desktop nav with active highlight
-│   │   ├── Sidebar.tsx          # Mobile drawer nav
-│   │   ├── Footer.tsx           # Footer with links and copyright
-│   │   ├── Section.tsx          # Reusable section wrapper
-│   │   └── ThemeProvider.tsx    # Dark / light / system theme context
+│   │   ├── MainNavigation.tsx   # Fixed header, always visible, scroll spy
+│   │   ├── MobileMenu.tsx       # Full-screen mobile navigation
+│   │   ├── CommandMenu.tsx      # Cmd+K / Ctrl+K command menu, provider and trigger
+│   │   ├── ConsoleGreeting.tsx  # Styled note in the browser console
+│   │   ├── Footer.tsx           # Footer with index, links and copyright
+│   │   ├── Section.tsx          # Numbered section shell (01 About, 02 Projects, ...)
+│   │   ├── StatusPage.tsx       # Shared 404 / error layout
+│   │   ├── MotionProvider.tsx   # Reduced-motion support for Framer Motion
+│   │   └── ThemeProvider.tsx    # Dark / light / system theme with circular wipe
 │   ├── sections/
-│   │   ├── Hero.tsx             # Hero section + FloatingPaths SVG background
-│   │   ├── About.tsx            # Bio, metrics, skills, achievements
-│   │   ├── Specializations.tsx  # AI, Full-Stack, Frontend focus cards
-│   │   ├── Projects.tsx         # Featured + all projects grid
-│   │   ├── Experience.tsx       # Vertical timeline - work + education
-│   │   └── ContactForm.tsx      # Web3Forms contact + contact info panel
+│   │   ├── Hero.tsx             # Name, rotating role, tagline, count-up figures
+│   │   ├── About.tsx            # Wide photo, bio, areas of expertise
+│   │   ├── SkillGlossary.tsx    # Skill lists; each skill opens a short note
+│   │   ├── Projects.tsx         # Featured projects + expandable project index
+│   │   ├── Experience.tsx       # Scroll-linked timeline - work, education, achievements
+│   │   └── ContactForm.tsx      # Contact details + Web3Forms form
 │   └── ui/
 │       ├── Button.tsx           # CVA-based button variants
-│       ├── Badge.tsx            # Skill / tag badges
-│       ├── Card.tsx             # Reusable card component
-│       ├── Input.tsx            # Floating label input + textarea
-│       ├── TypeWriter.tsx       # Typewriter role animation in Hero
-│       ├── Metrics.tsx          # Animated stat counters
-│       ├── Marquee.tsx          # Infinite scroll ticker
-│       ├── BackToTop.tsx        # Scroll-to-top with conveyor-belt hover animation
-│       ├── ThemeToggle.tsx      # Dark / light mode toggle
-│       ├── Magnet.tsx           # Magnetic hover effect
-│       └── BackgroundWrapper.tsx
+│       ├── Input.tsx            # Field - label above, underline-only input
+│       ├── Reveal.tsx           # RevealText, Rule, FadeIn motion primitives
+│       ├── TextLink.tsx         # Text link with directional arrow
+│       ├── ThemeToggle.tsx      # Light / dark / system menu
+│       ├── DropdownMenu.tsx     # Radix dropdown wrapper
+│       ├── Logo.tsx             # Serif wordmark
+│       ├── CopyEmail.tsx        # Large email that copies itself
+│       └── LocalTime.tsx        # Live clock for a fixed time zone
 └── lib/
-    └── animations.ts            # Shared easing curves
+    ├── animations/              # Easing and duration tokens, variants, hooks
+    ├── clipboard.ts             # copyText() helper
+    └── utils.ts                 # cn() helper
 ```
 
 ---
 
 ## Key Features
 
-- **Single data source** - all content (bio, projects, experience, skills, achievements) lives in `src/assets/site.tsx`; update once, reflected everywhere across every section
-- **Scroll spy navigation** - `IntersectionObserver` detects the active section and highlights the corresponding nav link in both desktop header and mobile sidebar
-- **Dark / light / system theme** - persisted via `ThemeProvider`, toggled from the header; respects `prefers-color-scheme`
-- **FloatingPaths SVG animation** - animated crimson SVG line paths in the Hero background; the same component is reused (rotated 180°) as the Contact section background
-- **Back-to-top button** - fixed bottom-right corner, springs in after 400 px of scroll, conveyor-belt upward arrow animation on hover
-- **CV download** - Hero button downloads `/public/Arno Christie - CV.pdf` directly via an anchor tag
-- **Animated contact form** - floating label inputs, loading state, animated SVG success checkmark, error messaging, and a reset flow
+- **Editorial design** - serif display type, numbered sections, hairline rules and a 12-column grid instead of card layouts. See the Design System section in [DEVELOPER.md](DEVELOPER.md)
+- **Single data source** - all content (bio, projects, experience, skills, achievements, section copy) lives in `src/assets/site.tsx`
+- **Considered motion** - masked word reveals, rules that draw in, a rotating role line, a wide About photo with a clip-path reveal and scroll parallax, count-up figures and a scroll-linked experience timeline
+- **Reduced motion support** - Framer Motion and CSS transitions respect `prefers-reduced-motion`
+- **Scroll spy navigation** - `IntersectionObserver` marks the active section in the header and the mobile menu. The header stays visible and gains a background after scrolling
+- **Dark / light / system theme** - persisted via `ThemeProvider`, applied before first paint to prevent a theme flash
+- **Project index** - featured projects show in full; other projects open inline in an accessible expandable list
+- **CV download** - Hero link downloads `/public/Arno Christie - CV.pdf`
+- **Small touches** - live local time in the Hero, click-to-copy email, a circular wipe when the theme changes, a note in the browser console, and a Cmd+K / Ctrl+K command menu
+- **Contact form** - underline inputs with autofill hints, loading state, animated success checkmark, error messaging and a reset flow
 - **Open Graph + Twitter Card metadata** - configured in `layout.tsx` for rich link previews on social platforms
-- **Fully responsive** - mobile drawer navigation, fluid CSS grids, touch-friendly targets throughout
+- **Fully responsive** - full-screen mobile menu, fluid type and grids
 
 ---
 
@@ -178,8 +185,8 @@ These files are served directly at the root URL by Vercel:
 
 ```text
 public/
-├── Arno Christie - CV.pdf     # Downloaded via the "Download CV" button in Hero
-├── Arno - Selfie Web.png      # Open Graph / Twitter Card social preview image
+├── Arno Christie - CV.pdf     # Downloaded via the "Download CV" link in Hero
+├── arno-lookout.jpg           # About photo and Open Graph / Twitter Card preview image
 └── favicon.ico
 ```
 
@@ -193,19 +200,24 @@ All portfolio content is managed from a single file: [src/assets/site.tsx](src/a
 | ----- | ----------- |
 | `siteData.name` | Your full name |
 | `siteData.role` | Primary role displayed in the Hero |
-| `siteData.tagline` | One-liner shown below the role |
+| `siteData.tagline` | One-liner shown in the Hero and Footer |
 | `siteData.bio` | Long-form bio paragraph in the About section |
-| `siteData.available` | `true` / `false` - controls the hero availability badge |
-| `siteData.typewriterRoles` | Array of roles cycled through the typewriter animation |
-| `siteData.metrics` | Stat counters in About (value + label pairs) |
-| `siteData.skillCategories` | Skill progress bars grouped by category (level: 0–100) |
-| `siteData.specializations` | Three focus-area cards in the Specializations section |
-| `siteData.projects` | Project cards - add `featured: true` to show in the featured row |
+| `siteData.available` | `true` / `false` - reserved; not rendered at present |
+| `siteData.typewriterRoles` | Roles cycled in the Hero rotating role line |
+| `siteData.metrics` | Count-up figures in the Hero (value + label pairs) |
+| `siteData.skillCategories` | Skill lists grouped by category. Each skill has a `summary` shown when selected, optional `aliases` for the "Where I've used it" match, and `allProjects: true` for tools used on every project, such as Git (`level` is kept as data, not shown) |
+| `siteData.specializations` | Areas of expertise list in the About section |
+| `siteData.projects` | Projects - `featured: true` shows the project in full; others go in the project index. For company work, set `client` to the employer's `org` (the role then links to the project) and `privateRepo: true` (shows "Private repository" instead of a source link) |
 | `siteData.experience` | Work and education timeline entries (`type: "work" \| "education"`) |
-| `siteData.achievements` | Achievement cards in the About section |
-| `navLinks` | Links rendered in the desktop header and mobile sidebar |
 
-To update the colour theme, edit the CSS custom properties in `src/app/globals.css`. The primary accent colour (`--color-primary`) is set in OKLCH format.
+**Adding a tool you used at work:** add it to that role's `tags` in `siteData.experience`. The timeline shows it, and the matching skill note lists the role automatically. Do not add tools such as Git to every project's tags; set `allProjects: true` on the skill instead.
+| `siteData.achievements` | Achievements list in the Experience section |
+| `siteData.sections` | Section labels, titles and intro copy, including the command menu and console greeting |
+| `siteData.timeZone` / `timeZoneLabel` | Time zone for the live clock in the Hero |
+| `siteData.links.source` | Repository link used by the console greeting and command menu |
+| `navLinks` | Links rendered in the header, mobile menu and footer |
+
+To update the colour theme, edit the CSS custom properties in `src/app/styles/theme.css`. The accent colour (`--primary`) is set in OKLCH format. Keep one accent colour only.
 
 ---
 

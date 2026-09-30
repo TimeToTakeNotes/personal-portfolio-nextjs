@@ -1,24 +1,42 @@
 import "./globals.css";
 import type React from "react"
 import type { Metadata } from "next"
-import { Space_Grotesk, DM_Sans } from "next/font/google"
+import { Instrument_Serif, Schibsted_Grotesk, JetBrains_Mono } from "next/font/google"
 import { ThemeProvider } from "@arno/components/layout/ThemeProvider";
+import { MotionProvider } from "@arno/components/layout/MotionProvider";
 import MainNavigation from "@arno/components/layout/MainNavigation";
+import { CommandMenuProvider } from "@arno/components/layout/CommandMenu";
+import { ConsoleGreeting } from "@arno/components/layout/ConsoleGreeting";
 import Footer from "@arno/components/layout/Footer";
-import { PageTransition } from "@arno/lib/animations";
-import { BackToTop } from "@arno/components/ui/BackToTop";
+import { PageTransition, pageFade } from "@arno/lib/animations";
 
-const spaceGrotesk = Space_Grotesk({
+// Display: headings, names, large figures
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
   display: "swap",
-  variable: "--font-space-grotesk",
+  variable: "--font-instrument-serif",
 })
 
-const dmSans = DM_Sans({
+// Body copy and interface text
+const schibstedGrotesk = Schibsted_Grotesk({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-dm-sans",
+  variable: "--font-schibsted-grotesk",
 })
+
+// Metadata: labels, dates, indexes, tags
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+  variable: "--font-jetbrains-mono",
+})
+
+// Applies the saved theme before first paint, so the page does not flash
+// the wrong theme while React hydrates. Keep the storage key in sync with ThemeProvider.
+const themeScript = `(function(){try{var t=localStorage.getItem("app-theme")||"system";var d=t==="dark"||(t==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.add(d?"dark":"light")}catch(e){}})()`
 
 export function generateViewport() {
   return "width=device-width, initial-scale=1, maximum-scale=5";
@@ -54,9 +72,9 @@ export const metadata: Metadata = {
     locale: "en_ZA",
     images: [
       {
-        url: "/Arno - Selfie Web.png",
-        width: 1200,
-        height: 630,
+        url: "/arno-lookout.jpg",
+        width: 1599,
+        height: 1199,
         alt: "Arno Christie – AI & Full-Stack Developer",
       },
     ],
@@ -66,7 +84,7 @@ export const metadata: Metadata = {
     title: "Arno Christie – AI & Full-Stack Developer",
     description:
       "BSc IT graduate specialising in NLP fine-tuning and full-stack development.",
-    images: ["/Arno - Selfie Web.png"],
+    images: ["/arno-lookout.jpg"],
   },
   robots: { index: true, follow: true },
 }
@@ -74,14 +92,23 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${spaceGrotesk.variable} ${dmSans.variable} font-sans antialiased`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body
+        className={`${instrumentSerif.variable} ${schibstedGrotesk.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+      >
         <ThemeProvider defaultTheme="system">
-          <MainNavigation />
-          <main className="pt-16">
-            <PageTransition>{children}</PageTransition>
-          </main>
-          <Footer />
-          <BackToTop />
+          <MotionProvider>
+            <CommandMenuProvider>
+              <MainNavigation />
+              <main id="main" className="relative">
+                <PageTransition variant={pageFade}>{children}</PageTransition>
+              </main>
+              <Footer />
+              <ConsoleGreeting />
+            </CommandMenuProvider>
+          </MotionProvider>
         </ThemeProvider>
       </body>
     </html>
