@@ -18,6 +18,7 @@ const shortTitle = (title: string) => title.split(" – ")[0]
  * Finds the projects and roles whose tags match a skill.
  * The skill name is split on "/" and "&", so "Python / Django" matches
  * a "Python" tag or a "Django" tag. Aliases add extra tags to match.
+ * Skills marked allProjects list the roles, then one "every project" entry.
  */
 function usedIn(skill: Skill): string[] {
   const terms = new Set(
@@ -25,8 +26,10 @@ function usedIn(skill: Skill): string[] {
   )
   const matches = (tags: string[] = []) => tags.some((tag) => terms.has(tag.toLowerCase()))
 
-  const projects = siteData.projects.filter((p) => matches(p.tags)).map((p) => shortTitle(p.title))
   const roles = siteData.experience.filter((e) => e.type === "work" && matches(e.tags)).map((e) => e.org)
+  const projects = skill.allProjects
+    ? [copy.skillAllProjects]
+    : siteData.projects.filter((p) => matches(p.tags)).map((p) => shortTitle(p.title))
   return [...roles, ...projects]
 }
 

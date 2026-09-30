@@ -21,6 +21,11 @@ export interface Skill {
    * The name is already split on "/" and "&" and matched against tags.
    */
   aliases?: string[]
+  /**
+   * Set when the skill applies to every project, for example version control.
+   * The note then says so once, instead of listing every project.
+   */
+  allProjects?: boolean
 }
 
 export interface SkillCategory {
@@ -109,6 +114,7 @@ export const siteData = {
       skillsLabel: "Skills",
       skillsHint: "Select a skill for a short note",
       skillUsedInLabel: "Where I've used it",
+      skillAllProjects: "Every project on this page",
     },
     projects: {
       label: "Projects",
@@ -284,6 +290,7 @@ export const siteData = {
           level: 85,
           summary:
             "Git records every change to a codebase. GitHub hosts the repositories and adds pull requests, code review and CI on top.",
+          allProjects: true,
         },
         {
           name: "Docker",
@@ -298,11 +305,11 @@ export const siteData = {
             "A document database that stores flexible, JSON-like records. A good fit for data whose shape changes often.",
         },
         {
-          name: "MySQL / SQL",
+          name: "PostgreSQL / MySQL",
           level: 75,
           summary:
-            "SQL is the standard language for relational databases. MySQL is one of the most widely used open-source relational databases.",
-          aliases: ["SQL Server"],
+            "Two widely used open-source relational databases, both queried with SQL. PostgreSQL adds strong support for advanced types, JSON and extensions.",
+          aliases: ["SQL", "SQL Server"],
         },
         {
           name: "Scrum / Agile",
@@ -412,7 +419,7 @@ export const siteData = {
         "Developing RESTful APIs and backend services with ASP.NET Core, integrated with Angular frontends.",
         "Collaborating with a distributed team to deliver features across the full stack.",
       ],
-      tags: ["C#", "ASP.NET Core", "Angular", "TypeScript", "Remote"],
+      tags: ["C#", "ASP.NET Core", "Angular", "TypeScript", "Next.js", "PostgreSQL", "MySQL", "Docker", "Git", "Remote"],
     },
     {
       type: "work" as const,
@@ -425,7 +432,7 @@ export const siteData = {
         "Handled dataset preprocessing, evaluation, and model deployment via Docker containerisation.",
         "Integrated MongoDB for document storage of model outputs; participated in Scrum ceremonies throughout each sprint.",
       ],
-      tags: ["HuggingFace", "PyTorch", "Django", "MongoDB", "Docker", "Scrum"],
+      tags: ["HuggingFace", "PyTorch", "Django", "MongoDB", "MySQL", "Docker", "Git", "Scrum"],
     },
     {
       type: "work" as const,

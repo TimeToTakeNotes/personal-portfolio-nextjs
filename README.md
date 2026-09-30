@@ -205,10 +205,12 @@ All portfolio content is managed from a single file: [src/assets/site.tsx](src/a
 | `siteData.available` | `true` / `false` - reserved; not rendered at present |
 | `siteData.typewriterRoles` | Roles cycled in the Hero rotating role line |
 | `siteData.metrics` | Count-up figures in the Hero (value + label pairs) |
-| `siteData.skillCategories` | Skill lists grouped by category. Each skill has a `summary` shown when selected, and optional `aliases` for the "Where I've used it" match (`level` is kept as data, not shown) |
+| `siteData.skillCategories` | Skill lists grouped by category. Each skill has a `summary` shown when selected, optional `aliases` for the "Where I've used it" match, and `allProjects: true` for tools used on every project, such as Git (`level` is kept as data, not shown) |
 | `siteData.specializations` | Areas of expertise list in the About section |
 | `siteData.projects` | Projects - `featured: true` shows the project in full; others go in the project index |
 | `siteData.experience` | Work and education timeline entries (`type: "work" \| "education"`) |
+
+**Adding a tool you used at work:** add it to that role's `tags` in `siteData.experience`. The timeline shows it, and the matching skill note lists the role automatically. Do not add tools such as Git to every project's tags; set `allProjects: true` on the skill instead.
 | `siteData.achievements` | Achievements list in the Experience section |
 | `siteData.sections` | Section labels, titles and intro copy, including the command menu and console greeting |
 | `siteData.timeZone` / `timeZoneLabel` | Time zone for the live clock in the Hero |
