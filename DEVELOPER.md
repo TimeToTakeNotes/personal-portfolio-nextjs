@@ -332,6 +332,7 @@ src/
 └── lib/
     ├── animations/          # Modular animation system (see Animation System section)
     ├── clipboard.ts         # copyText() - returns false when the clipboard is not available
+    ├── projects.ts          # shortTitle() and projectId() - project anchors for cross-links
     └── utils.ts             # cn() helper (clsx + tailwind-merge)
 ```
 

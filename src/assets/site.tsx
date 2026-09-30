@@ -41,6 +41,13 @@ export interface Project {
   live?: string
   featured?: boolean
   achievement?: string
+  /**
+   * Employer for client or company work. Must match an experience `org`, so
+   * the project and the role link to each other.
+   */
+  client?: string
+  /** Set when the source code is private. The UI says so instead of linking to it. */
+  privateRepo?: boolean
 }
 
 export interface ExperienceItem {
@@ -121,6 +128,11 @@ export const siteData = {
       title: "What I've built",
       intro: "A selection of projects ranging from AI-powered tools to interactive web apps.",
       moreLabel: "More projects",
+      clientLabel: "Client work",
+      privateRepoLabel: "Private repository",
+      liveSiteLabel: "Live site",
+      liveDemoLabel: "Live demo",
+      sourceLabel: "Source",
       githubCta: "View all on GitHub",
     },
     experience: {
@@ -130,6 +142,7 @@ export const siteData = {
       workLabel: "Work Experience",
       educationLabel: "Education",
       achievementsLabel: "Achievements",
+      relatedProjectLabel: "Project",
     },
     contact: {
       label: "Contact",
@@ -344,6 +357,16 @@ export const siteData = {
 
   projects: [
     {
+      title: "Intellidata – Company Website",
+      description:
+        "Redesign and rebuild of the marketing website for Intellidata, the FinTech and Analytics division of Converge Group. It presents the Themis detection and Maestro orchestration platforms to executive, compliance and investigations audiences. Built on the Next.js App Router with light and dark themes, WebGL hero backgrounds, reduced-motion support throughout, a server-side contact form and Docker deployment.",
+      tags: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Three.js", "WebGL", "Resend", "Docker"],
+      live: "https://intellidata.converge-solutions.com/",
+      featured: true,
+      client: "Converge Solutions",
+      privateRepo: true,
+    },
+    {
       title: "Themis to the Moon – NASA Space Apps",
       description:
         "Air quality forecasting web app built at the 2025 NASA Space Apps Challenge (Oct 4–5). Integrates NASA TEMPO satellite data with ground-based measurements and weather data to predict pollution levels and alert users to health risks. Built as a team across an advanced-difficulty global challenge.",
@@ -418,6 +441,7 @@ export const siteData = {
         "Building and maintaining full-stack web applications using C#, ASP.NET Core, and Angular in a remote, full-time role.",
         "Developing RESTful APIs and backend services with ASP.NET Core, integrated with Angular frontends.",
         "Collaborating with a distributed team to deliver features across the full stack.",
+        "Redesigned and rebuilt the Intellidata company website with Next.js, TypeScript and Tailwind CSS.",
       ],
       tags: ["C#", "ASP.NET Core", "Angular", "TypeScript", "Next.js", "PostgreSQL", "MySQL", "Docker", "Git", "Remote"],
     },

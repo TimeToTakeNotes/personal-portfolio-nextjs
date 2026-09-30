@@ -7,12 +7,11 @@ import { FadeIn, Rule } from "@arno/components/ui/Reveal"
 import { siteData } from "@arno/assets/site"
 import type { Skill } from "@arno/assets/site"
 import { cn } from "@arno/lib/utils"
+import { shortTitle } from "@arno/lib/projects"
 import { durations, easings } from "@arno/lib/animations"
 
 const copy = siteData.sections.about
 
-/** Short project names: "HMS App – Marvellous Machines" becomes "HMS App" */
-const shortTitle = (title: string) => title.split(" – ")[0]
 
 /**
  * Finds the projects and roles whose tags match a skill.

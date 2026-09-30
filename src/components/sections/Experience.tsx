@@ -7,6 +7,8 @@ import { FadeIn, RevealText, Rule } from "@arno/components/ui/Reveal"
 import { siteData } from "@arno/assets/site"
 import type { ExperienceItem } from "@arno/assets/site"
 import { cn } from "@arno/lib/utils"
+import { projectId, shortTitle } from "@arno/lib/projects"
+import { TextLink } from "@arno/components/ui/TextLink"
 import { useReducedMotion, useViewportAnimation } from "@arno/lib/animations"
 
 const copy = siteData.sections.experience
@@ -19,6 +21,8 @@ const groups = [
 // ── Entry ──────────────────────────────────────────────────────────────────
 
 function Entry({ item }: { item: ExperienceItem }) {
+  // Projects done for this employer link back up to the Projects section
+  const related = siteData.projects.filter((project) => project.client === item.org)
   // The marker on the timeline turns to the accent colour while the entry is in the reading zone.
   const { ref, isInView: active } = useViewportAnimation({ once: false, amount: 0, margin: "-40% 0px -40% 0px" })
 
@@ -45,6 +49,18 @@ function Entry({ item }: { item: ExperienceItem }) {
               </li>
             ))}
           </ul>
+          {related.length > 0 && (
+            <ul className="mt-6 flex flex-wrap items-baseline gap-x-6 gap-y-2 text-sm font-medium">
+              {related.map((project) => (
+                <li key={project.title} className="flex items-baseline gap-3">
+                  <span className="eyebrow">{copy.relatedProjectLabel}</span>
+                  <TextLink href={`#${projectId(project)}`} arrow="up" underline="underline">
+                    {shortTitle(project.title)}
+                  </TextLink>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         {item.tags && (

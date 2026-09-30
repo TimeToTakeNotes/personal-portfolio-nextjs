@@ -207,7 +207,7 @@ All portfolio content is managed from a single file: [src/assets/site.tsx](src/a
 | `siteData.metrics` | Count-up figures in the Hero (value + label pairs) |
 | `siteData.skillCategories` | Skill lists grouped by category. Each skill has a `summary` shown when selected, optional `aliases` for the "Where I've used it" match, and `allProjects: true` for tools used on every project, such as Git (`level` is kept as data, not shown) |
 | `siteData.specializations` | Areas of expertise list in the About section |
-| `siteData.projects` | Projects - `featured: true` shows the project in full; others go in the project index |
+| `siteData.projects` | Projects - `featured: true` shows the project in full; others go in the project index. For company work, set `client` to the employer's `org` (the role then links to the project) and `privateRepo: true` (shows "Private repository" instead of a source link) |
 | `siteData.experience` | Work and education timeline entries (`type: "work" \| "education"`) |
 
 **Adding a tool you used at work:** add it to that role's `tags` in `siteData.experience`. The timeline shows it, and the matching skill note lists the role automatically. Do not add tools such as Git to every project's tags; set `allProjects: true` on the skill instead.
