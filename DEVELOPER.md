@@ -302,11 +302,13 @@ src/
 │   ├── layout/
 │   │   ├── MainNavigation.tsx   # Fixed header: always visible, active-section tracking
 │   │   ├── MobileMenu.tsx       # Full-screen menu below 1024px
+│   │   ├── CommandMenu.tsx      # Cmd+K / Ctrl+K command menu: provider, dialog, trigger
+│   │   ├── ConsoleGreeting.tsx  # Styled note in the browser console (renders nothing)
 │   │   ├── Footer.tsx           # Footer
 │   │   ├── Section.tsx          # Numbered section shell: header row + rule + content
 │   │   ├── StatusPage.tsx       # Shared layout for 404 and error pages
 │   │   ├── MotionProvider.tsx   # MotionConfig with reducedMotion="user"
-│   │   └── ThemeProvider.tsx    # Dark/light mode context
+│   │   └── ThemeProvider.tsx    # Dark/light mode context; setTheme(theme, origin) runs a circular wipe
 │   │
 │   ├── sections/
 │   │   ├── Hero.tsx             # Name, rotating role, tagline, count-up figures
@@ -320,6 +322,8 @@ src/
 │       ├── Button.tsx           # CVA button - variants: primary, outline, secondary, ghost, link, error
 │       ├── DropdownMenu.tsx     # Radix dropdown wrapper
 │       ├── Input.tsx            # Field - label above, underline-only input/textarea
+│       ├── CopyEmail.tsx        # Large email that copies itself, with mailto fallback
+│       ├── LocalTime.tsx        # Live clock for a fixed IANA time zone
 │       ├── Logo.tsx             # Serif wordmark
 │       ├── Reveal.tsx           # RevealText, Rule, FadeIn motion primitives
 │       ├── TextLink.tsx         # Text link with optional directional arrow
@@ -327,6 +331,7 @@ src/
 │
 └── lib/
     ├── animations/          # Modular animation system (see Animation System section)
+    ├── clipboard.ts         # copyText() - returns false when the clipboard is not available
     └── utils.ts             # cn() helper (clsx + tailwind-merge)
 ```
 
@@ -390,6 +395,16 @@ All imports use `@arno/*` → `./src/*`. Never use relative paths.
 | `ghost` | No fill until hover | Icon buttons (theme toggle) |
 | `link` | Underlined text | Inline action inside text |
 | `error` | Destructive fill | Destructive action |
+
+### Interaction features
+
+| Feature | Source | Notes |
+| --- | --- | --- |
+| Command menu | `layout/CommandMenu.tsx` | Opens with Cmd+K / Ctrl+K or `CommandMenuTrigger`. Add commands to `COMMANDS`. Search matches group, label and `keywords`. Arrow keys move, Enter runs, Esc closes. Focus returns to the previous element on close |
+| Theme wipe | `layout/ThemeProvider.tsx` | `setTheme(theme, origin)` uses the View Transitions API. It falls back to an instant change when the API is not available, the colours do not change, or reduced motion is on. Close overlays before calling it, so the page snapshot does not include them |
+| Copy email | `ui/CopyEmail.tsx` | Uses `copyText()`. If the clipboard is not available, it opens the mail app. The result is announced through a polite live region |
+| Local time | `ui/LocalTime.tsx` | Renders `--:--` on the server and starts the clock on mount, so the markup does not depend on build time |
+| Console greeting | `layout/ConsoleGreeting.tsx` | Reads colours from CSS variables. Copy is in `siteData.sections.console` |
 
 ### Field
 

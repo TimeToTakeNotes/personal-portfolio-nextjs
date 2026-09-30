@@ -62,11 +62,13 @@ src/
 │   ├── layout/
 │   │   ├── MainNavigation.tsx   # Fixed header, always visible, scroll spy
 │   │   ├── MobileMenu.tsx       # Full-screen mobile navigation
+│   │   ├── CommandMenu.tsx      # Cmd+K / Ctrl+K command menu, provider and trigger
+│   │   ├── ConsoleGreeting.tsx  # Styled note in the browser console
 │   │   ├── Footer.tsx           # Footer with index, links and copyright
 │   │   ├── Section.tsx          # Numbered section shell (01 About, 02 Projects, ...)
 │   │   ├── StatusPage.tsx       # Shared 404 / error layout
 │   │   ├── MotionProvider.tsx   # Reduced-motion support for Framer Motion
-│   │   └── ThemeProvider.tsx    # Dark / light / system theme context
+│   │   └── ThemeProvider.tsx    # Dark / light / system theme with circular wipe
 │   ├── sections/
 │   │   ├── Hero.tsx             # Name, rotating role, tagline, count-up figures
 │   │   ├── About.tsx            # Wide photo, bio, areas of expertise
@@ -81,9 +83,12 @@ src/
 │       ├── TextLink.tsx         # Text link with directional arrow
 │       ├── ThemeToggle.tsx      # Light / dark / system menu
 │       ├── DropdownMenu.tsx     # Radix dropdown wrapper
-│       └── Logo.tsx             # Serif wordmark
+│       ├── Logo.tsx             # Serif wordmark
+│       ├── CopyEmail.tsx        # Large email that copies itself
+│       └── LocalTime.tsx        # Live clock for a fixed time zone
 └── lib/
     ├── animations/              # Easing and duration tokens, variants, hooks
+    ├── clipboard.ts             # copyText() helper
     └── utils.ts                 # cn() helper
 ```
 
@@ -99,6 +104,7 @@ src/
 - **Dark / light / system theme** - persisted via `ThemeProvider`, applied before first paint to prevent a theme flash
 - **Project index** - featured projects show in full; other projects open inline in an accessible expandable list
 - **CV download** - Hero link downloads `/public/Arno Christie - CV.pdf`
+- **Small touches** - live local time in the Hero, click-to-copy email, a circular wipe when the theme changes, a note in the browser console, and a Cmd+K / Ctrl+K command menu
 - **Contact form** - underline inputs with autofill hints, loading state, animated success checkmark, error messaging and a reset flow
 - **Open Graph + Twitter Card metadata** - configured in `layout.tsx` for rich link previews on social platforms
 - **Fully responsive** - full-screen mobile menu, fluid type and grids
@@ -204,7 +210,9 @@ All portfolio content is managed from a single file: [src/assets/site.tsx](src/a
 | `siteData.projects` | Projects - `featured: true` shows the project in full; others go in the project index |
 | `siteData.experience` | Work and education timeline entries (`type: "work" \| "education"`) |
 | `siteData.achievements` | Achievements list in the Experience section |
-| `siteData.sections` | Section labels, titles and intro copy |
+| `siteData.sections` | Section labels, titles and intro copy, including the command menu and console greeting |
+| `siteData.timeZone` / `timeZoneLabel` | Time zone for the live clock in the Hero |
+| `siteData.links.source` | Repository link used by the console greeting and command menu |
 | `navLinks` | Links rendered in the header, mobile menu and footer |
 
 To update the colour theme, edit the CSS custom properties in `src/app/styles/theme.css`. The accent colour (`--primary`) is set in OKLCH format. Keep one accent colour only.
