@@ -2,309 +2,135 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { motion } from "framer-motion"
-import { Award, GraduationCap, Star, BadgeCheck, MapPin, Rocket } from "lucide-react"
+import { motion, useScroll, useTransform } from "framer-motion"
 import { Section } from "@arno/components/layout/Section"
-import { Badge } from "@arno/components/ui/Badge"
-import { Button } from "@arno/components/ui/Button"
+import { FadeIn, RevealText, Rule } from "@arno/components/ui/Reveal"
+import { SkillGlossary } from "@arno/components/sections/SkillGlossary"
 import { siteData } from "@arno/assets/site"
-import { easings, durations, useViewportAnimation } from "@arno/lib/animations"
-import { cn } from "@arno/lib/utils"
+import { easings, durations, useReducedMotion, useViewportAnimation } from "@arno/lib/animations"
 
-// ── Helpers ────────────────────────────────────────────────────────────────
+const copy = siteData.sections.about
+const degree = siteData.experience.find((item) => item.type === "education")
+const honour = siteData.achievements[0]
 
-const achievementIcon = (icon: string) => {
-  const cls = "h-5 w-5 text-primary flex-shrink-0"
-  switch (icon) {
-    case "award":          return <Award className={cls} />
-    case "graduation-cap": return <GraduationCap className={cls} />
-    case "star":           return <Star className={cls} />
-    case "rocket":         return <Rocket className={cls} />
-    case "badge-check":    return <BadgeCheck className={cls} />
-    default:               return <Award className={cls} />
-  }
-}
+const facts = [
+  { label: "Based in", value: siteData.location },
+  { label: "Education", value: degree ? `${degree.title}, ${degree.org}` : "" },
+  { label: "Honours", value: honour.title },
+].filter((fact) => fact.value)
 
-// ── Sub-components ─────────────────────────────────────────────────────────
+// ── Photo ──────────────────────────────────────────────────────────────────
 
-function SkillBar({ name, level, delay }: { name: string; level: number; delay: number }) {
-  const { ref, isInView } = useViewportAnimation({ once: true, margin: "-40px" })
+/**
+ * Wide photo with a clip-path reveal and a slow scroll parallax.
+ * The frame opens from the bottom edge while the photo settles from a slight
+ * zoom. The crop keeps the face in view at every aspect ratio.
+ */
+function Photo() {
+  const { ref, isInView: inView } = useViewportAnimation({ margin: "0px 0px -15% 0px" })
+  const prefersReduced = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] })
+  const y = useTransform(scrollYProgress, [0, 1], prefersReduced ? ["0%", "0%"] : ["-6%", "6%"])
 
   return (
-    <div ref={ref} className="space-y-1.5">
-      <div className="flex justify-between items-center text-sm">
-        <span className="font-medium text-foreground">{name}</span>
-        <span className="text-muted-foreground tabular-nums">{level}%</span>
-      </div>
-      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+    <figure ref={ref}>
+      <motion.div
+        className="relative aspect-[4/5] overflow-hidden bg-muted sm:aspect-[4/3] md:aspect-[16/8] lg:aspect-[16/7]"
+        initial={{ clipPath: "inset(100% 0% 0% 0%)" }}
+        animate={inView ? { clipPath: "inset(0% 0% 0% 0%)" } : {}}
+        transition={{ duration: durations.crawl, ease: easings.expo }}
+      >
         <motion.div
-          className="h-full bg-primary rounded-full origin-left"
-          initial={{ scaleX: 0 }}
-          animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
-          transition={{ duration: 0.7, ease: easings.smooth, delay }}
-          style={{ width: `${level}%` }}
-        />
-      </div>
-    </div>
+          className="absolute inset-0"
+          initial={{ scale: 1.15 }}
+          animate={inView ? { scale: 1 } : {}}
+          transition={{ duration: durations.crawl, ease: easings.expo }}
+        >
+          {/* Oversized by 8% top and bottom so the parallax never shows an edge */}
+          <motion.div className="absolute inset-x-0 -inset-y-[8%]" style={{ y }}>
+            <Image
+              src="/arno-lookout.jpg"
+              alt={`${siteData.name} at a lookout above a forested river valley`}
+              fill
+              sizes="(min-width: 1408px) 1312px, 92vw"
+              className="object-cover object-[88%_40%]"
+            />
+          </motion.div>
+        </motion.div>
+      </motion.div>
+      <figcaption className="eyebrow mt-3 flex justify-between gap-4">
+        <span>{siteData.name}</span>
+        <span>{siteData.role}</span>
+      </figcaption>
+    </figure>
   )
 }
 
-const TABS = ["Skills", "Education", "Achievements"] as const
-type Tab = (typeof TABS)[number]
-
-// ── Quick-info chips ────────────────────────────────────────────────────────
-
-const INFO_CHIPS = [
-  { icon: <MapPin className="h-3 w-3 text-primary" />, label: "South Africa" },
-  { icon: <GraduationCap className="h-3 w-3 text-primary" />, label: "BSc IT Graduate" },
-  { icon: <Award className="h-3 w-3 text-primary" />, label: "Golden Key Society" },
-]
-
-// ── Main Component ─────────────────────────────────────────────────────────
+// ── Main component ─────────────────────────────────────────────────────────
 
 export function AboutSection() {
-  const [activeTab, setActiveTab] = React.useState<Tab>("Skills")
-  const { ref: sectionRef, isInView } = useViewportAnimation({ once: true, margin: "-80px" })
-
   return (
-    <Section id="about" className="relative overflow-hidden">
-      <div ref={sectionRef}>
+    <Section id="about" index="01" label={copy.label}>
+      <Photo />
 
-        {/* ── Background photo - xl+ only (≥1280px, wide desktop bleed) ──── */}
-        <div
-          className="hidden xl:block absolute right-0 top-0 bottom-0 w-[52%] pointer-events-none select-none"
-          aria-hidden
-        >
-          {/* Left-edge fade: transparent → opaque */}
-          <div
-            className="absolute inset-0"
-            style={{
-              maskImage: "linear-gradient(to right, transparent 0%, black 42%)",
-              WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 42%)",
-            }}
-          >
-            {/* Top + bottom fade */}
-            <div
-              className="absolute inset-0 opacity-90"
-              style={{
-                maskImage: "linear-gradient(to bottom, transparent 0%, black 8%, black 88%, transparent 100%)",
-                WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 8%, black 88%, transparent 100%)",
-              }}
-            >
-              <Image
-                src="/Arno - Selfie Web.png"
-                alt=""
-                fill
-                className="object-contain object-right-bottom"
-                priority
-              />
-            </div>
+      {/* Bio and facts */}
+      <div className="mt-16 grid grid-cols-12 gap-y-14 md:mt-24 md:gap-x-10">
+        <FadeIn className="col-span-12 lg:col-span-10">
+          <p className="font-serif text-[1.75rem] leading-[1.25] md:text-[2.5rem] lg:text-[3rem]">
+            {siteData.bio}
+          </p>
+        </FadeIn>
+
+        <dl className="col-span-12 grid grid-cols-1 gap-x-10 md:grid-cols-3">
+          {facts.map((fact, i) => (
+            <FadeIn key={fact.label} delay={i * 0.08}>
+              <Rule delay={i * 0.08} />
+              <dt className="eyebrow pt-4">{fact.label}</dt>
+              <dd className="mt-2 pb-6">{fact.value}</dd>
+            </FadeIn>
+          ))}
+        </dl>
+      </div>
+
+      {/* Areas of expertise */}
+      <div className="mt-28 md:mt-40">
+        <div className="grid grid-cols-12 gap-y-6 md:gap-x-10">
+          <p className="eyebrow col-span-12 md:col-span-4">{copy.practiceLabel}</p>
+          <div className="col-span-12 md:col-span-8">
+            <RevealText as="h2" className="text-5xl md:text-7xl">
+              {copy.practiceTitle}
+            </RevealText>
+            <FadeIn delay={0.2}>
+              <p className="mt-6 max-w-xl text-muted-foreground md:text-lg">{copy.practiceIntro}</p>
+            </FadeIn>
           </div>
         </div>
 
-        {/* ── Intro: responsive layout ─────────────────────────────────────── */}
-        {/*
-          Mobile  (<md):  single col - photo above text
-          Tablet  (md–xl): 2-col grid - text left, contained photo right
-          Desktop (xl+):  single col - text only (absolute bleed photo above)
-        */}
-        <div className="relative z-10 mb-14 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-10 md:gap-14 items-center xl:min-h-[380px] xl:flex xl:flex-col xl:justify-center">
-
-          {/* Text - below photo on mobile, left col on md–xl, full on xl+ */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.55, ease: easings.smooth, delay: 0.05 }}
-            className="order-2 md:order-1 xl:max-w-lg"
-          >
-            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
-              Get to know me
-            </p>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-5 leading-tight">
-              About Me
-            </h2>
-            <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-7">
-              {siteData.bio}
-            </p>
-
-            {/* Quick-info chips */}
-            <div className="flex flex-wrap gap-2">
-              {INFO_CHIPS.map(({ icon, label }) => (
-                <Badge
-                  key={label}
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5 bg-card/80 backdrop-blur-sm border-border/70 py-1.5"
-                >
-                  {icon}
-                  {label}
-                </Badge>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Photo - above text on mobile, right col on md–xl, hidden on xl+ */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.55, ease: easings.smooth, delay: 0.1 }}
-            className="order-1 md:order-2 xl:hidden flex justify-center"
-          >
-            {/* Mobile: compact card, person right-aligned */}
-            <div className="md:hidden relative w-52 h-64 overflow-hidden rounded-2xl border border-border/50 shadow-xl bg-muted/20">
-              <Image
-                src="/Arno - Selfie Mobile.png"
-                alt="Arno Christie"
-                fill
-                className="object-contain object-right-bottom"
-                priority
-              />
-            </div>
-
-            {/* md–xl: taller card, person right-aligned within container */}
-            <div className="hidden md:block relative w-full max-w-[320px] aspect-[3/4] rounded-2xl overflow-hidden border border-border/40 shadow-2xl bg-muted/15">
-              <Image
-                src="/Arno - Selfie Mobile.png"
-                alt="Arno Christie"
-                fill
-                className="object-contain object-right-bottom"
-                priority
-              />
-              {/* Bottom gradient so card edge blends */}
-              <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background/30 to-transparent pointer-events-none" />
-            </div>
-          </motion.div>
-
-        </div>
-
-        {/* ── Divider ─────────────────────────────────────────────────────── */}
-        <div className="relative z-10 h-px bg-gradient-to-r from-transparent via-border/80 to-transparent mb-10" />
-
-        {/* ── Tab bar ─────────────────────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4, ease: easings.smooth, delay: 0.25 }}
-          className="relative z-10 flex justify-center mb-8"
-        >
-          <div className="inline-flex bg-muted rounded-xl p-1 gap-1">
-            {TABS.map((tab) => (
-              <Button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "rounded-lg",
-                  activeTab === tab
-                    ? "bg-background dark:bg-secondary text-foreground shadow-sm"
-                    : "text-muted-foreground"
-                )}
-              >
-                {tab}
-              </Button>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* ── Tab content ─────────────────────────────────────────────────── */}
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25, ease: easings.smooth }}
-          className="relative z-10"
-        >
-          {activeTab === "Skills" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {siteData.skillCategories.map((cat, ci) => (
-                <div
-                  key={cat.category}
-                  className="bg-card border border-border rounded-2xl p-6 space-y-4"
-                >
-                  <h3 className="text-base font-semibold text-foreground">{cat.category}</h3>
-                  <div className="space-y-4">
-                    {cat.skills.map((skill, si) => (
-                      <SkillBar
-                        key={skill.name}
-                        name={skill.name}
-                        level={skill.level}
-                        delay={(ci * cat.skills.length + si) * 0.06}
-                      />
-                    ))}
-                  </div>
+        <ol className="mt-14 md:mt-20">
+          {siteData.specializations.map((spec, i) => (
+            <li key={spec.title} className="group">
+              <Rule delay={i * 0.1} />
+              <FadeIn delay={i * 0.1} className="grid grid-cols-12 gap-y-4 py-8 md:gap-x-10 md:py-12">
+                <span className="eyebrow figures col-span-12 pt-2 transition-colors group-hover:text-primary md:col-span-1">
+                  ({String(i + 1).padStart(2, "0")})
+                </span>
+                <h3 className="col-span-12 text-3xl transition-transform duration-500 ease-out group-hover:translate-x-2 md:col-span-6 md:col-start-2 lg:col-span-5 lg:col-start-2 lg:text-5xl">
+                  {spec.title}
+                </h3>
+                <div className="col-span-12 md:col-span-5 md:col-start-8 lg:col-span-5 lg:col-start-8">
+                  <p className="text-muted-foreground">{spec.description}</p>
+                  <p className="mt-4 font-mono text-xs text-foreground/80">{spec.tags.join("  /  ")}</p>
                 </div>
-              ))}
-            </div>
-          )}
+              </FadeIn>
+            </li>
+          ))}
+        </ol>
+        <Rule />
+      </div>
 
-          {activeTab === "Education" && (
-            <div className="max-w-2xl mx-auto space-y-6">
-              {siteData.experience
-                .filter((e) => e.type === "education")
-                .map((edu) => (
-                  <div
-                    key={edu.title}
-                    className="bg-card border border-border rounded-2xl p-6 md:p-8"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
-                      <div>
-                        <h3 className="text-lg font-semibold text-foreground">{edu.title}</h3>
-                        <p className="text-primary font-medium">{edu.org}</p>
-                      </div>
-                      <Badge variant="outline" size="sm" className="whitespace-nowrap self-start">
-                        {edu.period}
-                      </Badge>
-                    </div>
-                    <ul className="space-y-2 mb-4">
-                      {edu.description.map((point, i) => (
-                        <li key={i} className="flex gap-2 text-sm text-muted-foreground">
-                          <span className="text-primary mt-0.5 flex-shrink-0">•</span>
-                          {point}
-                        </li>
-                      ))}
-                    </ul>
-                    {edu.tags && (
-                      <div className="flex flex-wrap gap-2">
-                        {edu.tags.map((tag) => (
-                          <Badge key={tag} variant="tag" size="sm">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-            </div>
-          )}
-
-          {activeTab === "Achievements" && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
-              {siteData.achievements.map((achievement, i) => (
-                <motion.div
-                  key={achievement.title}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, ease: easings.smooth, delay: i * 0.08 }}
-                  className="bg-card border border-border rounded-2xl p-5 flex gap-4"
-                >
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    {achievementIcon(achievement.icon)}
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">
-                      {achievement.title}
-                    </h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                      {achievement.description}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </motion.div>
-
+      {/* Skills: grouped lists with short notes, no self-rated levels */}
+      <div className="mt-28 md:mt-40">
+        <SkillGlossary />
       </div>
     </Section>
   )

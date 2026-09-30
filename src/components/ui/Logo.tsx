@@ -1,33 +1,35 @@
-"use client";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+"use client"
 
-interface LogoLinkProps {
-  href?: string;
-  className?: string;
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { siteData } from "@arno/assets/site"
+import { cn } from "@arno/lib/utils"
+
+interface LogoProps {
+  href?: string
+  className?: string
 }
 
-export default function Logo({ href = "/", className = "" }: LogoLinkProps) {
-  const pathname = usePathname();
+/**
+ * Logo - serif wordmark. On the home page it scrolls to the top instead of navigating.
+ */
+export default function Logo({ href = "/", className }: LogoProps) {
+  const pathname = usePathname()
 
   const handleClick = (e: React.MouseEvent) => {
     if (pathname === href) {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      e.preventDefault()
+      window.scrollTo({ top: 0, behavior: "smooth" })
     }
-  };
+  }
 
   return (
     <Link
       href={href}
       onClick={handleClick}
-      className={`flex flex-col items-start space-y-1 cursor-pointer group ${className}`}
+      className={cn("font-serif text-2xl leading-none tracking-[-0.01em] transition-colors hover:text-primary", className)}
     >
-      <div className="flex items-center">
-        <span className="text-3xl font-bold">
-          Arno Christie
-        </span>
-      </div>
+      {siteData.name}
     </Link>
-  );
+  )
 }
