@@ -86,6 +86,9 @@ export const siteData = {
   email: "arno.christie@gmail.com",
   phone: "(+27) 082 654 2130",
   location: "Randfontein, Gauteng, South Africa",
+  /** IANA time zone for the live local time in the Hero */
+  timeZone: "Africa/Johannesburg",
+  timeZoneLabel: "SAST",
   available: false,
 
   metrics: [
@@ -131,8 +134,21 @@ export const siteData = {
       details:
         "Feel free to reach out via email or phone. I'm based in South Africa and available for remote opportunities worldwide.",
       formTitle: "Send a Message",
+      copyHint: "Click to copy",
+      copied: "Copied to clipboard",
+      mailAppLabel: "Or open in your mail app",
       successTitle: "Message Sent!",
       successBody: "Thanks for reaching out - I'll get back to you as soon as possible.",
+    },
+    console: {
+      greeting: "Hi there. You're reading the console, so we'll probably get along.",
+      sourceLabel: "The source for this site is on GitHub:",
+      contactLabel: "Say hello:",
+    },
+    commandMenu: {
+      placeholder: "Type a command or search",
+      empty: "No matching commands",
+      triggerLabel: "Open command menu",
     },
     footer: {
       credit: "Built with Next.js, TypeScript & Tailwind CSS",
@@ -148,6 +164,7 @@ export const siteData = {
     github: "https://github.com/TimeToTakeNotes",
     linkedin: "https://www.linkedin.com/in/arno-christie-5003a1209",
     email: "arno.christie@gmail.com",
+    source: "https://github.com/TimeToTakeNotes/personal-portfolio-nextjs",
   },
 
   skillCategories: [

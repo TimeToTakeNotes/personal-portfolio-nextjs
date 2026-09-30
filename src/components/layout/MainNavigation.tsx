@@ -6,6 +6,7 @@ import clsx from "clsx"
 import Logo from "@arno/components/ui/Logo"
 import { ThemeToggle } from "@arno/components/ui/ThemeToggle"
 import MobileMenu from "@arno/components/layout/MobileMenu"
+import { CommandMenuTrigger } from "@arno/components/layout/CommandMenu"
 import { navLinks } from "@arno/assets/site"
 
 const SECTIONS = ["home", ...navLinks.map((link) => link.href.replace("#", ""))]
@@ -107,7 +108,10 @@ export default function MainNavigation() {
                 )
               })}
             </ul>
-            <ThemeToggle />
+            <div className="flex items-center gap-3">
+              <CommandMenuTrigger />
+              <ThemeToggle />
+            </div>
           </nav>
 
           <button

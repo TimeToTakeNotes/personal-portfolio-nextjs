@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { Check, Moon, Sun } from "lucide-react"
 import { Button } from "@arno/components/ui/Button"
 import {
@@ -18,11 +19,18 @@ const OPTIONS = [
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
+  const triggerRef = React.useRef<HTMLButtonElement>(null)
+
+  // The theme change spreads out from the centre of the toggle button
+  const origin = () => {
+    const rect = triggerRef.current?.getBoundingClientRect()
+    return rect ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 } : undefined
+  }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
+        <Button ref={triggerRef} variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
           <Sun
             aria-hidden="true"
             className="h-4 w-4 rotate-0 scale-100 transition-transform duration-500 dark:-rotate-90 dark:scale-0"
@@ -36,7 +44,7 @@ export function ThemeToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[9rem]">
         {OPTIONS.map(({ value, label }) => (
-          <DropdownMenuItem key={value} onClick={() => setTheme(value)} className="justify-between">
+          <DropdownMenuItem key={value} onClick={() => setTheme(value, origin())} className="justify-between">
             {label}
             {theme === value && <Check aria-hidden="true" className="h-3.5 w-3.5" />}
           </DropdownMenuItem>

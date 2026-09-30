@@ -2,12 +2,13 @@
 
 import * as React from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { ArrowRight, ArrowUpRight, RotateCcw } from "lucide-react"
+import { ArrowRight, RotateCcw } from "lucide-react"
 import { Section } from "@arno/components/layout/Section"
 import { FadeIn, RevealText, Rule } from "@arno/components/ui/Reveal"
 import { Field } from "@arno/components/ui/Input"
 import { Button } from "@arno/components/ui/Button"
 import { TextLink } from "@arno/components/ui/TextLink"
+import { CopyEmail } from "@arno/components/ui/CopyEmail"
 import { siteData } from "@arno/assets/site"
 import { easings, durations } from "@arno/lib/animations"
 
@@ -176,16 +177,7 @@ export function ContactSection() {
       </div>
 
       <FadeIn delay={0.3} className="mt-12 md:mt-16">
-        <a
-          href={`mailto:${siteData.email}`}
-          className="group inline-flex max-w-full items-center gap-3 font-serif text-[clamp(1.75rem,5.5vw,4.5rem)] leading-none transition-colors hover:text-primary"
-        >
-          <span className="link-underline break-all pb-1">{siteData.email}</span>
-          <ArrowUpRight
-            aria-hidden="true"
-            className="h-[0.7em] w-[0.7em] shrink-0 transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1"
-          />
-        </a>
+        <CopyEmail />
       </FadeIn>
 
       <div className="mt-20 grid grid-cols-12 gap-y-16 md:mt-28 md:gap-x-10">

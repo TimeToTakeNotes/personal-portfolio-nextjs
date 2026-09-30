@@ -79,6 +79,18 @@
   }
 }
 
+/* Theme change: ThemeProvider animates a circular clip on the new snapshot.
+   Disable the default cross-fade so only the circle is visible. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
+}
+
 /* Reduced motion: stop CSS transitions and smooth scrolling.
    Framer Motion animations are controlled by MotionProvider. */
 @media (prefers-reduced-motion: reduce) {

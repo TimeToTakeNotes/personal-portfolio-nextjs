@@ -13,6 +13,7 @@ import type { MetricItem } from "@arno/assets/site"
 import { easings, useReducedMotion, durations, useViewportAnimation } from "@arno/lib/animations"
 import { RevealText, Rule } from "@arno/components/ui/Reveal"
 import { TextLink } from "@arno/components/ui/TextLink"
+import { LocalTime } from "@arno/components/ui/LocalTime"
 
 const ROLE_INTERVAL_MS = 2800
 
@@ -139,7 +140,11 @@ export function HeroSection() {
               </span>
             </p>
           )}
-          <p>{siteData.location}</p>
+          <p>
+            {siteData.location}
+            <span aria-hidden="true" className="mx-3 text-border-strong/40">/</span>
+            <LocalTime timeZone={siteData.timeZone} label={siteData.timeZoneLabel} />
+          </p>
         </motion.div>
 
         {/* Name */}

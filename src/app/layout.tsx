@@ -5,6 +5,8 @@ import { Instrument_Serif, Schibsted_Grotesk, JetBrains_Mono } from "next/font/g
 import { ThemeProvider } from "@arno/components/layout/ThemeProvider";
 import { MotionProvider } from "@arno/components/layout/MotionProvider";
 import MainNavigation from "@arno/components/layout/MainNavigation";
+import { CommandMenuProvider } from "@arno/components/layout/CommandMenu";
+import { ConsoleGreeting } from "@arno/components/layout/ConsoleGreeting";
 import Footer from "@arno/components/layout/Footer";
 import { PageTransition, pageFade } from "@arno/lib/animations";
 
@@ -98,11 +100,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       >
         <ThemeProvider defaultTheme="system">
           <MotionProvider>
-            <MainNavigation />
-            <main id="main" className="relative">
-              <PageTransition variant={pageFade}>{children}</PageTransition>
-            </main>
-            <Footer />
+            <CommandMenuProvider>
+              <MainNavigation />
+              <main id="main" className="relative">
+                <PageTransition variant={pageFade}>{children}</PageTransition>
+              </main>
+              <Footer />
+              <ConsoleGreeting />
+            </CommandMenuProvider>
           </MotionProvider>
         </ThemeProvider>
       </body>
