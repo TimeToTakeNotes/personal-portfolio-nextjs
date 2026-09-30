@@ -1,18 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { motion, useMotionValueEvent, useScroll } from "framer-motion"
+import { useMotionValueEvent, useScroll } from "framer-motion"
 import clsx from "clsx"
 import Logo from "@arno/components/ui/Logo"
 import { ThemeToggle } from "@arno/components/ui/ThemeToggle"
 import MobileMenu from "@arno/components/layout/MobileMenu"
 import { navLinks } from "@arno/assets/site"
-import { easings, durations } from "@arno/lib/animations"
 
 const SECTIONS = ["home", ...navLinks.map((link) => link.href.replace("#", ""))]
-
-/** Scroll distance in pixels before the header can hide */
-const HIDE_AFTER_PX = 160
 
 function useActiveSection() {
   const [active, setActive] = React.useState("home")
@@ -42,23 +38,16 @@ function useActiveSection() {
 }
 
 /**
- * MainNavigation - fixed site header.
- *
- * The header hides when the user scrolls down and returns when the user
- * scrolls up, so it does not cover content while reading.
+ * MainNavigation - fixed site header. It stays visible at all times and
+ * gets a background and a bottom rule after the page scrolls.
  */
 export default function MainNavigation() {
   const [menuOpen, setMenuOpen] = React.useState(false)
-  const [hidden, setHidden] = React.useState(false)
   const [scrolled, setScrolled] = React.useState(false)
   const activeSection = useActiveSection()
   const { scrollY } = useScroll()
 
-  useMotionValueEvent(scrollY, "change", (current) => {
-    const previous = scrollY.getPrevious() ?? 0
-    setScrolled(current > 12)
-    setHidden(current > previous && current > HIDE_AFTER_PX)
-  })
+  useMotionValueEvent(scrollY, "change", (current) => setScrolled(current > 12))
 
   // Close the mobile menu when the viewport grows to desktop width
   React.useEffect(() => {
@@ -77,15 +66,13 @@ export default function MainNavigation() {
         Skip to content
       </a>
 
-      <motion.header
+      <header
         className={clsx(
           "fixed inset-x-0 top-0 z-[1001] transition-[background-color,border-color] duration-300",
           scrolled || menuOpen
             ? "border-b border-border bg-background/85 backdrop-blur-md"
             : "border-b border-transparent bg-transparent"
         )}
-        animate={{ y: hidden && !menuOpen ? "-100%" : "0%" }}
-        transition={{ duration: durations.base, ease: easings.expo }}
       >
         <div className="container-page flex h-16 items-center justify-between">
           <Logo />
@@ -147,7 +134,7 @@ export default function MainNavigation() {
             </span>
           </button>
         </div>
-      </motion.header>
+      </header>
 
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} activeSection={activeSection} />
     </>

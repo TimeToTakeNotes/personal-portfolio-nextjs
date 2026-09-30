@@ -10,10 +10,22 @@ export interface NavLink {
   href: string
 }
 
+export interface Skill {
+  name: string
+  /** Kept as reference data. The UI does not show it. */
+  level: number
+  /** One or two sentences shown when the skill is selected */
+  summary: string
+  /**
+   * Extra project or experience tags that count as a use of this skill.
+   * The name is already split on "/" and "&" and matched against tags.
+   */
+  aliases?: string[]
+}
+
 export interface SkillCategory {
   category: string
-  /** `level` is kept as reference data. The UI does not show it. */
-  skills: Array<{ name: string; level: number }>
+  skills: Skill[]
 }
 
 export interface Project {
@@ -92,6 +104,8 @@ export const siteData = {
       practiceIntro:
         "Where my skills and interests intersect - from AI model integration to production-ready full-stack engineering.",
       skillsLabel: "Skills",
+      skillsHint: "Select a skill for a short note",
+      skillUsedInLabel: "Where I've used it",
     },
     projects: {
       label: "Projects",
@@ -140,41 +154,145 @@ export const siteData = {
     {
       category: "Frontend",
       skills: [
-        { name: "React / Next.js", level: 85 },
-        { name: "TypeScript", level: 80 },
-        { name: "Tailwind CSS", level: 85 },
-        { name: "HTML & CSS", level: 90 },
-        { name: "Framer Motion", level: 70 },
+        {
+          name: "React / Next.js",
+          level: 85,
+          summary:
+            "React builds interfaces from reusable components. Next.js adds routing, server rendering and static generation on top. This site uses both.",
+        },
+        {
+          name: "TypeScript",
+          level: 80,
+          summary:
+            "JavaScript with static types. It catches whole classes of bugs before the code runs and makes large codebases safer to change.",
+        },
+        {
+          name: "Tailwind CSS",
+          level: 85,
+          summary:
+            "A utility-first CSS framework. Styles are composed in the markup from small, consistent building blocks instead of separate stylesheets.",
+        },
+        {
+          name: "HTML & CSS",
+          level: 90,
+          summary:
+            "The foundation of every web page. HTML gives content structure and meaning; CSS controls layout, type and colour.",
+        },
+        {
+          name: "Framer Motion",
+          level: 70,
+          summary:
+            "A React animation library. It drives the text reveals, drawn rules and scroll effects on this page.",
+        },
       ],
     },
     {
       category: "Backend",
       skills: [
-        { name: "Python / Django", level: 80 },
-        { name: "C# / .NET", level: 75 },
-        { name: "Node.js / Express", level: 70 },
-        { name: "Java", level: 65 },
-        { name: "REST APIs", level: 80 },
+        {
+          name: "Python / Django",
+          level: 80,
+          summary:
+            "Python is the main language for data and machine learning work. Django is its full-featured web framework, with an ORM, admin and auth built in.",
+        },
+        {
+          name: "C# / .NET",
+          level: 75,
+          summary:
+            "C# is a statically typed language from Microsoft, and .NET is the runtime and framework around it. ASP.NET Core with C# is my day-to-day stack at work.",
+          aliases: ["ASP.NET Core"],
+        },
+        {
+          name: "Node.js / Express",
+          level: 70,
+          summary:
+            "Node.js runs JavaScript on the server. Express is a minimal framework for building HTTP APIs on top of it.",
+        },
+        {
+          name: "Java",
+          level: 65,
+          summary:
+            "A statically typed, object-oriented language that runs on the JVM. Common in enterprise systems and used throughout my degree.",
+        },
+        {
+          name: "REST APIs",
+          level: 80,
+          summary:
+            "A convention for designing web APIs around resources and standard HTTP methods, so clients and servers can change independently.",
+          aliases: ["Express", "ASP.NET Core"],
+        },
       ],
     },
     {
       category: "AI & ML",
       skills: [
-        { name: "HuggingFace", level: 75 },
-        { name: "PyTorch", level: 70 },
-        { name: "NLP Fine-tuning", level: 70 },
-        { name: "Text Generation", level: 65 },
-        { name: "OpenAI APIs", level: 70 },
+        {
+          name: "HuggingFace",
+          level: 75,
+          summary:
+            "The open hub for machine learning models and datasets. Its Transformers library makes it practical to load, fine-tune and serve pretrained models.",
+        },
+        {
+          name: "PyTorch",
+          level: 70,
+          summary:
+            "A deep learning framework with dynamic computation graphs. It is the engine under most modern NLP research and HuggingFace models.",
+        },
+        {
+          name: "NLP Fine-tuning",
+          level: 70,
+          summary:
+            "Further training a pretrained language model on a smaller, domain-specific dataset so it performs better on one task.",
+        },
+        {
+          name: "Text Generation",
+          level: 65,
+          summary:
+            "Using language models to produce text, from short completions to long-form writing. Quality depends on the data, the decoding settings and careful evaluation.",
+        },
+        {
+          name: "OpenAI APIs",
+          level: 70,
+          summary:
+            "Hosted APIs for OpenAI models such as GPT and Whisper. They add language and speech features to an application without training a model.",
+          aliases: ["OpenAI Whisper"],
+        },
       ],
     },
     {
       category: "Tools & Infra",
       skills: [
-        { name: "Git / GitHub", level: 85 },
-        { name: "Docker", level: 65 },
-        { name: "MongoDB", level: 70 },
-        { name: "MySQL / SQL", level: 75 },
-        { name: "Scrum / Agile", level: 75 },
+        {
+          name: "Git / GitHub",
+          level: 85,
+          summary:
+            "Git records every change to a codebase. GitHub hosts the repositories and adds pull requests, code review and CI on top.",
+        },
+        {
+          name: "Docker",
+          level: 65,
+          summary:
+            "Packages an application and its dependencies into a container, so it runs the same way on a laptop, a server or in the cloud.",
+        },
+        {
+          name: "MongoDB",
+          level: 70,
+          summary:
+            "A document database that stores flexible, JSON-like records. A good fit for data whose shape changes often.",
+        },
+        {
+          name: "MySQL / SQL",
+          level: 75,
+          summary:
+            "SQL is the standard language for relational databases. MySQL is one of the most widely used open-source relational databases.",
+          aliases: ["SQL Server"],
+        },
+        {
+          name: "Scrum / Agile",
+          level: 75,
+          summary:
+            "An iterative way to deliver software in short sprints, with regular planning, review and retrospectives.",
+        },
       ],
     },
   ] satisfies SkillCategory[],

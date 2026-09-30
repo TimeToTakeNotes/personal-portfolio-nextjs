@@ -5,6 +5,7 @@ import Image from "next/image"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { Section } from "@arno/components/layout/Section"
 import { FadeIn, RevealText, Rule } from "@arno/components/ui/Reveal"
+import { SkillGlossary } from "@arno/components/sections/SkillGlossary"
 import { siteData } from "@arno/assets/site"
 import { easings, durations, useReducedMotion, useViewportAnimation } from "@arno/lib/animations"
 
@@ -127,24 +128,9 @@ export function AboutSection() {
         <Rule />
       </div>
 
-      {/* Skills: grouped lists, no self-rated levels */}
+      {/* Skills: grouped lists with short notes, no self-rated levels */}
       <div className="mt-28 md:mt-40">
-        <p className="eyebrow">{copy.skillsLabel}</p>
-        <div className="mt-8 grid grid-cols-1 gap-y-12 sm:grid-cols-2 sm:gap-x-10 lg:grid-cols-4">
-          {siteData.skillCategories.map((cat, ci) => (
-            <FadeIn key={cat.category} delay={ci * 0.08}>
-              <h3 className="text-3xl">{cat.category}</h3>
-              <Rule className="mt-4" delay={ci * 0.08} />
-              <ul className="mt-4 space-y-2">
-                {cat.skills.map((skill) => (
-                  <li key={skill.name} className="text-foreground/85">
-                    {skill.name}
-                  </li>
-                ))}
-              </ul>
-            </FadeIn>
-          ))}
-        </div>
+        <SkillGlossary />
       </div>
     </Section>
   )

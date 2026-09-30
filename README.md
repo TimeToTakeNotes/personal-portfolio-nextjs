@@ -60,7 +60,7 @@ src/
 │   └── site.tsx                 # Single source of truth for all portfolio content
 ├── components/
 │   ├── layout/
-│   │   ├── MainNavigation.tsx   # Fixed header, scroll spy, hide on scroll down
+│   │   ├── MainNavigation.tsx   # Fixed header, always visible, scroll spy
 │   │   ├── MobileMenu.tsx       # Full-screen mobile navigation
 │   │   ├── Footer.tsx           # Footer with index, links and copyright
 │   │   ├── Section.tsx          # Numbered section shell (01 About, 02 Projects, ...)
@@ -69,7 +69,8 @@ src/
 │   │   └── ThemeProvider.tsx    # Dark / light / system theme context
 │   ├── sections/
 │   │   ├── Hero.tsx             # Name, rotating role, tagline, count-up figures
-│   │   ├── About.tsx            # Wide photo, bio, areas of expertise, skills
+│   │   ├── About.tsx            # Wide photo, bio, areas of expertise
+│   │   ├── SkillGlossary.tsx    # Skill lists; each skill opens a short note
 │   │   ├── Projects.tsx         # Featured projects + expandable project index
 │   │   ├── Experience.tsx       # Scroll-linked timeline - work, education, achievements
 │   │   └── ContactForm.tsx      # Contact details + Web3Forms form
@@ -94,7 +95,7 @@ src/
 - **Single data source** - all content (bio, projects, experience, skills, achievements, section copy) lives in `src/assets/site.tsx`
 - **Considered motion** - masked word reveals, rules that draw in, a rotating role line, a wide About photo with a clip-path reveal and scroll parallax, count-up figures and a scroll-linked experience timeline
 - **Reduced motion support** - Framer Motion and CSS transitions respect `prefers-reduced-motion`
-- **Scroll spy navigation** - `IntersectionObserver` marks the active section in the header and the mobile menu. The header hides on scroll down and returns on scroll up
+- **Scroll spy navigation** - `IntersectionObserver` marks the active section in the header and the mobile menu. The header stays visible and gains a background after scrolling
 - **Dark / light / system theme** - persisted via `ThemeProvider`, applied before first paint to prevent a theme flash
 - **Project index** - featured projects show in full; other projects open inline in an accessible expandable list
 - **CV download** - Hero link downloads `/public/Arno Christie - CV.pdf`
@@ -198,7 +199,7 @@ All portfolio content is managed from a single file: [src/assets/site.tsx](src/a
 | `siteData.available` | `true` / `false` - reserved; not rendered at present |
 | `siteData.typewriterRoles` | Roles cycled in the Hero rotating role line |
 | `siteData.metrics` | Count-up figures in the Hero (value + label pairs) |
-| `siteData.skillCategories` | Skill lists grouped by category (`level` is kept as data, not shown) |
+| `siteData.skillCategories` | Skill lists grouped by category. Each skill has a `summary` shown when selected, and optional `aliases` for the "Where I've used it" match (`level` is kept as data, not shown) |
 | `siteData.specializations` | Areas of expertise list in the About section |
 | `siteData.projects` | Projects - `featured: true` shows the project in full; others go in the project index |
 | `siteData.experience` | Work and education timeline entries (`type: "work" \| "education"`) |

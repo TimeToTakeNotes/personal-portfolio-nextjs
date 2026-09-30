@@ -300,7 +300,7 @@ src/
 │
 ├── components/
 │   ├── layout/
-│   │   ├── MainNavigation.tsx   # Fixed header: hides on scroll down, active-section tracking
+│   │   ├── MainNavigation.tsx   # Fixed header: always visible, active-section tracking
 │   │   ├── MobileMenu.tsx       # Full-screen menu below 1024px
 │   │   ├── Footer.tsx           # Footer
 │   │   ├── Section.tsx          # Numbered section shell: header row + rule + content
@@ -310,7 +310,8 @@ src/
 │   │
 │   ├── sections/
 │   │   ├── Hero.tsx             # Name, rotating role, tagline, count-up figures
-│   │   ├── About.tsx            # Wide photo, bio, facts, areas of expertise, skills
+│   │   ├── About.tsx            # Wide photo, bio, facts, areas of expertise
+│   │   ├── SkillGlossary.tsx    # Skill lists; each skill opens a note with a summary and "Where I've used it"
 │   │   ├── Projects.tsx         # Featured projects + expandable project index
 │   │   ├── Experience.tsx       # Work + education timeline, achievements
 │   │   └── ContactForm.tsx      # Contact details + Web3Forms form
