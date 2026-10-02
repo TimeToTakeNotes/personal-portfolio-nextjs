@@ -2,7 +2,7 @@
 
 Personal developer portfolio for **Arno Christie** - AI & Full-Stack Developer, BSc IT graduate (86.3% distinction, NWU), and Junior Fullstack Developer at Converge Solutions.
 
-Live at: **[personal-portfolio-nextjs-rouge.vercel.app](https://personal-portfolio-nextjs-rouge.vercel.app)**
+Live at: **[https://arno-christie.duckdns.org/](https://arno-christie.duckdns.org/)**
 
 ---
 
